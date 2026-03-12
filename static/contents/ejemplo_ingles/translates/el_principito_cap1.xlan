@@ -1,0 +1,306 @@
+{
+  "meta": {
+    "title": "El Principito — Capítulo I",
+    "description": "Inicio del clásico de Antoine de Saint-Exupéry. El narrador recuerda su infancia y un dibujo que hizo a los seis años.",
+    "source_language": "es",
+    "target_language": "en",
+    "created_at": "2026-01-01T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "El Principito",
+          "translation": "The Little Prince",
+          "info": "Sustantivo masculino + adjetivo. 'Principito' es el diminutivo de 'príncipe' (prince). El diminutivo en español añade afecto o indica tamaño pequeño.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "segments": [
+        {
+          "id": "h2_s1",
+          "text": "Capítulo I",
+          "translation": "Chapter I",
+          "info": "'Capítulo' (chapter) proviene del latín 'caput' (cabeza/inicio). Se usa para dividir obras literarias.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "Cuando tenía seis años",
+          "translation": "When I was six years old",
+          "info": "'Tenía' es el pretérito imperfecto de 'tener'. En español se usa 'tener' para expresar la edad (tener X años), mientras que en inglés se usa 'to be' (to be X years old).",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": " vi una vez",
+          "translation": " I once saw",
+          "info": "'Vi' es la primera persona del pretérito indefinido de 'ver' (to see → saw). 'Una vez' equivale a 'once' en inglés.",
+          "styles": []
+        },
+        {
+          "id": "p1_s3",
+          "text": " una lámina magnífica",
+          "translation": " a magnificent picture",
+          "info": "'Lámina' (picture/plate) puede referirse a una ilustración o grabado en un libro. 'Magnífica' → magnificent; adjetivo que en español concuerda en género y número con el sustantivo.",
+          "styles": []
+        },
+        {
+          "id": "p1_s4",
+          "text": " en un libro sobre el bosque virgen",
+          "translation": " in a book about the virgin forest",
+          "info": "'Bosque virgen' (virgin forest / primeval forest): bosque no alterado por el hombre. En inglés también se dice 'old-growth forest' o 'primeval forest'.",
+          "styles": []
+        },
+        {
+          "id": "p1_s5",
+          "text": " que se llamaba 'Historias vividas'.",
+          "translation": " that was called 'True Stories from Nature'.",
+          "info": "'Se llamaba' es el pretérito imperfecto reflexivo de 'llamar', equivalente a 'was called'. El título original francés era 'Histoires Naturelles'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "Representaba una serpiente boa",
+          "translation": "It depicted a boa constrictor snake",
+          "info": "'Representaba' (pretérito imperfecto de 'representar') → 'depicted / showed'. 'Serpiente boa' o 'boa constrictor' es una serpiente tropical no venenosa que mata a sus presas por constricción.",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": " que se tragaba a una fiera.",
+          "translation": " swallowing a wild animal.",
+          "info": "'Se tragaba' (pretérito imperfecto de 'tragarse') → 'was swallowing'. 'Fiera' (wild animal / beast): animal salvaje. Relacionado con 'fierce' en inglés.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "He aquí",
+          "translation": "Here is",
+          "info": "Expresión formal/literaria equivalente a 'aquí está' o 'esto es'. En inglés moderno se diría simplemente 'Here is' o 'This is'.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": " la copia del dibujo.",
+          "translation": " a copy of the drawing.",
+          "info": "'Copia' → copy. 'Dibujo' → drawing (sustantivo de 'dibujar', to draw). Nótese el artículo definido 'la' vs. el artículo indefinido 'a' en inglés, que responde a un matiz de referencia.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "En el libro",
+          "translation": "In the book",
+          "info": "Sintagma preposicional locativo. 'En' equivale a 'in' cuando se refiere a estar dentro de algo.",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": " se decía:",
+          "translation": " it said:",
+          "info": "'Se decía' (impersonal reflexivo) equivale a 'it said' o 'one could read'. La voz impersonal con 'se' es muy frecuente en español donde el inglés usa 'it' como sujeto expletivo.",
+          "styles": []
+        },
+        {
+          "id": "p4_s3",
+          "text": " «Las serpientes boas se tragan",
+          "translation": " 'Boa constrictors swallow",
+          "info": "'Se tragan' (presente con 'se' reflexivo/recíproco): forma activa en presente. Las comillas angulares « » son el signo tipográfico español para citas directas, equivalente a las comillas inglesas \" \".",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p4_s4",
+          "text": " a sus presas enteras",
+          "translation": " their prey whole",
+          "info": "'Presa' (prey): lo que caza/come un depredador. 'Entera' (whole/entire): sin masticar. En inglés el adverbio 'whole' va detrás del objeto: 'swallow their prey whole'.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p4_s5",
+          "text": " sin masticarlas.»",
+          "translation": " without chewing them.'",
+          "info": "'Sin masticarlas': 'without chewing them'. 'Masticar' → to chew. La preposición 'sin' + infinitivo en español se traduce por 'without' + gerundio (-ing) en inglés.",
+          "styles": ["italic"]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "Reflexioné mucho entonces",
+          "translation": "I thought about this a great deal",
+          "info": "'Reflexioné' (pretérito indefinido de 'reflexionar') → 'I thought / I reflected'. 'Mucho' como adverbio → 'a great deal / a lot'. En inglés es necesario explicitar el objeto 'about this'.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": " sobre las aventuras de la jungla",
+          "translation": " about the adventures of the jungle",
+          "info": "'Aventuras' → adventures. 'Jungla' → jungle (del hindi 'jangal'). Es sinónimo de 'selva' en muchos contextos, aunque 'selva' es el término más propio del español.",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": " y, a mi vez,",
+          "translation": " and, in my turn,",
+          "info": "'A mi vez' → 'in my turn / in turn'. Expresión que indica que alguien hace algo siguiendo un orden o como respuesta a lo que acaba de ver.",
+          "styles": []
+        },
+        {
+          "id": "p5_s4",
+          "text": " logré trazar",
+          "translation": " I managed to draw",
+          "info": "'Logré' (pretérito indefinido de 'lograr') → 'I managed to / I succeeded in'. Verbo que indica éxito al realizar algo. 'Trazar' → to draw/trace. Aquí equivalente a 'dibujar'.",
+          "styles": []
+        },
+        {
+          "id": "p5_s5",
+          "text": " con un lápiz de colores",
+          "translation": " with coloured pencils",
+          "info": "'Lápiz de colores' → 'coloured pencil / crayon'. En inglés americano: 'colored pencils'. Nótese que 'lápiz' es singular y 'de colores' es un complemento nominal.",
+          "styles": []
+        },
+        {
+          "id": "p5_s6",
+          "text": " mi primer dibujo.",
+          "translation": " my first drawing.",
+          "info": "'Primer' es el apócope (forma abreviada) de 'primero' ante sustantivos masculinos singulares: 'primer dibujo' (pero 'primera vez'). En inglés 'first' no varía.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "Mi dibujo número 1",
+          "translation": "My Drawing Number One",
+          "info": "El narrador numera sus dibujos, lo cual crea un tono infantil y a la vez metódico. El uso del número en lugar del ordinal ('primero') da un efecto más objetivo/científico.",
+          "styles": ["bold"]
+        },
+        {
+          "id": "p6_s2",
+          "text": " era de este tenor:",
+          "translation": " was of this nature:",
+          "info": "'De este tenor' (of this nature/kind): expresión literaria que significa 'de este tipo o estilo'. 'Tenor' en este sentido no es el cantante, sino sinónimo de 'carácter' o 'índole'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p7_s1",
+          "text": "Enseñé mi obra maestra",
+          "translation": "I showed my masterpiece",
+          "info": "'Enseñé' (pretérito indefinido de 'enseñar'): aquí en el sentido de 'mostrar' (to show), no de 'instruir' (to teach). Esta ambigüedad es muy frecuente en español: 'enseñar' significa tanto 'show' como 'teach'.",
+          "styles": []
+        },
+        {
+          "id": "p7_s2",
+          "text": " a las personas mayores",
+          "translation": " to the grown-ups",
+          "info": "'Personas mayores' → 'grown-ups / adults'. 'Mayor' como adjetivo aquí significa 'de mayor edad' (adult), no 'más grande'. 'Grown-up' (sustantivo coloquial) se usa especialmente en el lenguaje infantil.",
+          "styles": []
+        },
+        {
+          "id": "p7_s3",
+          "text": " y les pregunté",
+          "translation": " and asked them",
+          "info": "'Les' es el pronombre de objeto indirecto (dativo) de tercera persona plural: 'to them'. En inglés no es necesario repetirlo porque 'them' es el objeto del verbo 'asked'.",
+          "styles": []
+        },
+        {
+          "id": "p7_s4",
+          "text": " si mi dibujo les daba miedo.",
+          "translation": " if my drawing frightened them.",
+          "info": "'Dar miedo' (lit. 'to give fear') es una construcción impersonal. Se traduce al inglés como 'to frighten' o 'to scare'. Nótese que el español usa 'dar + sustantivo' donde el inglés prefiere un verbo directo.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p8_s1",
+          "text": "Me respondieron:",
+          "translation": "They answered:",
+          "info": "'Me respondieron' (pretérito indefinido, 3a persona plural de 'responder'): 'they answered / they replied'. El pronombre 'me' (objeto indirecto) indica que la respuesta iba dirigida al narrador.",
+          "styles": []
+        },
+        {
+          "id": "p8_s2",
+          "text": " «¿Por qué habría de asustar",
+          "translation": " 'Why would a hat",
+          "info": "'¿Por qué habría de...?' → 'Why would...?'. Construcción con condicional que expresa extrañeza o incredulidad. 'Habría de' + infinitivo indica una obligación hipotética o algo esperado.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p8_s3",
+          "text": " un sombrero?»",
+          "translation": " be frightening?'",
+          "info": "Las personas mayores ven el dibujo como un sombrero, no como una boa tragándose un elefante. Este malentendido es el tema central del capítulo: los adultos han perdido la imaginación.",
+          "styles": ["italic"]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p9_s1",
+          "text": "Mi dibujo no representaba un sombrero.",
+          "translation": "My drawing was not a picture of a hat.",
+          "info": "'Representaba' (pretérito imperfecto): describe cómo era el dibujo en ese pasado. El inglés usa 'was not a picture of' para indicar que el dibujo no mostraba lo que los adultos creían.",
+          "styles": []
+        },
+        {
+          "id": "p9_s2",
+          "text": " Representaba una serpiente boa",
+          "translation": " It was a boa constrictor",
+          "info": "Repetición de 'representaba' con valor contrastivo. El narrador insiste en corregir la interpretación errónea de los adultos.",
+          "styles": []
+        },
+        {
+          "id": "p9_s3",
+          "text": " que digería a un elefante.",
+          "translation": " digesting an elephant.",
+          "info": "'Que digería' (pretérito imperfecto de 'digerir'): 'that was digesting'. 'Digerir' → to digest. Verbos de la 3a conjugación irregular con raíz e→i en ciertos tiempos.",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

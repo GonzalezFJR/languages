@@ -1,0 +1,395 @@
+{
+  "meta": {
+    "title": "Caperucita Roja (versión breve)",
+    "description": "Versión simplificada del cuento clásico de los hermanos Grimm. Vocabulario cotidiano, ideal para nivel A2-B1.",
+    "source_language": "es",
+    "target_language": "en",
+    "created_at": "2026-01-01T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "Caperucita Roja",
+          "translation": "Little Red Riding Hood",
+          "info": "'Caperucita' es el diminutivo de 'caperuza' (hood, a type of pointed cap). 'Roja' → red. El nombre inglés usa 'Riding Hood' (capucha de montar) por la traducción tradicional inglesa.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "Había una vez",
+          "translation": "Once upon a time",
+          "info": "'Había una vez' es la fórmula de inicio de los cuentos en español (lit. 'there was once'). La fórmula inglesa equivalente 'Once upon a time' es igualmente convencional y no es una traducción literal.",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": " una niña pequeña",
+          "translation": " a little girl",
+          "info": "'Niña' → girl (female child). 'Pequeña' → little/small. En inglés el adjetivo precede al sustantivo ('a little girl'), mientras que en español puede ir después ('una niña pequeña').",
+          "styles": []
+        },
+        {
+          "id": "p1_s3",
+          "text": " que vivía",
+          "translation": " who lived",
+          "info": "'Que vivía' → 'who lived'. Proposición de relativo con 'que' (who/that). El pretérito imperfecto 'vivía' describe una situación habitual en el pasado.",
+          "styles": []
+        },
+        {
+          "id": "p1_s4",
+          "text": " cerca del bosque.",
+          "translation": " near the forest.",
+          "info": "'Cerca de' → near/close to. Preposición de lugar. 'Bosque' → forest/wood. 'Forest' implica mayor tamaño que 'wood' en inglés.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "Su abuela le había regalado",
+          "translation": "Her grandmother had given her",
+          "info": "'Le había regalado' → 'had given her' (pluscuamperfecto). 'Regalar' (to give as a gift) es más específico que 'dar'. En inglés se usa 'give' para ambos sentidos.",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": " una capa roja con capucha,",
+          "translation": " a red cloak with a hood,",
+          "info": "'Capa' → cloak/cape (prenda larga sin mangas). 'Capucha' → hood (parte de una prenda que cubre la cabeza). Estos son los elementos que dan nombre al personaje.",
+          "styles": []
+        },
+        {
+          "id": "p2_s3",
+          "text": " y la niña",
+          "translation": " and the girl",
+          "info": "'La niña' aquí funciona como sujeto de la siguiente proposición. El artículo determinado 'la' (the) se usa porque ya se ha mencionado la niña antes.",
+          "styles": []
+        },
+        {
+          "id": "p2_s4",
+          "text": " siempre la llevaba puesta.",
+          "translation": " always wore it.",
+          "info": "'Llevar puesto' → 'to wear'. Expresión idiomática: 'llevar' (to carry/take) + 'puesto' (put on) = llevar ropa encima. En inglés simplemente 'to wear'. 'Siempre' → always (adverbio de frecuencia).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "Un día,",
+          "translation": "One day,",
+          "info": "'Un día' → 'one day'. Expresión temporal que introduce un evento puntual en el pasado. Muy común en cuentos para señalar el inicio de la acción.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": " su madre le dijo:",
+          "translation": " her mother said to her:",
+          "info": "'Le dijo' (pretérito indefinido de 'decir'): 'said to her'. El pronombre 'le' (objeto indirecto) indica que el discurso iba dirigido a ella. Nótese que 'decir' es irregular: digo, dices, dice... dije, dijiste, dijo...",
+          "styles": []
+        },
+        {
+          "id": "p3_s3",
+          "text": " «Lleva esta cesta a casa de la abuela.",
+          "translation": " 'Take this basket to grandmother's house.",
+          "info": "'Lleva' es el imperativo informal de 'llevar' (to take/carry). 'Cesta' → basket. 'A casa de' → 'to X's house': se usa esta construcción en español para indicar la casa de alguien.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p3_s4",
+          "text": " Está enferma",
+          "translation": " She is ill",
+          "info": "'Estar enferma' → 'to be ill/sick'. Se usa 'estar' (not 'ser') porque la enfermedad es un estado temporal. 'Enferma' concuerda en género (fem.) con el sujeto.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p3_s5",
+          "text": " y necesita comida.»",
+          "translation": " and needs food.'",
+          "info": "'Necesita' (3a persona singular del presente de 'necesitar') → 'needs'. 'Comida' → food (en general) o 'meal' si se refiere a una comida concreta.",
+          "styles": ["italic"]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "Caperucita cogió la cesta",
+          "translation": "Little Red Riding Hood picked up the basket",
+          "info": "'Cogió' (pretérito indefinido de 'coger'): 'picked up / grabbed'. ⚠️ 'Coger' se usa libremente en España, pero en Latinoamérica se prefiere 'agarrar' o 'tomar' por connotaciones vulgares.",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": " y se adentró en el bosque.",
+          "translation": " and ventured into the forest.",
+          "info": "'Se adentró en' → 'ventured into / went deep into'. Verbo reflexivo 'adentrarse' (to go deep into, to enter). Más expresivo que simplemente 'entrar en el bosque'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "De repente,",
+          "translation": "Suddenly,",
+          "info": "'De repente' → suddenly. Locución adverbial de tiempo que indica algo inesperado. Sinónimos: 'de pronto', 'súbitamente'.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": " un lobo grande y malvado",
+          "translation": " a big, bad wolf",
+          "info": "'Lobo' → wolf. 'Grande y malvado' → 'big and bad' / 'big, bad'. La construcción 'the big bad wolf' está tan lexicalizada en inglés que se suele usar sin conjunción.",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": " se cruzó en su camino.",
+          "translation": " crossed her path.",
+          "info": "'Cruzarse en el camino de alguien' → 'to cross someone's path'. Expresión que significa encontrarse con alguien (a menudo de forma inesperada o indeseada).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "«¿A dónde vas",
+          "translation": "'Where are you going",
+          "info": "'¿A dónde vas?' → 'Where are you going?' La preposición 'a' antes del pronombre interrogativo 'dónde' es obligatoria en español cuando hay movimiento hacia un lugar ('¿dónde?' = lugar estático, '¿a dónde?' = dirección).",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p6_s2",
+          "text": ", pequeña?»,",
+          "translation": ", little one?',",
+          "info": "'Pequeña' como sustantivo vocativo → 'little one'. Se usa para dirigirse a alguien de forma condescendiente o afectuosa. El lobo usa un tono aparentemente amable.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p6_s3",
+          "text": " preguntó el lobo",
+          "translation": " asked the wolf",
+          "info": "'Preguntó' (pretérito indefinido de 'preguntar') → 'asked'. Verbo de habla muy frecuente. En narraciones inglesas el sujeto suele ir después del verbo en estilo directo: 'asked the wolf'.",
+          "styles": []
+        },
+        {
+          "id": "p6_s4",
+          "text": " con voz suave.",
+          "translation": " in a gentle voice.",
+          "info": "'Con voz suave' → 'in a gentle/soft voice'. 'Suave' → gentle/soft/mild. Esta descripción contrasta con la naturaleza malvada del lobo.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p7_s1",
+          "text": "«Voy a casa de mi abuela»,",
+          "translation": "'I am going to my grandmother's house',",
+          "info": "'Voy a' + sustantivo de lugar → 'I am going to'. El posesivo se expresa en inglés con el genitivo sajón ('grandmother's house'). En español basta con 'casa de mi abuela'.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p7_s2",
+          "text": " respondió Caperucita",
+          "translation": " replied Little Red Riding Hood",
+          "info": "'Respondió' (pretérito indefinido de 'responder') → 'replied / answered'. Sinónimo de 'contestó'. 'Responder' y 'contestar' son perfectamente intercambiables aquí.",
+          "styles": []
+        },
+        {
+          "id": "p7_s3",
+          "text": " sin sospechar nada.",
+          "translation": " without suspecting anything.",
+          "info": "'Sin sospechar nada' → 'without suspecting anything'. 'Sin' + infinitivo → 'without' + gerundio (-ing). 'Sospechar' → to suspect. 'Nada' → anything (en frases negativas) o nothing (como sujeto).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p8_s1",
+          "text": "El lobo llegó antes",
+          "translation": "The wolf arrived first",
+          "info": "'Llegó antes' → 'arrived first / arrived earlier'. 'Antes' (before/first) es adverbio temporal. El lobo tomó un camino más corto para llegar primero.",
+          "styles": []
+        },
+        {
+          "id": "p8_s2",
+          "text": " a casa de la abuela,",
+          "translation": " at grandmother's house,",
+          "info": "'Llegar a casa de' → 'arrive at X's house'. 'Llegar a' usa la preposición 'a' (movement towards), que en inglés se traduce como 'at' o 'to' dependiendo del verbo.",
+          "styles": []
+        },
+        {
+          "id": "p8_s3",
+          "text": " se la comió",
+          "translation": " ate her up",
+          "info": "'Se la comió' → 'ate her up'. 'Comerse' (reflexivo enfático de 'comer') implica comer completamente. El 'up' en 'eat up' en inglés intensifica el significado (consumir por completo).",
+          "styles": []
+        },
+        {
+          "id": "p8_s4",
+          "text": " y se metió en su cama.",
+          "translation": " and got into her bed.",
+          "info": "'Se metió en' (pretérito indefinido de 'meterse en') → 'got into'. 'Meterse en' indica entrar en un espacio cerrado o estrecho. 'Cama' → bed.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p9_s1",
+          "text": "Cuando Caperucita llegó,",
+          "translation": "When Little Red Riding Hood arrived,",
+          "info": "'Cuando' introduce una proposición temporal: 'when'. Seguido del pretérito indefinido porque describe el momento puntual en que ocurre la acción principal.",
+          "styles": []
+        },
+        {
+          "id": "p9_s2",
+          "text": " notó que algo era extraño.",
+          "translation": " she noticed that something was strange.",
+          "info": "'Notó' (pretérito indefinido de 'notar') → 'noticed'. 'Algo era extraño' → 'something was strange'. El imperfecto 'era' describe el estado ('strange') mientras que 'notó' es la percepción puntual.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p10_s1",
+          "text": "«Abuela, ¡qué ojos tan grandes tienes!»",
+          "translation": "'Grandmother, what big eyes you have!'",
+          "info": "'¡Qué + adjetivo + tan + adjetivo + tienes!' → 'What + adjetivo + you have!'. La exclamación en español usa 'qué' + sustantivo/adjetivo. En inglés 'What big eyes you have!' es la fórmula tradicional del cuento.",
+          "styles": ["italic"]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p11_s1",
+          "text": "«Son para verte mejor»,",
+          "translation": "'All the better to see you with',",
+          "info": "Respuesta icónica del lobo. 'Son para verte mejor' → literalmente 'they are to see you better', pero la traducción canónica es 'All the better to see you with'. Esta fórmula es única del cuento en inglés.",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p11_s2",
+          "text": " gruñó el lobo.",
+          "translation": " growled the wolf.",
+          "info": "'Gruñó' (pretérito indefinido de 'gruñir') → 'growled'. 'Gruñir' describe el sonido gutural de los animales (y de las personas malhumoradas). 'Growl' es el verbo específico en inglés para este sonido.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p12_s1",
+          "text": "Entonces el lobo saltó de la cama",
+          "translation": "Then the wolf leaped out of bed",
+          "info": "'Saltó de la cama' → 'leaped/jumped out of bed'. 'Saltar' → to leap/jump. 'De la cama' → 'out of bed'. Nótese que en inglés no se usa artículo con 'bed' en este tipo de expresiones: 'out of bed', 'in bed'.",
+          "styles": []
+        },
+        {
+          "id": "p12_s2",
+          "text": " y persiguió a Caperucita,",
+          "translation": " and chased Little Red Riding Hood,",
+          "info": "'Persiguió' (pretérito indefinido de 'perseguir') → 'chased'. 'Perseguir' es verbo irregular de la 3a conjugación (e→i): persigo, persigues... perseguí, perseguiste, persiguió...",
+          "styles": []
+        },
+        {
+          "id": "p12_s3",
+          "text": " pero un valiente leñador",
+          "translation": " but a brave woodcutter",
+          "info": "'Leñador' → 'woodcutter / lumberjack'. De 'leña' (firewood/logs) + sufijo '-ador' (agente). 'Valiente' → brave/courageous. Es adjetivo que puede preceder al sustantivo en español con valor enfático.",
+          "styles": []
+        },
+        {
+          "id": "p12_s4",
+          "text": " los escuchó",
+          "translation": " heard them",
+          "info": "'Los escuchó' → 'heard them'. 'Escuchar' implica escuchar activamente, 'oír' es percibir el sonido pasivamente. En inglés 'hear' es percepción pasiva; 'listen' es activa. Aquí 'heard' es la mejor traducción.",
+          "styles": []
+        },
+        {
+          "id": "p12_s5",
+          "text": " y acudió en su ayuda.",
+          "translation": " and came to her rescue.",
+          "info": "'Acudir en ayuda de' → 'come to someone's aid/rescue'. 'Acudir' (to come/go in response to a call/need): verbo que implica ir a un lugar en respuesta a una necesidad urgente.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p13_s1",
+          "text": "El leñador ahuyentó al lobo,",
+          "translation": "The woodcutter scared the wolf away,",
+          "info": "'Ahuyentó' (pretérito indefinido de 'ahuyentar') → 'scared away / drove away'. 'Ahuyentar' es un verbo específico que significa hacer huir a alguien con ruidos, amenazas, etc.",
+          "styles": []
+        },
+        {
+          "id": "p13_s2",
+          "text": " salvó a la abuela",
+          "translation": " saved the grandmother",
+          "info": "'Salvó' (pretérito indefinido de 'salvar') → 'saved'. 'Salvar' → to save (from danger). Comparte raíz con 'salvation' y 'salvage' en inglés, todos del latín 'salvare'.",
+          "styles": []
+        },
+        {
+          "id": "p13_s3",
+          "text": " y Caperucita aprendió una lección importante:",
+          "translation": " and Little Red Riding Hood learned an important lesson:",
+          "info": "'Aprendió' (pretérito indefinido de 'aprender') → 'learned' (Am.) / 'learnt' (Br.). 'Lección importante' → 'important lesson'. En inglés el adjetivo precede siempre al sustantivo.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p14_s1",
+          "text": "nunca hablar con desconocidos.",
+          "translation": "never to talk to strangers.",
+          "info": "'Nunca hablar con desconocidos' → 'never to talk to strangers'. 'Desconocido' → stranger (persona que no se conoce). 'Nunca' → never. En inglés se usa el infinitivo con 'to' en este tipo de lecciones o reglas.",
+          "styles": ["bold"]
+        }
+      ]
+    }
+  ]
+}

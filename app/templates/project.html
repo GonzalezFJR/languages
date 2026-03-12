@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-ink-50">
+
+  <!-- Nav -->
+  <nav class="bg-white border-b border-ink-100 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center gap-4">
+      <a href="/home" class="text-ink-400 hover:text-ink-700 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </a>
+      <a href="/" class="flex items-center gap-1.5">
+        <span class="text-xl font-bold tracking-tight text-ink-900">xlan</span>
+        <span class="text-xs font-medium text-ink-400 uppercase tracking-widest">languages</span>
+      </a>
+      <span class="text-ink-200">/</span>
+      <span class="text-ink-600 font-medium truncate">{{ project.name }}</span>
+      <div class="ml-auto flex items-center gap-2">
+        <span class="text-xs bg-ink-50 border border-ink-100 text-ink-500 px-2.5 py-1 rounded-full">{{ languages.get(project.base, project.base) }}</span>
+        <svg class="w-3 h-3 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-xs bg-blue-50 border border-blue-100 text-blue-600 px-2.5 py-1 rounded-full">{{ languages.get(project.target, project.target) }}</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- Section: Documentación -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-xl font-bold text-ink-900">Documentación</h2>
+          <p class="text-sm text-ink-400 mt-0.5">Gramáticas, guías y material de referencia.</p>
+        </div>
+        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-4 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Subir documento
+        </button>
+      </div>
+
+      {% set docs_files = docs_meta.get('files', {}) %}
+      {% if docs_files %}
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for fname, finfo in docs_files.items() %}
+        <div class="bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden">
+          <a href="/viewer/{{ project.id }}/doc/{{ fname }}" class="block p-5">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-lg bg-ink-50 flex items-center justify-center flex-shrink-0 text-lg">
+                {{ '📄' if fname.endswith('.txt') or fname.endswith('.md') else '📕' if fname.endswith('.pdf') else '📝' }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
+                {% if finfo.description %}
+                <div class="text-xs text-ink-400 mt-0.5 truncate">{{ finfo.description }}</div>
+                {% endif %}
+                <div class="text-xs text-ink-300 mt-1">{{ fname }}</div>
+              </div>
+            </div>
+          </a>
+          <div class="border-t border-ink-50 px-5 py-2.5 flex justify-between items-center">
+            <span class="text-xs text-ink-300">{{ finfo.uploaded_at[:10] if finfo.uploaded_at else '' }}</span>
+            <button onclick="deleteDoc('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 transition-colors">Eliminar</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center" id="drop-zone-docs">
+        <div class="text-4xl mb-3">📂</div>
+        <p class="text-ink-400 text-sm">Arrastra archivos aquí o usa el botón <strong>Subir documento</strong>.</p>
+        <p class="text-xs text-ink-300 mt-1">PDF, TXT, DOC, DOCX, MD</p>
+      </div>
+      {% endif %}
+
+      <!-- Category organizer toggle -->
+      <div class="mt-4">
+        <button onclick="toggleOrganizer('docs')" class="text-sm text-ink-400 hover:text-ink-700 underline-offset-2 hover:underline transition-colors">
+          🗂 Organizar en categorías
+        </button>
+      </div>
+      <div id="organizer-docs" class="hidden mt-4">
+        <div class="bg-white rounded-xl border border-ink-100 p-5">
+          <p class="text-sm text-ink-500 mb-3">Editor de categorías (JSON directo — en futuras versiones habrá un editor visual):</p>
+          <textarea id="organizer-docs-json" class="w-full h-48 border border-ink-200 rounded-lg p-3 text-xs font-mono text-ink-700 focus:outline-none focus:ring-2 focus:ring-ink-200" 
+            placeholder="{ categories: [...] }">{{ docs_meta | tojson(indent=2) }}</textarea>
+          <button onclick="saveOrganizer('docs')" class="mt-3 px-4 py-2 bg-ink-900 text-white text-xs font-medium rounded-lg hover:bg-ink-700 transition-colors">Guardar estructura</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Textos Traducidos -->
+    <section>
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-xl font-bold text-ink-900">Textos traducidos</h2>
+          <p class="text-sm text-ink-400 mt-0.5">Textos interactivos en formato .xlan.</p>
+        </div>
+        <button onclick="openTranslateModal()" class="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Agregar traducción
+        </button>
+      </div>
+
+      {% set xlan_files = translates_meta.get('files', {}) %}
+      {% if xlan_files %}
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for fname, finfo in xlan_files.items() %}
+        <div class="bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden">
+          <a href="/viewer/{{ project.id }}/xlan/{{ fname }}" class="block p-5">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 text-lg">🌐</div>
+              <div class="min-w-0 flex-1">
+                <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
+                {% if finfo.description %}
+                <div class="text-xs text-ink-400 mt-0.5 line-clamp-2">{{ finfo.description }}</div>
+                {% endif %}
+                <div class="text-xs text-ink-300 mt-1">{{ fname }}</div>
+              </div>
+            </div>
+          </a>
+          <div class="border-t border-ink-50 px-5 py-2.5 flex justify-between items-center">
+            <span class="text-xs bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full">.xlan</span>
+            <button onclick="deleteTranslate('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 transition-colors">Eliminar</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center">
+        <div class="text-4xl mb-3">🌐</div>
+        <p class="text-ink-400 text-sm">Aún no hay textos traducidos. Usa <strong>Agregar traducción</strong> para procesar un texto.</p>
+      </div>
+      {% endif %}
+
+      <div class="mt-4">
+        <button onclick="toggleOrganizer('translates')" class="text-sm text-ink-400 hover:text-ink-700 underline-offset-2 hover:underline transition-colors">
+          🗂 Organizar en categorías
+        </button>
+      </div>
+      <div id="organizer-translates" class="hidden mt-4">
+        <div class="bg-white rounded-xl border border-ink-100 p-5">
+          <textarea id="organizer-translates-json" class="w-full h-48 border border-ink-200 rounded-lg p-3 text-xs font-mono text-ink-700 focus:outline-none focus:ring-2 focus:ring-ink-200">{{ translates_meta | tojson(indent=2) }}</textarea>
+          <button onclick="saveOrganizer('translates')" class="mt-3 px-4 py-2 bg-ink-900 text-white text-xs font-medium rounded-lg hover:bg-ink-700 transition-colors">Guardar estructura</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Upload Modal -->
+<div id="upload-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeUploadModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
+    <h2 class="text-xl font-bold text-ink-900 mb-6">Subir documento</h2>
+    <form id="upload-form" onsubmit="submitUpload(event)">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Archivo</label>
+        <div id="drop-zone" class="border-2 border-dashed border-ink-200 rounded-xl p-6 text-center cursor-pointer hover:border-ink-400 transition-colors" onclick="document.getElementById('file-input').click()">
+          <div class="text-3xl mb-2">📎</div>
+          <div class="text-sm text-ink-500" id="drop-label">Haz clic o arrastra un archivo aquí</div>
+          <div class="text-xs text-ink-300 mt-1">PDF, TXT, DOC, DOCX, MD</div>
+        </div>
+        <input id="file-input" type="file" accept=".pdf,.txt,.doc,.docx,.md" class="hidden" onchange="onFileSelect(this)" />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Nombre para mostrar</label>
+        <input id="upload-display" type="text" placeholder="ej. Verbos irregulares" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Descripción (opcional)</label>
+        <input id="upload-desc" type="text" placeholder="Breve descripción del contenido" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div id="upload-error" class="text-red-500 text-sm mb-4 hidden"></div>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeUploadModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+        <button type="submit" id="upload-btn" class="flex-1 px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Subir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Translate Modal -->
+<div id="translate-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeTranslateModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 z-10">
+    <h2 class="text-xl font-bold text-ink-900 mb-2">Agregar texto traducido</h2>
+    <p class="text-sm text-ink-500 mb-6">Pega el texto en <strong>{{ languages.get(project.base, project.base) }}</strong> y el sistema generará un borrador .xlan.</p>
+    <form id="translate-form" onsubmit="submitTranslate(event)">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Título</label>
+        <input id="trans-title" type="text" required placeholder="Título del texto" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Descripción (opcional)</label>
+        <input id="trans-desc" type="text" placeholder="Breve descripción" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Texto en {{ languages.get(project.base, project.base) }}</label>
+        <textarea id="trans-text" required rows="7" placeholder="Pega aquí el texto a procesar..." class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-y"></textarea>
+      </div>
+      <div id="translate-error" class="text-red-500 text-sm mb-4 hidden"></div>
+      <div id="translate-success" class="text-green-600 text-sm mb-4 hidden bg-green-50 rounded-lg px-4 py-3 border border-green-100"></div>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeTranslateModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+        <button type="submit" id="translate-btn" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors">Procesar texto</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PROJECT_ID = '{{ project.id }}';
+
+function openUploadModal() {
+  document.getElementById('upload-modal').classList.remove('hidden');
+  document.getElementById('upload-modal').classList.add('flex');
+}
+function closeUploadModal() {
+  document.getElementById('upload-modal').classList.add('hidden');
+  document.getElementById('upload-modal').classList.remove('flex');
+  document.getElementById('upload-form').reset();
+  document.getElementById('drop-label').textContent = 'Haz clic o arrastra un archivo aquí';
+  document.getElementById('upload-error').classList.add('hidden');
+}
+
+function onFileSelect(input) {
+  if (input.files[0]) {
+    document.getElementById('drop-label').textContent = input.files[0].name;
+    if (!document.getElementById('upload-display').value) {
+      document.getElementById('upload-display').value = input.files[0].name.replace(/\.[^.]+$/, '');
+    }
+  }
+}
+
+async function submitUpload(e) {
+  e.preventDefault();
+  const file = document.getElementById('file-input').files[0];
+  if (!file) { showError('upload-error', 'Selecciona un archivo'); return; }
+  const btn = document.getElementById('upload-btn');
+  btn.disabled = true; btn.textContent = 'Subiendo...';
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('display_name', document.getElementById('upload-display').value);
+  fd.append('description', document.getElementById('upload-desc').value);
+
+  try {
+    const res = await fetch(`/api/projects/${PROJECT_ID}/docs`, {method:'POST', body:fd});
+    const data = await res.json();
+    if (!res.ok) { showError('upload-error', data.detail || 'Error'); btn.disabled=false; btn.textContent='Subir'; return; }
+    window.location.reload();
+  } catch(err) { showError('upload-error', 'Error de conexión'); btn.disabled=false; btn.textContent='Subir'; }
+}
+
+function openTranslateModal() {
+  document.getElementById('translate-modal').classList.remove('hidden');
+  document.getElementById('translate-modal').classList.add('flex');
+}
+function closeTranslateModal() {
+  document.getElementById('translate-modal').classList.add('hidden');
+  document.getElementById('translate-modal').classList.remove('flex');
+  document.getElementById('translate-form').reset();
+  document.getElementById('translate-error').classList.add('hidden');
+  document.getElementById('translate-success').classList.add('hidden');
+}
+
+async function submitTranslate(e) {
+  e.preventDefault();
+  const btn = document.getElementById('translate-btn');
+  btn.disabled = true; btn.textContent = 'Procesando...';
+  const errEl = document.getElementById('translate-error');
+  const sucEl = document.getElementById('translate-success');
+  errEl.classList.add('hidden');
+  sucEl.classList.add('hidden');
+
+  const body = {
+    title: document.getElementById('trans-title').value.trim(),
+    description: document.getElementById('trans-desc').value.trim(),
+    raw_text: document.getElementById('trans-text').value.trim(),
+  };
+  try {
+    const res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/translate`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) { showError('translate-error', data.detail || 'Error'); btn.disabled=false; btn.textContent='Procesar texto'; return; }
+    sucEl.textContent = `¡Listo! Se creó "${body.title}" con ${data.segments_created} segmentos. Redirigiendo...`;
+    sucEl.classList.remove('hidden');
+    setTimeout(() => window.location.href = `/viewer/${PROJECT_ID}/xlan/${data.filename}`, 1500);
+  } catch(err) { showError('translate-error', 'Error de conexión'); btn.disabled=false; btn.textContent='Procesar texto'; }
+}
+
+async function deleteDoc(projectId, filename) {
+  if (!confirm(`¿Eliminar "${filename}"?`)) return;
+  await fetch(`/api/projects/${projectId}/docs/${filename}`, {method:'DELETE'});
+  window.location.reload();
+}
+async function deleteTranslate(projectId, filename) {
+  if (!confirm(`¿Eliminar "${filename}"?`)) return;
+  await fetch(`/api/projects/${projectId}/translates/${filename}`, {method:'DELETE'});
+  window.location.reload();
+}
+
+function toggleOrganizer(section) {
+  const el = document.getElementById(`organizer-${section}`);
+  el.classList.toggle('hidden');
+}
+
+async function saveOrganizer(section) {
+  const raw = document.getElementById(`organizer-${section}-json`).value;
+  let parsed;
+  try { parsed = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; }
+  const res = await fetch(`/api/projects/${PROJECT_ID}/${section}/metadata`, {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(parsed)
+  });
+  if (res.ok) { alert('Estructura guardada'); window.location.reload(); }
+  else { alert('Error al guardar'); }
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+// Drag-and-drop on upload modal
+const dz = document.getElementById('drop-zone');
+if (dz) {
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('border-ink-500','bg-ink-50'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('border-ink-500','bg-ink-50'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('border-ink-500','bg-ink-50');
+    const f = e.dataTransfer.files[0];
+    if (f) {
+      const inp = document.getElementById('file-input');
+      const dt = new DataTransfer(); dt.items.add(f); inp.files = dt.files;
+      onFileSelect(inp);
+    }
+  });
+}
+</script>
+{% endblock %}

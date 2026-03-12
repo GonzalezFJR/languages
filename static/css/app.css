@@ -1,0 +1,72 @@
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+/* ── XLAN segment styles ── */
+.xlan-style-bold   { font-weight: 700; }
+.xlan-style-italic { font-style: italic; }
+.xlan-style-underline { text-decoration: underline; }
+
+/* ── Sidebar scrollbar ── */
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: #d6d6dc; border-radius: 4px; }
+
+/* ── Content scroll ── */
+#xlan-scroll::-webkit-scrollbar,
+#doc-viewer::-webkit-scrollbar { width: 6px; }
+#xlan-scroll::-webkit-scrollbar-track,
+#doc-viewer::-webkit-scrollbar-track { background: #f7f7f8; }
+#xlan-scroll::-webkit-scrollbar-thumb,
+#doc-viewer::-webkit-scrollbar-thumb { background: #d6d6dc; border-radius: 6px; }
+
+/* ── Landing demo animation ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+.float-anim { animation: float 4s ease-in-out infinite; }
+
+/* ── Project card hover ── */
+.project-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* ── Modal backdrop ── */
+[id$="-modal"].flex {
+  animation: fade-in 0.15s ease;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Tooltip arrow (optional visual) ── */
+#seg-tooltip > div::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 16px;
+  border: 6px solid transparent;
+  border-bottom-color: #e5e7eb;
+  border-top: none;
+  filter: drop-shadow(0 -1px 0 #e5e7eb);
+}
+
+/* ── line-clamp utility ── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Focus ring override ── */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #64748b;
+  outline-offset: 2px;
+  border-radius: 4px;
+}

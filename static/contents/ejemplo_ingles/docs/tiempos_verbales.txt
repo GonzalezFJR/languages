@@ -1,0 +1,132 @@
+GUÍA DE TIEMPOS VERBALES: INGLÉS vs. ESPAÑOL
+=============================================
+
+Esta guía compara los principales tiempos verbales del inglés con sus
+equivalentes (o aproximaciones) en español, con ejemplos de uso.
+
+
+1. PRESENT SIMPLE (Presente simple)
+   Uso: acciones habituales, verdades generales, horarios fijos.
+   Forma: sujeto + verbo base (+ s/es en 3a persona singular)
+
+   EN: She reads every morning.
+   ES: Ella lee cada mañana.
+
+   EN: Water boils at 100°C.
+   ES: El agua hierve a 100°C.
+
+   ⚠️ No confundir con el presente continuo. "I read" ≠ "I am reading".
+
+
+2. PRESENT CONTINUOUS (Presente continuo)
+   Uso: acciones que ocurren AHORA MISMO o en el futuro próximo (planes).
+   Forma: sujeto + am/is/are + verbo-ing
+
+   EN: I am studying English right now.
+   ES: Estoy estudiando inglés ahora mismo.
+
+   EN: We are leaving tomorrow morning.
+   ES: Mañana por la mañana nos vamos. (futuro próximo)
+
+
+3. PAST SIMPLE (Pretérito indefinido)
+   Uso: acciones completadas en un momento determinado del pasado.
+   Forma: sujeto + verbo en pasado (regular: -ed; irregular: forma 2)
+
+   EN: I visited Paris last year.
+   ES: Visité París el año pasado.
+
+   EN: She didn't go to the party.
+   ES: Ella no fue a la fiesta.
+
+
+4. PAST CONTINUOUS (Pretérito imperfecto continuo)
+   Uso: acción en desarrollo en un momento del pasado; interrumpida por otra.
+   Forma: sujeto + was/were + verbo-ing
+
+   EN: I was reading when the phone rang.
+   ES: Estaba leyendo cuando sonó el teléfono.
+
+
+5. PRESENT PERFECT (Pretérito perfecto compuesto)
+   Uso: acciones con relevancia en el presente; experiencias de vida.
+   Forma: sujeto + have/has + participio pasado
+
+   EN: I have never been to Japan.
+   ES: Nunca he estado en Japón.
+
+   EN: She has just arrived.
+   ES: Acaba de llegar.
+
+   ⚠️ En español peninsular coincide bastante con el pretérito perfecto,
+      pero en español de América se usa más el pretérito indefinido.
+
+
+6. PAST PERFECT (Pluscuamperfecto)
+   Uso: acción que ocurrió ANTES de otra acción pasada.
+   Forma: sujeto + had + participio pasado
+
+   EN: When I arrived, she had already left.
+   ES: Cuando llegué, ella ya se había ido.
+
+
+7. FUTURE: WILL
+   Uso: predicciones, decisiones espontáneas, promesas.
+   Forma: sujeto + will + verbo base
+
+   EN: I will help you with that.
+   ES: Te ayudaré con eso.
+
+   EN: It will probably rain tomorrow.
+   ES: Probablemente lloverá mañana.
+
+
+8. FUTURE: BE GOING TO
+   Uso: planes decididos de antemano, predicciones basadas en evidencias.
+   Forma: sujeto + am/is/are going to + verbo base
+
+   EN: I am going to study medicine.
+   ES: Voy a estudiar medicina.
+
+   EN: Look at those clouds — it's going to rain.
+   ES: Mira esas nubes — va a llover.
+
+
+9. CONDITIONAL SIMPLE (Condicional simple)
+   Uso: situaciones hipotéticas (tipo 2: poco probables).
+   Forma: sujeto + would + verbo base
+
+   EN: If I had more time, I would travel more.
+   ES: Si tuviera más tiempo, viajaría más.
+
+
+10. MODAL VERBS (Verbos modales) — resumen
+    can / could       → poder (capacidad/posibilidad)
+    must              → deber (obligación)
+    have to           → tener que (obligación externa)
+    should            → debería (consejo)
+    might / may       → puede que (probabilidad)
+    need to           → necesitar
+    ought to          → debería (más formal que should)
+
+    EN: You should practice every day.
+    ES: Deberías practicar cada día.
+
+    EN: She might be late.
+    ES: Puede que llegue tarde.
+
+
+TABLA RESUMEN
+─────────────────────────────────────────────────────────────────
+Tiempo inglés            │ Equivalente español aproximado
+─────────────────────────┼───────────────────────────────────────
+Present Simple           │ Presente simple
+Present Continuous       │ Presente continuo / Gerundio
+Past Simple              │ Pretérito indefinido
+Past Continuous          │ Pretérito imperfecto continuo
+Present Perfect          │ Pretérito perfecto / Indefinido (Am.)
+Past Perfect             │ Pluscuamperfecto
+Future (will)            │ Futuro simple
+Future (going to)        │ Ir a + infinitivo
+Conditional              │ Condicional simple
+─────────────────────────────────────────────────────────────────

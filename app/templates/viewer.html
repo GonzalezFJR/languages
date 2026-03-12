@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% block title %}{{ file_info.display_name or filename }} — {{ project.name }}{% endblock %}
+
+{% block head %}
+<style>
+  body { overflow: hidden; }
+  #sidebar { width: 280px; min-width: 220px; max-width: 360px; }
+  #main-area { flex: 1; overflow: hidden; }
+  .sidebar-item { transition: background 0.15s, color 0.15s; }
+  .sidebar-item.active { background: #f0f4ff; color: #2563eb; font-weight: 500; }
+  .sidebar-item:hover { background: #f7f7f8; }
+  .category-toggle { cursor: pointer; user-select: none; }
+  /* Document viewer */
+  #doc-frame { width: 100%; height: 100%; border: none; }
+  /* XLAN viewer */
+  #xlan-content { font-family: 'Lora', Georgia, serif; }
+  .xlan-seg {
+    cursor: default;
+    border-radius: 3px;
+    padding: 0 2px;
+    transition: background 0.12s, color 0.12s;
+    position: relative;
+  }
+  .xlan-seg:hover, .xlan-seg.seg-hover {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .xlan-seg.seg-active {
+    background: #fde68a;
+    color: #78350f;
+  }
+  /* Tooltip */
+  #seg-tooltip {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    max-width: 320px;
+    min-width: 200px;
+    transition: opacity 0.1s;
+  }
+  /* Sidebar resize handle */
+  #resize-handle {
+    width: 4px;
+    cursor: col-resize;
+    background: transparent;
+    transition: background 0.2s;
+  }
+  #resize-handle:hover, #resize-handle.dragging { background: #d6d6dc; }
+  /* Zoom wrapper */
+  #zoom-wrapper {
+    transform-origin: top center;
+    transition: transform 0.1s;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="flex h-screen flex-col">
+
+  <!-- Top bar -->
+  <div class="bg-white border-b border-ink-100 px-4 h-14 flex items-center gap-3 flex-shrink-0 z-30">
+    <a href="/project/{{ project.id }}" class="text-ink-400 hover:text-ink-700 transition-colors flex-shrink-0">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <span class="text-xs text-ink-300 font-medium uppercase tracking-widest">{{ project.name }}</span>
+    <span class="text-ink-200">/</span>
+    <span class="text-sm font-medium text-ink-700 truncate flex-1">{{ file_info.display_name or filename }}</span>
+    {% if view_type == 'xlan' %}
+    <span class="text-xs bg-blue-50 text-blue-500 border border-blue-100 px-2 py-0.5 rounded-full flex-shrink-0">.xlan</span>
+    {% endif %}
+
+    {% if view_type == 'doc' %}
+    <!-- Zoom controls for text docs -->
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <button id="zoom-out" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors" title="Ctrl + -">−</button>
+      <span id="zoom-label" class="text-xs text-ink-400 w-10 text-center">100%</span>
+      <button id="zoom-in" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors" title="Ctrl + +">+</button>
+    </div>
+    {% endif %}
+
+    {% if view_type == 'xlan' %}
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <button id="zoom-out" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors">−</button>
+      <span id="zoom-label" class="text-xs text-ink-400 w-10 text-center">100%</span>
+      <button id="zoom-in" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors">+</button>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Body: sidebar + content -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-white border-r border-ink-100 flex flex-col overflow-hidden flex-shrink-0">
+      <div class="px-4 py-3 border-b border-ink-50">
+        <div class="text-xs font-semibold text-ink-400 uppercase tracking-widest">Proyecto</div>
+        <div class="text-sm font-bold text-ink-800 mt-0.5 truncate">{{ project.name }}</div>
+        <div class="text-xs text-ink-400 mt-0.5">
+          {{ languages.get(project.base, project.base) }} → {{ languages.get(project.target, project.target) }}
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto py-2">
+
+        <!-- Docs section -->
+        <div class="px-3 pt-3 pb-1">
+          <button class="category-toggle flex items-center gap-1 w-full text-left text-xs font-semibold text-ink-400 uppercase tracking-widest hover:text-ink-600" onclick="toggleSection('sidebar-docs')">
+            <svg id="arrow-docs" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            Documentación
+          </button>
+        </div>
+        <div id="sidebar-docs" class="px-2">
+          {% set docs_files = docs_meta.get('files', {}) %}
+          {% if docs_files %}
+            {% for fname, finfo in docs_files.items() %}
+            <a href="/viewer/{{ project.id }}/doc/{{ fname }}"
+               class="sidebar-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink-600 {% if view_type == 'doc' and filename == fname %}active{% endif %}">
+              <span class="flex-shrink-0 text-base">{{ '📄' if fname.endswith('.txt') or fname.endswith('.md') else '📕' if fname.endswith('.pdf') else '📝' }}</span>
+              <span class="truncate">{{ finfo.display_name or fname }}</span>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="px-3 py-2 text-xs text-ink-300 italic">Sin documentos</div>
+          {% endif %}
+        </div>
+
+        <!-- Translates section -->
+        <div class="px-3 pt-4 pb-1">
+          <button class="category-toggle flex items-center gap-1 w-full text-left text-xs font-semibold text-ink-400 uppercase tracking-widest hover:text-ink-600" onclick="toggleSection('sidebar-translates')">
+            <svg id="arrow-translates" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            Textos traducidos
+          </button>
+        </div>
+        <div id="sidebar-translates" class="px-2">
+          {% set xlan_files = translates_meta.get('files', {}) %}
+          {% if xlan_files %}
+            {% for fname, finfo in xlan_files.items() %}
+            <a href="/viewer/{{ project.id }}/xlan/{{ fname }}"
+               class="sidebar-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink-600 {% if view_type == 'xlan' and filename == fname %}active{% endif %}">
+              <span class="flex-shrink-0 text-base">🌐</span>
+              <span class="truncate">{{ finfo.display_name or fname }}</span>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="px-3 py-2 text-xs text-ink-300 italic">Sin textos</div>
+          {% endif %}
+        </div>
+      </div>
+    </aside>
+
+    <!-- Resize handle -->
+    <div id="resize-handle"></div>
+
+    <!-- Main content -->
+    <main id="main-area" class="flex-1 overflow-hidden bg-ink-50 relative">
+
+      {% if view_type == 'doc' %}
+      <!-- Document viewer -->
+      <div id="doc-viewer" class="w-full h-full overflow-auto p-6">
+        <div id="zoom-wrapper" class="max-w-3xl mx-auto">
+          {% set fname_lower = filename.lower() %}
+          {% if fname_lower.endswith('.txt') or fname_lower.endswith('.md') %}
+          <div class="bg-white rounded-2xl shadow-sm border border-ink-100 p-10 font-serif text-ink-800 leading-loose text-lg whitespace-pre-wrap">{{ doc_content }}</div>
+          {% elif fname_lower.endswith('.pdf') %}
+          <div class="bg-white rounded-2xl shadow-sm border border-ink-100 overflow-hidden" style="height: calc(100vh - 120px);">
+            <iframe id="doc-frame" src="/api/projects/{{ project.id }}/docs/file/{{ filename }}" class="w-full h-full border-none"></iframe>
+          </div>
+          {% else %}
+          <div class="bg-white rounded-2xl shadow-sm border border-ink-100 p-10 text-center text-ink-400">
+            <div class="text-4xl mb-4">📄</div>
+            <p>Vista previa no disponible para este formato.</p>
+            <a href="/api/projects/{{ project.id }}/docs/file/{{ filename }}" class="mt-4 inline-block text-blue-600 hover:underline text-sm">Descargar archivo</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% elif view_type == 'xlan' %}
+      <!-- XLAN viewer -->
+      <div id="xlan-scroll" class="w-full h-full overflow-auto p-6 md:p-10">
+        <div id="zoom-wrapper" class="max-w-2xl mx-auto">
+          <div id="xlan-content" class="bg-white rounded-2xl shadow-sm border border-ink-100 px-10 py-12">
+
+            {% if xlan_data %}
+            <!-- Meta header -->
+            <div class="mb-8 pb-6 border-b border-ink-100">
+              <div class="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">
+                {{ languages.get(xlan_data.meta.source_language, '') }} → {{ languages.get(xlan_data.meta.target_language, '') }}
+              </div>
+              {% if xlan_data.meta.description %}
+              <p class="text-sm text-ink-500 leading-relaxed">{{ xlan_data.meta.description }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Content blocks -->
+            {% for block in xlan_data.content %}
+              {% if block.type == 'heading' %}
+                {% set tag = 'h' ~ block.get('level', 1) %}
+                {% set hclass = 'text-3xl font-bold text-ink-950 mb-4 mt-8' if block.get('level',1) == 1 else 'text-2xl font-bold text-ink-900 mb-3 mt-6' if block.get('level',1) == 2 else 'text-xl font-semibold text-ink-800 mb-2 mt-4' %}
+                <{{ tag }} class="{{ hclass }}">
+                  {% for seg in block.segments %}
+                  <span class="xlan-seg {% for s in seg.styles %}xlan-style-{{ s }} {% endfor %}"
+                        data-seg-id="{{ seg.id }}"
+                        data-text="{{ seg.text | e }}"
+                        data-translation="{{ seg.translation | e }}"
+                        data-info="{{ seg.info | e }}">{{ seg.text }}</span>
+                  {% endfor %}
+                </{{ tag }}>
+
+              {% elif block.type == 'paragraph' %}
+                <p class="text-xl leading-loose text-ink-800 mb-5">
+                  {% for seg in block.segments %}
+                  <span class="xlan-seg {% for s in seg.styles %}xlan-style-{{ s }} {% endfor %}"
+                        data-seg-id="{{ seg.id }}"
+                        data-text="{{ seg.text | e }}"
+                        data-translation="{{ seg.translation | e }}"
+                        data-info="{{ seg.info | e }}">{{ seg.text }}</span>
+                  {% endfor %}
+                </p>
+              {% endif %}
+            {% endfor %}
+
+            {% endif %}
+          </div>
+
+          <div class="mt-4 px-2 text-xs text-ink-400 text-center">
+            Pasa el ratón sobre cualquier segmento para ver su traducción
+          </div>
+        </div>
+      </div>
+
+      <!-- Tooltip -->
+      <div id="seg-tooltip" class="hidden">
+        <div class="bg-white border border-ink-200 rounded-xl shadow-xl px-5 py-4 text-sm">
+          <div id="tip-original" class="font-serif text-base font-semibold text-ink-900 mb-1"></div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-ink-300 text-xs">→</span>
+            <span id="tip-translation" class="text-ink-700 font-medium"></span>
+          </div>
+          <div id="tip-info" class="text-xs text-ink-400 border-t border-ink-50 pt-2 mt-1 leading-relaxed"></div>
+        </div>
+      </div>
+      {% endif %}
+
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  const arrow = document.getElementById('arrow-' + id.replace('sidebar-',''));
+  el.classList.toggle('hidden');
+  if (arrow) arrow.style.transform = el.classList.contains('hidden') ? 'rotate(-90deg)' : '';
+}
+
+// Sidebar resize
+(function() {
+  const handle = document.getElementById('resize-handle');
+  const sidebar = document.getElementById('sidebar');
+  let dragging = false, startX = 0, startW = 0;
+  handle.addEventListener('mousedown', e => {
+    dragging = true; startX = e.clientX; startW = sidebar.offsetWidth;
+    handle.classList.add('dragging'); document.body.style.cursor = 'col-resize';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const w = Math.max(180, Math.min(480, startW + (e.clientX - startX)));
+    sidebar.style.width = w + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    dragging = false; handle.classList.remove('dragging'); document.body.style.cursor = '';
+  });
+})();
+
+// Zoom
+(function() {
+  let zoom = 1;
+  const zoomWrapper = document.getElementById('zoom-wrapper');
+  const zoomLabel = document.getElementById('zoom-label');
+  const zoomIn = document.getElementById('zoom-in');
+  const zoomOut = document.getElementById('zoom-out');
+  if (!zoomWrapper || !zoomLabel) return;
+
+  function applyZoom() {
+    zoomWrapper.style.transform = `scale(${zoom})`;
+    zoomLabel.textContent = Math.round(zoom * 100) + '%';
+  }
+  if (zoomIn) zoomIn.onclick = () => { zoom = Math.min(2.5, zoom + 0.1); applyZoom(); };
+  if (zoomOut) zoomOut.onclick = () => { zoom = Math.max(0.4, zoom - 0.1); applyZoom(); };
+
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && (e.key === '=' || e.key === '+')) { e.preventDefault(); zoom = Math.min(2.5, zoom + 0.1); applyZoom(); }
+    if (e.ctrlKey && e.key === '-') { e.preventDefault(); zoom = Math.max(0.4, zoom - 0.1); applyZoom(); }
+    if (e.ctrlKey && e.key === '0') { e.preventDefault(); zoom = 1; applyZoom(); }
+  });
+  document.addEventListener('wheel', e => {
+    if (e.ctrlKey) { e.preventDefault(); zoom = e.deltaY < 0 ? Math.min(2.5, zoom + 0.05) : Math.max(0.4, zoom - 0.05); applyZoom(); }
+  }, { passive: false });
+})();
+
+// Keyboard navigation (arrow keys to scroll)
+document.addEventListener('keydown', e => {
+  const scroller = document.getElementById('xlan-scroll') || document.getElementById('doc-viewer');
+  if (!scroller) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); scroller.scrollBy(0, 80); }
+  if (e.key === 'ArrowUp') { e.preventDefault(); scroller.scrollBy(0, -80); }
+  if (e.key === 'PageDown') { e.preventDefault(); scroller.scrollBy(0, scroller.clientHeight * 0.9); }
+  if (e.key === 'PageUp') { e.preventDefault(); scroller.scrollBy(0, -scroller.clientHeight * 0.9); }
+  if (e.key === 'Home') { e.preventDefault(); scroller.scrollTo(0, 0); }
+  if (e.key === 'End') { e.preventDefault(); scroller.scrollTo(0, scroller.scrollHeight); }
+});
+
+// XLAN interactive hover
+(function() {
+  const tooltip = document.getElementById('seg-tooltip');
+  if (!tooltip) return;
+
+  const tipOriginal = document.getElementById('tip-original');
+  const tipTranslation = document.getElementById('tip-translation');
+  const tipInfo = document.getElementById('tip-info');
+
+  let activeSegId = null;
+
+  document.querySelectorAll('.xlan-seg').forEach(seg => {
+    seg.addEventListener('mouseenter', function(e) {
+      activeSegId = this.dataset.segId;
+
+      // Highlight this + siblings
+      highlightAround(this);
+
+      // Show tooltip
+      const text = this.dataset.text || '';
+      const translation = this.dataset.translation || '';
+      const info = this.dataset.info || '';
+
+      if (!translation && !info) { tooltip.classList.add('hidden'); return; }
+
+      tipOriginal.textContent = text;
+      tipTranslation.textContent = translation || '—';
+      if (info && info !== '[pendiente de revisión]') {
+        tipInfo.textContent = info;
+        tipInfo.classList.remove('hidden');
+      } else {
+        tipInfo.classList.add('hidden');
+      }
+
+      positionTooltip(e);
+      tooltip.classList.remove('hidden');
+    });
+
+    seg.addEventListener('mousemove', positionTooltip);
+
+    seg.addEventListener('mouseleave', function() {
+      activeSegId = null;
+      clearHighlights();
+      tooltip.classList.add('hidden');
+    });
+  });
+
+  function positionTooltip(e) {
+    const tw = tooltip.offsetWidth || 280;
+    const th = tooltip.offsetHeight || 100;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let x = e.clientX + 14;
+    let y = e.clientY + 20;
+    if (x + tw > vw - 10) x = e.clientX - tw - 14;
+    if (y + th > vh - 10) y = e.clientY - th - 14;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  function highlightAround(seg) {
+    clearHighlights();
+    seg.classList.add('seg-active');
+
+    const parent = seg.parentElement;
+    const siblings = Array.from(parent.querySelectorAll('.xlan-seg'));
+    const idx = siblings.indexOf(seg);
+    const WINDOW = 2;
+    for (let i = Math.max(0, idx - WINDOW); i <= Math.min(siblings.length - 1, idx + WINDOW); i++) {
+      if (i !== idx) siblings[i].classList.add('seg-hover');
+    }
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('.xlan-seg.seg-active, .xlan-seg.seg-hover').forEach(el => {
+      el.classList.remove('seg-active', 'seg-hover');
+    });
+  }
+})();
+</script>
+
+{% if view_type == 'doc' and (filename.endswith('.txt') or filename.endswith('.md')) %}
+<script>
+  // doc_content is injected server-side via template
+</script>
+{% endif %}
+{% endblock %}

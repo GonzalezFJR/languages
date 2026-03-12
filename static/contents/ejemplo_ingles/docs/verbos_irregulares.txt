@@ -1,0 +1,88 @@
+VERBOS IRREGULARES COMUNES EN INGLÉS
+=====================================
+
+Los verbos irregulares en inglés no siguen el patrón estándar de añadir
+"-ed" para formar el pasado simple y el participio pasado. Aquí presentamos
+los más frecuentes agrupados por similitud fonética.
+
+──────────────────────────────────────────
+GRUPO 1: Infinitivo = Pasado = Participio
+──────────────────────────────────────────
+cut     – cut     – cut      (cortar)
+put     – put     – put      (poner)
+hit     – hit     – hit      (golpear)
+let     – let     – let      (dejar)
+set     – set     – set      (establecer)
+shut    – shut    – shut     (cerrar)
+read    – read    – read     (leer) *pronunciación cambia: /riːd/ → /rɛd/
+
+──────────────────────────────────────────
+GRUPO 2: Pasado = Participio (≠ Infinitivo)
+──────────────────────────────────────────
+bring   – brought – brought  (traer)
+buy     – bought  – bought   (comprar)
+catch   – caught  – caught   (atrapar)
+teach   – taught  – taught   (enseñar)
+think   – thought – thought  (pensar)
+say     – said    – said     (decir)
+sell    – sold    – sold     (vender)
+tell    – told    – told     (contar/decir)
+have    – had     – had      (tener)
+make    – made    – made     (hacer/fabricar)
+meet    – met     – met      (conocer/reunirse)
+find    – found   – found    (encontrar)
+hold    – held    – held     (sostener)
+hear    – heard   – heard    (oír)
+keep    – kept    – kept     (mantener/guardar)
+leave   – left    – left     (salir/dejar)
+lose    – lost    – lost     (perder)
+sit     – sat     – sat      (sentarse)
+stand   – stood   – stood    (estar de pie)
+understand – understood – understood (entender)
+win     – won     – won      (ganar)
+
+──────────────────────────────────────────
+GRUPO 3: Los tres formas son distintas
+──────────────────────────────────────────
+be      – was/were – been    (ser/estar)
+begin   – began   – begun   (comenzar)
+break   – broke   – broken  (romper)
+choose  – chose   – chosen  (elegir)
+come    – came    – come    (venir)
+do      – did     – done    (hacer)
+drink   – drank   – drunk   (beber)
+drive   – drove   – driven  (conducir)
+eat     – ate     – eaten   (comer)
+fall    – fell    – fallen  (caer)
+fly     – flew    – flown   (volar)
+forget  – forgot  – forgotten (olvidar)
+get     – got     – gotten  (obtener/llegar a ser)
+give    – gave    – given   (dar)
+go      – went    – gone    (ir)
+grow    – grew    – grown   (crecer)
+know    – knew    – known   (saber/conocer)
+ride    – rode    – ridden  (montar)
+ring    – rang    – rung    (sonar/llamar)
+rise    – rose    – risen   (levantarse/subir)
+run     – ran     – run     (correr)
+see     – saw     – seen    (ver)
+show    – showed  – shown   (mostrar)
+sing    – sang    – sung    (cantar)
+speak   – spoke   – spoken  (hablar)
+steal   – stole   – stolen  (robar)
+swim    – swam    – swum    (nadar)
+take    – took    – taken   (tomar/coger)
+throw   – threw   – thrown  (lanzar)
+wake    – woke    – woken   (despertar)
+wear    – wore    – worn    (llevar/vestir)
+write   – wrote   – written (escribir)
+
+──────────────────────────────────────────
+NOTA SOBRE EL USO
+──────────────────────────────────────────
+En inglés americano, "gotten" es el participio estándar de "get".
+En inglés británico se usa "got" para ambas formas (pasado y participio).
+
+Ejemplo de uso:
+  I have gotten better at English.  (Am.)
+  I have got better at English.     (Br.)
