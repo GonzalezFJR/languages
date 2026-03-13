@@ -7,17 +7,20 @@
       "items": ["verbos_irregulares.txt", "tiempos_verbales.txt"]
     }
   ],
+  "available_tags": ["Gramática", "Vocabulario", "Referencia"],
   "files": {
     "verbos_irregulares.txt": {
       "name": "verbos_irregulares.txt",
       "display_name": "Verbos Irregulares Comunes",
       "description": "Lista de los 50 verbos irregulares más frecuentes en inglés con su traducción.",
+      "tags": ["Gramática", "Vocabulario"],
       "uploaded_at": "2026-01-01T00:00:00"
     },
     "tiempos_verbales.txt": {
       "name": "tiempos_verbales.txt",
       "display_name": "Guía de Tiempos Verbales",
       "description": "Comparativa entre los tiempos verbales del inglés y el español.",
+      "tags": ["Gramática", "Referencia"],
       "uploaded_at": "2026-01-01T00:00:00"
     }
   }

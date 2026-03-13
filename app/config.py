@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     port: int = 8000
     contents_dir: str = "static/contents"
 
+    # LLM pipeline
+    llm_provider: str = "openai"          # openai | anthropic | google | ...
+    llm_model: str = "gpt-4o-mini"
+    llm_api_key: str = ""
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
     @property

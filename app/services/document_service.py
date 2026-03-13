@@ -33,7 +33,25 @@ def list_translates(project_id: str) -> dict:
     return load_section_metadata(project_id, "translates")
 
 
-def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_name: str = "", description: str = "") -> dict:
+def update_file_meta(project_id: str, section: str, filename: str, updates: dict) -> dict:
+    meta = load_section_metadata(project_id, section)
+    if filename not in meta.get("files", {}):
+        raise ValueError(f"Archivo no encontrado: {filename}")
+    for key in ("display_name", "description", "tags"):
+        if key in updates:
+            meta["files"][filename][key] = updates[key]
+    save_section_metadata(project_id, section, meta)
+    return meta["files"][filename]
+
+
+def update_available_tags(project_id: str, section: str, tags: list) -> list:
+    meta = load_section_metadata(project_id, section)
+    meta["available_tags"] = tags
+    save_section_metadata(project_id, section, meta)
+    return tags
+
+
+def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_name: str = "", description: str = "", tags: Optional[list] = None) -> dict:
     suffix = Path(filename).suffix.lower()
     if suffix not in ALLOWED_DOC_EXTENSIONS:
         raise ValueError(f"Extensión no permitida: {suffix}")
@@ -57,6 +75,7 @@ def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_na
         "name": safe_name,
         "display_name": display_name or Path(safe_name).stem,
         "description": description,
+        "tags": tags or [],
         "uploaded_at": datetime.utcnow().isoformat(),
     }
     save_section_metadata(project_id, "docs", meta)

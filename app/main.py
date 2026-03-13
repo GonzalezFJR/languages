@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 
 from app.config import settings
-from app.routers import pages, api_projects, api_documents, api_pipeline
+from app.routers import pages, api_projects, api_documents, api_pipeline, api_pipeline_agent
 
 app = FastAPI(
     title=settings.app_name,
@@ -26,3 +26,4 @@ app.include_router(pages.router)
 app.include_router(api_projects.router)
 app.include_router(api_documents.router)
 app.include_router(api_pipeline.router)
+app.include_router(api_pipeline_agent.router)

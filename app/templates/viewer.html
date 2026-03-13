@@ -30,6 +30,10 @@
     background: #fde68a;
     color: #78350f;
   }
+  .xlan-seg.seg-cross-active {
+    background: #fef9c3;
+    color: #713f12;
+  }
   /* Tooltip */
   #seg-tooltip {
     position: fixed;
@@ -52,6 +56,25 @@
     transform-origin: top center;
     transition: transform 0.1s;
   }
+  /* Block container — structural only, no hover effect */
+  .xlan-block { border-radius: 4px; }
+  /* Segment has-note marker */
+  .seg-has-note { border-bottom: 2px solid #f59e0b; }
+  /* Segment dblclick hint */
+  .xlan-seg { cursor: text; }
+  /* Tooltip comment area */
+  #tip-comment-wrap { border-top: 1px solid #f0f0f0; padding-top: 6px; margin-top: 6px; }
+  #tip-comment-label { font-size: 10px; font-weight: 600; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  #tip-comment-text { font-size: 12px; color: #374151; line-height: 1.5; font-style: italic; }
+  /* Split view */
+  .split-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .split-row > div { padding: 14px 20px; }
+  .split-row:not(:last-child) > div { border-bottom: 1px solid #f3f4f6; }
+  /* Table view */
+  #view-table table { border-collapse: collapse; }
+  #view-table td, #view-table th { vertical-align: top; }
+  /* View switcher active */
+  .view-btn-active { background: white; color: #1a1a2e; box-shadow: 0 1px 3px rgba(0,0,0,.1); font-weight: 600; }
 </style>
 {% endblock %}
 
@@ -69,6 +92,10 @@
     {% if view_type == 'xlan' %}
     <span class="text-xs bg-blue-50 text-blue-500 border border-blue-100 px-2 py-0.5 rounded-full flex-shrink-0">.xlan</span>
     {% endif %}
+    <button onclick="openMetaModal()" class="flex items-center gap-1 px-3 py-1.5 border border-ink-200 text-ink-500 text-xs font-medium rounded-full hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0" title="Editar metadatos">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Metadatos
+    </button>
 
     {% if view_type == 'doc' %}
     <!-- Zoom controls for text docs -->
@@ -80,6 +107,13 @@
     {% endif %}
 
     {% if view_type == 'xlan' %}
+    <!-- View switcher -->
+    <div class="flex items-center bg-ink-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0 text-xs font-medium">
+      <button id="view-btn-standard" onclick="setView('standard')" class="px-3 py-1 rounded-md transition-colors view-btn-active">Estándar</button>
+      <button id="view-btn-split"    onclick="setView('split')"    class="px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700">Original / Trad.</button>
+      <button id="view-btn-table"    onclick="setView('table')"    class="px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700">Tabla</button>
+    </div>
+    <!-- Zoom -->
     <div class="flex items-center gap-1 flex-shrink-0">
       <button id="zoom-out" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors">−</button>
       <span id="zoom-label" class="text-xs text-ink-400 w-10 text-center">100%</span>
@@ -129,7 +163,7 @@
         <div class="px-3 pt-4 pb-1">
           <button class="category-toggle flex items-center gap-1 w-full text-left text-xs font-semibold text-ink-400 uppercase tracking-widest hover:text-ink-600" onclick="toggleSection('sidebar-translates')">
             <svg id="arrow-translates" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            Textos traducidos
+            Textos interactivos
           </button>
         </div>
         <div id="sidebar-translates" class="px-2">
@@ -177,68 +211,185 @@
       </div>
 
       {% elif view_type == 'xlan' %}
-      <!-- XLAN viewer -->
-      <div id="xlan-scroll" class="w-full h-full overflow-auto p-6 md:p-10">
-        <div id="zoom-wrapper" class="max-w-2xl mx-auto">
-          <div id="xlan-content" class="bg-white rounded-2xl shadow-sm border border-ink-100 px-10 py-12">
+      {%- set tlang = languages.get(xlan_data.meta.get('text_language',''), xlan_data.meta.get('text_language','')) if xlan_data else '' -%}
+      {%- set nlang = languages.get(xlan_data.meta.get('notes_language',''), xlan_data.meta.get('notes_language','')) if xlan_data else '' -%}
 
-            {% if xlan_data %}
-            <!-- Meta header -->
-            <div class="mb-8 pb-6 border-b border-ink-100">
-              <div class="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">
-                {{ languages.get(xlan_data.meta.source_language, '') }} → {{ languages.get(xlan_data.meta.target_language, '') }}
+      <!-- XLAN viewer — all 3 views share this scroll container -->
+      <div id="xlan-scroll" class="w-full h-full overflow-auto p-6 md:p-8">
+
+        {# ── VIEW: STANDARD ───────────────────────────────────────── #}
+        <div id="view-standard">
+          <div id="zoom-wrapper" class="max-w-2xl mx-auto">
+            <div id="xlan-content" class="bg-white rounded-2xl shadow-sm border border-ink-100 px-10 py-12">
+              {% if xlan_data %}
+              <div class="mb-8 pb-6 border-b border-ink-100">
+                <div class="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">{{ tlang }} &mdash; {{ nlang }}</div>
+                {% if xlan_data.meta.description %}<p class="text-sm text-ink-500 leading-relaxed">{{ xlan_data.meta.description }}</p>{% endif %}
               </div>
-              {% if xlan_data.meta.description %}
-              <p class="text-sm text-ink-500 leading-relaxed">{{ xlan_data.meta.description }}</p>
+              {% for block in xlan_data.content %}
+                {% set bi = loop.index0 %}
+                <div class="xlan-block" data-block-index="{{ bi }}">
+                {% if block.type == 'heading' %}
+                  {% set lv = block.get('level', 1) %}
+                  {% set hcls = 'text-3xl font-bold text-ink-950 mb-4 mt-8' if lv==1 else 'text-2xl font-bold text-ink-900 mb-3 mt-6' if lv==2 else 'text-xl font-semibold text-ink-800 mb-2 mt-4' %}
+                  <h{{ lv }} class="{{ hcls }}">
+                    {% for seg in block.segments %}
+                      {% set sn = seg.get('user_note') or {} %}
+                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                      <span class="xlan-seg {% if sh %}seg-has-note{% endif %} {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
+                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.text }}</span>
+                    {% endfor %}
+                  </h{{ lv }}>
+                {% elif block.type == 'paragraph' %}
+                  <p class="text-xl leading-loose text-ink-800 mb-5">
+                    {% for seg in block.segments %}
+                      {% set sn = seg.get('user_note') or {} %}
+                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                      <span class="xlan-seg {% if sh %}seg-has-note{% endif %} {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
+                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.text }}</span>
+                    {% endfor %}
+                  </p>
+                {% endif %}
+                </div>
+              {% endfor %}
               {% endif %}
             </div>
-
-            <!-- Content blocks -->
-            {% for block in xlan_data.content %}
-              {% if block.type == 'heading' %}
-                {% set tag = 'h' ~ block.get('level', 1) %}
-                {% set hclass = 'text-3xl font-bold text-ink-950 mb-4 mt-8' if block.get('level',1) == 1 else 'text-2xl font-bold text-ink-900 mb-3 mt-6' if block.get('level',1) == 2 else 'text-xl font-semibold text-ink-800 mb-2 mt-4' %}
-                <{{ tag }} class="{{ hclass }}">
-                  {% for seg in block.segments %}
-                  <span class="xlan-seg {% for s in seg.styles %}xlan-style-{{ s }} {% endfor %}"
-                        data-seg-id="{{ seg.id }}"
-                        data-text="{{ seg.text | e }}"
-                        data-translation="{{ seg.translation | e }}"
-                        data-info="{{ seg.info | e }}">{{ seg.text }}</span>
-                  {% endfor %}
-                </{{ tag }}>
-
-              {% elif block.type == 'paragraph' %}
-                <p class="text-xl leading-loose text-ink-800 mb-5">
-                  {% for seg in block.segments %}
-                  <span class="xlan-seg {% for s in seg.styles %}xlan-style-{{ s }} {% endfor %}"
-                        data-seg-id="{{ seg.id }}"
-                        data-text="{{ seg.text | e }}"
-                        data-translation="{{ seg.translation | e }}"
-                        data-info="{{ seg.info | e }}">{{ seg.text }}</span>
-                  {% endfor %}
-                </p>
-              {% endif %}
-            {% endfor %}
-
-            {% endif %}
-          </div>
-
-          <div class="mt-4 px-2 text-xs text-ink-400 text-center">
-            Pasa el ratón sobre cualquier segmento para ver su traducción
+            <div class="mt-4 px-2 text-xs text-ink-400 text-center">Pasa el ratón para ver la traducción · Doble clic para anotar un fragmento</div>
           </div>
         </div>
-      </div>
 
-      <!-- Tooltip -->
-      <div id="seg-tooltip" class="hidden">
-        <div class="bg-white border border-ink-200 rounded-xl shadow-xl px-5 py-4 text-sm">
-          <div id="tip-original" class="font-serif text-base font-semibold text-ink-900 mb-1"></div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-ink-300 text-xs">→</span>
-            <span id="tip-translation" class="text-ink-700 font-medium"></span>
+        {# ── VIEW: SPLIT (Original / Traducción) ──────────────────── #}
+        <div id="view-split" class="hidden max-w-5xl mx-auto">
+          <div class="bg-white rounded-2xl shadow-sm border border-ink-100 overflow-hidden">
+            {% if xlan_data %}
+            <div class="split-row border-b bg-ink-50/80">
+              <div class="text-xs font-semibold text-ink-500 uppercase tracking-widest py-3 px-5">{{ tlang }}</div>
+              <div class="text-xs font-semibold text-ink-500 uppercase tracking-widest py-3 px-5 border-l border-ink-100">{{ nlang }}</div>
+            </div>
+            {% for block in xlan_data.content %}
+              {% set bi = loop.index0 %}
+              {% if block.type == 'heading' %}
+                {% set lv = block.get('level',1) %}
+                {% set hcls = 'text-2xl font-bold' if lv==1 else 'text-xl font-bold' if lv==2 else 'text-lg font-semibold' %}
+                <div class="split-row bg-ink-50/40 border-b border-ink-100">
+                  <div class="font-serif {{ hcls }} text-ink-900">
+                    {% for seg in block.segments %}
+                      {% set sn = seg.get('user_note') or {} %}
+                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                      <span class="xlan-seg {% if sh %}seg-has-note{% endif %}"
+                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.text }}</span>
+                    {% endfor %}
+                  </div>
+                  <div class="font-serif {{ hcls }} text-ink-600 border-l border-ink-100">
+                    {% for seg in block.segments %}
+                      {% set sn = seg.get('user_note') or {} %}
+                      <span class="xlan-seg xlan-seg-tr"
+                            data-seg-id="{{ seg.id }}__tr" data-seg-ref="{{ seg.id }}"
+                            data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.translation }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% elif block.type == 'paragraph' %}
+                <div class="split-row border-b border-ink-100">
+                  <div class="font-serif text-base text-ink-800 leading-loose">
+                    {% for seg in block.segments %}
+                      {% set sn = seg.get('user_note') or {} %}
+                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                      <span class="xlan-seg {% if sh %}seg-has-note{% endif %} {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
+                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.text }}</span>
+                    {% endfor %}
+                  </div>
+                  <div class="font-serif text-base text-ink-600 leading-loose border-l border-ink-100">
+                    {% for seg in block.segments %}
+                      {% set sn = seg.get('user_note') or {} %}
+                      <span class="xlan-seg xlan-seg-tr {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
+                            data-seg-id="{{ seg.id }}__tr" data-seg-ref="{{ seg.id }}"
+                            data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.translation }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+            {% endif %}
           </div>
-          <div id="tip-info" class="text-xs text-ink-400 border-t border-ink-50 pt-2 mt-1 leading-relaxed"></div>
+        </div>
+
+        {# ── VIEW: TABLE ──────────────────────────────────────────── #}
+        <div id="view-table" class="hidden">
+          <div class="bg-white rounded-2xl shadow-sm border border-ink-100 overflow-hidden">
+            {% if xlan_data %}
+            <div class="flex items-center justify-between px-5 py-3 border-b bg-ink-50/80">
+              <span class="text-xs font-semibold text-ink-400 uppercase tracking-widest">Tabla de segmentos</span>
+              <button onclick="toggleTableComments()" id="table-comments-btn"
+                class="text-xs border border-ink-200 rounded-lg px-3 py-1 text-ink-500 hover:text-ink-700 hover:border-ink-400 transition-colors">
+                Mostrar comentarios
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b bg-ink-50 text-left text-xs font-semibold text-ink-400 uppercase tracking-wide">
+                    <th class="px-4 py-3 w-56">{{ tlang }}</th>
+                    <th class="px-4 py-3 w-56">{{ nlang }}</th>
+                    <th class="px-4 py-3">Explicación</th>
+                    <th class="px-4 py-3 w-48 table-col-comments hidden">Comentarios</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for block in xlan_data.content %}
+                    {% set bi = loop.index0 %}
+                    {% if block.type == 'heading' %}
+                      <tr class="border-b bg-amber-50/50">
+                        <td colspan="4" class="px-4 py-2 font-bold text-ink-800 font-serif text-base">
+                          {% for seg in block.segments %}{{ seg.text }}{% endfor %}
+                        </td>
+                      </tr>
+                    {% else %}
+                      {% for seg in block.segments %}
+                        {% set sn = seg.get('user_note') or {} %}
+                        {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                        <tr class="border-b hover:bg-ink-50/60 transition-colors xlan-seg{% if sh %} seg-has-note{% endif %}"
+                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
+                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
+                            data-seg-note='{{ sn | tojson | e }}'>
+                          <td class="px-4 py-2.5 font-serif text-ink-800 align-top text-base">{{ seg.text }}</td>
+                          <td class="px-4 py-2.5 font-serif text-ink-600 align-top text-base">{{ seg.translation }}</td>
+                          <td class="px-4 py-2.5 text-ink-500 text-xs align-top leading-relaxed">{{ seg.info }}</td>
+                          <td class="px-4 py-2.5 text-xs text-amber-700 align-top table-col-comments hidden italic">{{ sn.get('comment','') }}</td>
+                        </tr>
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>{# end xlan-scroll #}
+
+      <!-- Shared tooltip (all views) -->
+      <div id="seg-tooltip" class="hidden" style="position:fixed;z-index:1000;pointer-events:none;max-width:340px;min-width:180px;">
+        <div class="bg-white border border-ink-200 rounded-xl shadow-xl px-5 py-4">
+          <div id="tip-translation" class="font-serif text-lg font-medium text-ink-800 leading-snug mb-2"></div>
+          <div id="tip-info" class="text-xs text-ink-500 leading-relaxed border-t border-ink-50 pt-2"></div>
+          <div id="tip-comment-wrap" class="hidden">
+            <div id="tip-comment-label">Tu comentario</div>
+            <div id="tip-comment-text"></div>
+          </div>
         </div>
       </div>
       {% endif %}
@@ -246,10 +397,86 @@
     </main>
   </div>
 </div>
+
+<!-- ════ METADATA MODAL ════ -->
+<div id="meta-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeMetaModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
+    <h2 class="text-xl font-bold text-ink-900 mb-1">Editar metadatos</h2>
+    <p class="text-xs text-ink-400 mb-6" id="meta-modal-fname"></p>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-ink-700 mb-1.5">Título para mostrar</label>
+      <input id="meta-title" type="text" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-ink-700 mb-1.5">Descripción</label>
+      <textarea id="meta-desc" rows="3" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-none"></textarea>
+    </div>
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-ink-700 mb-2">Etiquetas</label>
+      <div id="meta-tag-options" class="flex flex-wrap gap-2"></div>
+    </div>
+    <div id="meta-error" class="text-red-500 text-xs mb-3 hidden"></div>
+    <div class="flex gap-3">
+      <button onclick="closeMetaModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+      <button onclick="saveMetaModal()" class="flex-1 px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ANNOTATION PANEL ════ -->
+<div id="annotate-panel" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/30 backdrop-blur-sm" onclick="closeAnnotatePanel()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
+    <h2 class="text-lg font-bold text-ink-900 mb-1">Anotar fragmento</h2>
+    <p id="ann-seg-preview" class="text-sm text-ink-600 font-serif italic mb-4 border-l-2 border-amber-300 pl-3 leading-snug"></p>
+    <!-- Highlight color -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-ink-700 mb-2">Resaltar fondo</label>
+      <div class="flex items-center gap-3">
+        <div class="flex gap-1.5">
+          <button class="hl-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#fef3c7" data-color="#fef3c7" onclick="setHighlight('#fef3c7')" title="Amarillo"></button>
+          <button class="hl-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#d1fae5" data-color="#d1fae5" onclick="setHighlight('#d1fae5')" title="Verde"></button>
+          <button class="hl-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#dbeafe" data-color="#dbeafe" onclick="setHighlight('#dbeafe')" title="Azul"></button>
+          <button class="hl-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#fce7f3" data-color="#fce7f3" onclick="setHighlight('#fce7f3')" title="Rosa"></button>
+          <button class="hl-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#ede9fe" data-color="#ede9fe" onclick="setHighlight('#ede9fe')" title="Morado"></button>
+          <button class="hl-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform bg-white border-ink-200" data-color="" onclick="setHighlight('')" title="Sin color">✕</button>
+        </div>
+        <input id="ann-color-custom" type="color" class="w-8 h-8 rounded cursor-pointer border border-ink-200" oninput="setHighlight(this.value)" title="Color personalizado" />
+      </div>
+    </div>
+    <!-- Style toggles -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-ink-700 mb-2">Estilo de texto</label>
+      <div class="flex gap-2">
+        <button id="ann-bold" onclick="toggleAnnStyle('bold')" class="px-3 py-1.5 border border-ink-200 rounded-lg text-sm font-bold transition-colors hover:bg-ink-50">N</button>
+        <button id="ann-italic" onclick="toggleAnnStyle('italic')" class="px-3 py-1.5 border border-ink-200 rounded-lg text-sm italic transition-colors hover:bg-ink-50"><em>I</em></button>
+      </div>
+    </div>
+    <!-- Comment -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-ink-700 mb-1.5">Comentario personal</label>
+      <textarea id="ann-comment" rows="4" placeholder="Tus notas sobre este párrafo..." class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-none"></textarea>
+    </div>
+    <div id="ann-error" class="text-red-500 text-xs mb-3 hidden"></div>
+    <div class="flex gap-3">
+      <button onclick="deleteAnnotation()" class="px-4 py-2.5 border border-red-200 text-red-500 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors">Borrar</button>
+      <button onclick="closeAnnotatePanel()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+      <button onclick="saveAnnotation()" class="flex-1 px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
+const PROJECT_ID = '{{ project.id }}';
+const FILENAME = '{{ filename }}';
+const VIEW_TYPE = '{{ view_type }}';
+const FILE_META = {{ file_info | tojson }};
+const AVAIL_TAGS = {{ (docs_meta.get('available_tags',[]) if view_type=='doc' else translates_meta.get('available_tags',[])) | tojson }};
+
 function toggleSection(id) {
   const el = document.getElementById(id);
   const arrow = document.getElementById('arrow-' + id.replace('sidebar-',''));
@@ -314,85 +541,281 @@ document.addEventListener('keydown', e => {
   if (e.key === 'End') { e.preventDefault(); scroller.scrollTo(0, scroller.scrollHeight); }
 });
 
-// XLAN interactive hover
-(function() {
-  const tooltip = document.getElementById('seg-tooltip');
+// ── View switcher ────────────────────────────────────────────────
+const VIEWS = ['standard', 'split', 'table'];
+function setView(name) {
+  VIEWS.forEach(v => {
+    const el = document.getElementById('view-' + v);
+    const btn = document.getElementById('view-btn-' + v);
+    if (!el || !btn) return;
+    if (v === name) {
+      el.classList.remove('hidden');
+      btn.classList.add('view-btn-active');
+      btn.classList.remove('text-ink-500');
+    } else {
+      el.classList.add('hidden');
+      btn.classList.remove('view-btn-active');
+      btn.classList.add('text-ink-500');
+    }
+  });
+  hideTooltip();
+}
+
+// ── Table comments column toggle ─────────────────────────────────
+let _tableCommentsVisible = false;
+function toggleTableComments() {
+  _tableCommentsVisible = !_tableCommentsVisible;
+  document.querySelectorAll('.table-col-comments').forEach(el => {
+    el.classList.toggle('hidden', !_tableCommentsVisible);
+  });
+  const btn = document.getElementById('table-comments-btn');
+  if (btn) btn.textContent = _tableCommentsVisible ? 'Ocultar comentarios' : 'Mostrar comentarios';
+}
+
+// ── Tooltip helpers ──────────────────────────────────────────────
+const tooltip    = document.getElementById('seg-tooltip');
+const tipTr      = document.getElementById('tip-translation');
+const tipInfo    = document.getElementById('tip-info');
+const tipCmtWrap = document.getElementById('tip-comment-wrap');
+const tipCmtText = document.getElementById('tip-comment-text');
+
+function showTooltip(el, e) {
   if (!tooltip) return;
+  const translation = el.dataset.translation || '';
+  const info        = el.dataset.info || '';
+  let note = {};
+  try { note = JSON.parse(el.dataset.segNote || '{}') || {}; } catch(_) {}
+  const comment = note.comment || '';
 
-  const tipOriginal = document.getElementById('tip-original');
-  const tipTranslation = document.getElementById('tip-translation');
-  const tipInfo = document.getElementById('tip-info');
+  if (!translation && !info && !comment) { hideTooltip(); return; }
 
-  let activeSegId = null;
+  tipTr.textContent = translation || '—';
+  if (info && info !== '[pendiente de revisión]') {
+    tipInfo.textContent = info; tipInfo.classList.remove('hidden');
+  } else { tipInfo.classList.add('hidden'); }
+  if (comment) {
+    tipCmtText.textContent = comment; tipCmtWrap.classList.remove('hidden');
+  } else { tipCmtWrap.classList.add('hidden'); }
+
+  positionTooltip(e);
+  tooltip.classList.remove('hidden');
+}
+function hideTooltip() { if (tooltip) tooltip.classList.add('hidden'); }
+function positionTooltip(e) {
+  if (!tooltip) return;
+  const tw = tooltip.offsetWidth || 300, th = tooltip.offsetHeight || 100;
+  const vw = window.innerWidth,          vh = window.innerHeight;
+  let x = e.clientX + 16, y = e.clientY + 22;
+  if (x + tw > vw - 10) x = e.clientX - tw - 14;
+  if (y + th > vh - 10) y = e.clientY - th - 14;
+  tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+}
+
+// ── Segment hover (all views) ────────────────────────────────────
+(function attachHover() {
+  if (!document.getElementById('seg-tooltip')) return;
 
   document.querySelectorAll('.xlan-seg').forEach(seg => {
     seg.addEventListener('mouseenter', function(e) {
-      activeSegId = this.dataset.segId;
+      // Clear any previous highlights
+      document.querySelectorAll('.seg-active, .seg-cross-active').forEach(s =>
+        s.classList.remove('seg-active','seg-cross-active'));
 
-      // Highlight this + siblings
-      highlightAround(this);
+      this.classList.add('seg-active');
 
-      // Show tooltip
-      const text = this.dataset.text || '';
-      const translation = this.dataset.translation || '';
-      const info = this.dataset.info || '';
-
-      if (!translation && !info) { tooltip.classList.add('hidden'); return; }
-
-      tipOriginal.textContent = text;
-      tipTranslation.textContent = translation || '—';
-      if (info && info !== '[pendiente de revisión]') {
-        tipInfo.textContent = info;
-        tipInfo.classList.remove('hidden');
-      } else {
-        tipInfo.classList.add('hidden');
+      // In split view: cross-highlight counterpart
+      const ref = this.dataset.segRef;          // right col → left col
+      const id  = this.dataset.segId;
+      if (ref) {
+        // this is a right-col (tr) element; highlight left col by segId=ref
+        const left = document.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
+        if (left) left.classList.add('seg-cross-active');
+      } else if (id) {
+        // this is a left-col element; highlight right col by segRef=id
+        const right = document.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
+        if (right) right.classList.add('seg-cross-active');
       }
 
-      positionTooltip(e);
-      tooltip.classList.remove('hidden');
+      showTooltip(this, e);
     });
 
     seg.addEventListener('mousemove', positionTooltip);
-
     seg.addEventListener('mouseleave', function() {
-      activeSegId = null;
-      clearHighlights();
-      tooltip.classList.add('hidden');
+      this.classList.remove('seg-active','seg-cross-active');
+      const ref = this.dataset.segRef, id = this.dataset.segId;
+      if (ref) {
+        const left = document.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
+        if (left) left.classList.remove('seg-active','seg-cross-active');
+      } else if (id) {
+        const right = document.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
+        if (right) right.classList.remove('seg-active','seg-cross-active');
+      }
+      hideTooltip();
     });
-  });
 
-  function positionTooltip(e) {
-    const tw = tooltip.offsetWidth || 280;
-    const th = tooltip.offsetHeight || 100;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    let x = e.clientX + 14;
-    let y = e.clientY + 20;
-    if (x + tw > vw - 10) x = e.clientX - tw - 14;
-    if (y + th > vh - 10) y = e.clientY - th - 14;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-  }
-
-  function highlightAround(seg) {
-    clearHighlights();
-    seg.classList.add('seg-active');
-
-    const parent = seg.parentElement;
-    const siblings = Array.from(parent.querySelectorAll('.xlan-seg'));
-    const idx = siblings.indexOf(seg);
-    const WINDOW = 2;
-    for (let i = Math.max(0, idx - WINDOW); i <= Math.min(siblings.length - 1, idx + WINDOW); i++) {
-      if (i !== idx) siblings[i].classList.add('seg-hover');
+    // Double-click → annotation (skip right-col translation spans)
+    if (!seg.classList.contains('xlan-seg-tr') && seg.tagName !== 'TR') {
+      seg.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
+        const bi    = parseInt(this.dataset.blockIndex);
+        const segId = this.dataset.segId;
+        // get the segment text from the element's text content (spans) or innerText
+        const segText = this.innerText || this.textContent || '';
+        openAnnotatePanel(bi, segId, segText.trim());
+      });
     }
-  }
-
-  function clearHighlights() {
-    document.querySelectorAll('.xlan-seg.seg-active, .xlan-seg.seg-hover').forEach(el => {
-      el.classList.remove('seg-active', 'seg-hover');
-    });
-  }
+    // Table-row dblclick
+    if (seg.tagName === 'TR') {
+      seg.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
+        const bi    = parseInt(this.dataset.blockIndex);
+        const segId = this.dataset.segId;
+        const cells = this.querySelectorAll('td');
+        const segText = cells[0] ? cells[0].textContent.trim() : '';
+        openAnnotatePanel(bi, segId, segText);
+      });
+    }
+  });
 })();
+
+// ── Apply segment note styles on load ───────────────────────────
+(function applySegmentStyles() {
+  document.querySelectorAll('.xlan-seg[data-seg-note]').forEach(el => {
+    try {
+      const note = JSON.parse(el.dataset.segNote || '{}');
+      if (!note || !Object.keys(note).length) return;
+      let css = '';
+      if (note.highlight_color) css += `background-color:${note.highlight_color};padding:1px 3px;border-radius:3px;`;
+      if (note.text_color) css += `color:${note.text_color};`;
+      if (note.bold) css += 'font-weight:bold;';
+      if (note.italic) css += 'font-style:italic;';
+      if (css) el.style.cssText = (el.style.cssText || '') + css;
+    } catch(_) {}
+  });
+})();
+
+// ── Metadata modal ───────────────────────────────────────────────
+let metaTags = [...(FILE_META.tags || [])];
+function openMetaModal() {
+  document.getElementById('meta-modal-fname').textContent = FILENAME;
+  document.getElementById('meta-title').value = FILE_META.display_name || '';
+  document.getElementById('meta-desc').value = FILE_META.description || '';
+  metaTags = [...(FILE_META.tags || [])];
+  renderMetaTagOptions();
+  document.getElementById('meta-error').classList.add('hidden');
+  const m = document.getElementById('meta-modal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+}
+function closeMetaModal() {
+  const m = document.getElementById('meta-modal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+}
+function renderMetaTagOptions() {
+  const el = document.getElementById('meta-tag-options');
+  if (!AVAIL_TAGS.length) { el.innerHTML='<span class="text-xs text-ink-300">Sin etiquetas disponibles en el proyecto.</span>'; return; }
+  el.innerHTML = AVAIL_TAGS.map(t => {
+    const active = metaTags.includes(t);
+    return `<button onclick="toggleMetaTag('${t}')" id="mtag-${t}" class="px-3 py-1.5 text-xs rounded-full border transition-colors ${active ? 'bg-amber-100 border-amber-400 text-amber-800' : 'border-ink-200 text-ink-500 hover:border-amber-300'}">${t}</button>`;
+  }).join('');
+}
+function toggleMetaTag(tag) {
+  const idx = metaTags.indexOf(tag);
+  if (idx>-1) metaTags.splice(idx,1); else metaTags.push(tag);
+  const btn = document.getElementById(`mtag-${tag}`);
+  if (btn) {
+    const active = metaTags.includes(tag);
+    btn.className = `px-3 py-1.5 text-xs rounded-full border transition-colors ${active ? 'bg-amber-100 border-amber-400 text-amber-800' : 'border-ink-200 text-ink-500 hover:border-amber-300'}`;
+  }
+}
+async function saveMetaModal() {
+  const section = VIEW_TYPE === 'doc' ? 'docs' : 'translates';
+  const ep = VIEW_TYPE === 'doc' ? `docs/${FILENAME}/meta` : `translates/${FILENAME}/meta`;
+  const body = {
+    display_name: document.getElementById('meta-title').value.trim(),
+    description: document.getElementById('meta-desc').value.trim(),
+    tags: metaTags,
+  };
+  const res = await fetch(`/api/projects/${PROJECT_ID}/${ep}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+  });
+  if (res.ok) { closeMetaModal(); window.location.reload(); }
+  else { document.getElementById('meta-error').textContent='Error al guardar'; document.getElementById('meta-error').classList.remove('hidden'); }
+}
+
+// ── Segment annotation panel ─────────────────────────────────────
+let annotateBlockIdx = null;
+let annotateSegId    = null;
+let annState = {highlight_color:'', bold:false, italic:false, text_color:'', comment:''};
+
+function openAnnotatePanel(blockIdx, segId, segText) {
+  annotateBlockIdx = blockIdx;
+  annotateSegId    = segId;
+
+  // Load existing note from the segment element
+  const segEl = document.querySelector(`.xlan-seg[data-seg-id="${segId}"]`);
+  let note = {};
+  try { note = JSON.parse(segEl?.dataset.segNote || '{}') || {}; } catch(_) {}
+
+  annState = {
+    highlight_color: note.highlight_color || '',
+    bold:            note.bold    || false,
+    italic:          note.italic  || false,
+    text_color:      note.text_color || '',
+    comment:         note.comment || '',
+  };
+
+  // Segment preview
+  const preview = document.getElementById('ann-seg-preview');
+  if (preview) preview.textContent = segText ? (segText.length > 100 ? segText.slice(0,97)+'…' : segText) : '';
+
+  document.getElementById('ann-comment').value = annState.comment;
+  document.getElementById('ann-color-custom').value = annState.highlight_color || '#fef3c7';
+  document.getElementById('ann-bold').className   = `px-3 py-1.5 border rounded-lg text-sm font-bold transition-colors ${annState.bold   ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+  document.getElementById('ann-italic').className = `px-3 py-1.5 border rounded-lg text-sm italic transition-colors ${annState.italic ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+  document.querySelectorAll('.hl-preset').forEach(btn => {
+    btn.style.outline = btn.dataset.color === annState.highlight_color ? '2px solid #1a1a2e' : 'none';
+  });
+  document.getElementById('ann-error').classList.add('hidden');
+  const p = document.getElementById('annotate-panel');
+  p.classList.remove('hidden'); p.classList.add('flex');
+}
+function closeAnnotatePanel() {
+  const p = document.getElementById('annotate-panel');
+  p.classList.add('hidden'); p.classList.remove('flex');
+  annotateBlockIdx = null; annotateSegId = null;
+}
+function setHighlight(color) {
+  annState.highlight_color = color;
+  document.querySelectorAll('.hl-preset').forEach(btn => {
+    btn.style.outline = btn.dataset.color === color ? '2px solid #1a1a2e' : 'none';
+  });
+  if (color && /^#[0-9a-fA-F]{6}$/.test(color)) document.getElementById('ann-color-custom').value = color;
+}
+function toggleAnnStyle(style) {
+  annState[style] = !annState[style];
+  const btn = document.getElementById(`ann-${style}`);
+  btn.className = `px-3 py-1.5 border rounded-lg text-sm ${style==='bold'?'font-bold':'italic'} transition-colors ${annState[style] ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+}
+async function saveAnnotation() {
+  if (annotateBlockIdx === null || !annotateSegId) return;
+  const note = {
+    highlight_color: annState.highlight_color,
+    bold:            annState.bold,
+    italic:          annState.italic,
+    text_color:      annState.text_color,
+    comment:         document.getElementById('ann-comment').value.trim(),
+  };
+  const url = `/api/projects/${PROJECT_ID}/translates/${FILENAME}/note/${annotateBlockIdx}/seg/${annotateSegId}`;
+  const res = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(note)});
+  if (res.ok) { closeAnnotatePanel(); window.location.reload(); }
+  else { document.getElementById('ann-error').textContent='Error al guardar'; document.getElementById('ann-error').classList.remove('hidden'); }
+}
+async function deleteAnnotation() {
+  if (annotateBlockIdx === null || !annotateSegId) return;
+  const url = `/api/projects/${PROJECT_ID}/translates/${FILENAME}/note/${annotateBlockIdx}/seg/${annotateSegId}`;
+  await fetch(url, {method:'DELETE'});
+  closeAnnotatePanel(); window.location.reload();
+}
 </script>
 
 {% if view_type == 'doc' and (filename.endswith('.txt') or filename.endswith('.md')) %}

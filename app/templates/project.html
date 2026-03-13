@@ -28,23 +28,32 @@
   <main class="max-w-6xl mx-auto px-6 py-10">
 
     <!-- Section: Documentación -->
-    <section class="mb-12">
-      <div class="flex items-center justify-between mb-5">
-        <div>
+    <section class="mb-14" id="sec-docs">
+      <div class="flex flex-wrap items-center gap-3 mb-3">
+        <div class="flex-1">
           <h2 class="text-xl font-bold text-ink-900">Documentación</h2>
           <p class="text-sm text-ink-400 mt-0.5">Gramáticas, guías y material de referencia.</p>
         </div>
-        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-4 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-          Subir documento
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="openTagManagerModal('docs')" class="px-3 py-1.5 border border-ink-200 text-ink-500 text-xs font-medium rounded-full hover:border-ink-400 hover:text-ink-700 transition-colors">🏷 Etiquetas</button>
+          <div class="flex border border-ink-200 rounded-full overflow-hidden text-xs">
+            <button id="btn-docs-mosaic" onclick="setView('docs','mosaic')" class="px-3 py-1.5 bg-ink-900 text-white">Mosaico</button>
+            <button id="btn-docs-tree" onclick="setView('docs','tree')" class="px-3 py-1.5 text-ink-500 hover:bg-ink-50">Árbol</button>
+          </div>
+          <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-4 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Subir
+          </button>
+        </div>
       </div>
+      <div id="docs-tag-filter-bar" class="flex flex-wrap gap-2 mb-4 hidden"></div>
 
       {% set docs_files = docs_meta.get('files', {}) %}
+      <div id="view-docs-mosaic">
       {% if docs_files %}
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {% for fname, finfo in docs_files.items() %}
-        <div class="bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden">
+        <div class="doc-card bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden" data-tags="{{ (finfo.tags or []) | join(',') }}">
           <a href="/viewer/{{ project.id }}/doc/{{ fname }}" class="block p-5">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-lg bg-ink-50 flex items-center justify-center flex-shrink-0 text-lg">
@@ -52,77 +61,84 @@
               </div>
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
-                {% if finfo.description %}
-                <div class="text-xs text-ink-400 mt-0.5 truncate">{{ finfo.description }}</div>
-                {% endif %}
+                {% if finfo.description %}<div class="text-xs text-ink-400 mt-0.5 truncate">{{ finfo.description }}</div>{% endif %}
                 <div class="text-xs text-ink-300 mt-1">{{ fname }}</div>
               </div>
             </div>
           </a>
-          <div class="border-t border-ink-50 px-5 py-2.5 flex justify-between items-center">
-            <span class="text-xs text-ink-300">{{ finfo.uploaded_at[:10] if finfo.uploaded_at else '' }}</span>
-            <button onclick="deleteDoc('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 transition-colors">Eliminar</button>
+          <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
+            {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
+            <button onclick="openFileTagModal('docs','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
+            <button onclick="deleteDoc('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 ml-1">Eliminar</button>
           </div>
         </div>
         {% endfor %}
       </div>
       {% else %}
-      <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center" id="drop-zone-docs">
+      <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center">
         <div class="text-4xl mb-3">📂</div>
-        <p class="text-ink-400 text-sm">Arrastra archivos aquí o usa el botón <strong>Subir documento</strong>.</p>
+        <p class="text-ink-400 text-sm">Arrastra archivos aquí o usa el botón <strong>Subir</strong>.</p>
         <p class="text-xs text-ink-300 mt-1">PDF, TXT, DOC, DOCX, MD</p>
       </div>
       {% endif %}
-
-      <!-- Category organizer toggle -->
-      <div class="mt-4">
-        <button onclick="toggleOrganizer('docs')" class="text-sm text-ink-400 hover:text-ink-700 underline-offset-2 hover:underline transition-colors">
-          🗂 Organizar en categorías
-        </button>
-      </div>
-      <div id="organizer-docs" class="hidden mt-4">
-        <div class="bg-white rounded-xl border border-ink-100 p-5">
-          <p class="text-sm text-ink-500 mb-3">Editor de categorías (JSON directo — en futuras versiones habrá un editor visual):</p>
-          <textarea id="organizer-docs-json" class="w-full h-48 border border-ink-200 rounded-lg p-3 text-xs font-mono text-ink-700 focus:outline-none focus:ring-2 focus:ring-ink-200" 
-            placeholder="{ categories: [...] }">{{ docs_meta | tojson(indent=2) }}</textarea>
-          <button onclick="saveOrganizer('docs')" class="mt-3 px-4 py-2 bg-ink-900 text-white text-xs font-medium rounded-lg hover:bg-ink-700 transition-colors">Guardar estructura</button>
+      </div>{# end view-docs-mosaic #}
+      <!-- Tree view -->
+      <div id="view-docs-tree" class="hidden">
+        <div class="bg-white rounded-2xl border border-ink-100 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm font-medium text-ink-700">Organiza arrastrando — doble clic en carpeta para renombrar</p>
+            <div class="flex gap-2">
+              <button onclick="addFolder('docs')" class="px-3 py-1.5 border border-ink-200 text-ink-600 text-xs rounded-lg hover:bg-ink-50">+ Carpeta</button>
+              <button onclick="saveTree('docs')" class="px-3 py-1.5 bg-ink-900 text-white text-xs rounded-lg hover:bg-ink-700">Guardar</button>
+            </div>
+          </div>
+          <div id="tree-docs"></div>
         </div>
       </div>
     </section>
 
-    <!-- Section: Textos Traducidos -->
-    <section>
-      <div class="flex items-center justify-between mb-5">
-        <div>
-          <h2 class="text-xl font-bold text-ink-900">Textos traducidos</h2>
-          <p class="text-sm text-ink-400 mt-0.5">Textos interactivos en formato .xlan.</p>
+    <!-- Section: Textos Interactivos -->
+    <section id="sec-translates">
+      <div class="flex flex-wrap items-center gap-3 mb-3">
+        <div class="flex-1">
+          <h2 class="text-xl font-bold text-ink-900">Textos interactivos</h2>
+          <p class="text-sm text-ink-400 mt-0.5">Textos en <strong>{{ languages.get(project.target, project.target) }}</strong> con notas en <strong>{{ languages.get(project.base, project.base) }}</strong>.</p>
         </div>
-        <button onclick="openTranslateModal()" class="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          Agregar traducción
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="openTagManagerModal('translates')" class="px-3 py-1.5 border border-ink-200 text-ink-500 text-xs font-medium rounded-full hover:border-ink-400 hover:text-ink-700 transition-colors">🏷 Etiquetas</button>
+          <div class="flex border border-ink-200 rounded-full overflow-hidden text-xs">
+            <button id="btn-translates-mosaic" onclick="setView('translates','mosaic')" class="px-3 py-1.5 bg-ink-900 text-white">Mosaico</button>
+            <button id="btn-translates-tree" onclick="setView('translates','tree')" class="px-3 py-1.5 text-ink-500 hover:bg-ink-50">Árbol</button>
+          </div>
+          <button onclick="openTranslateModal()" class="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-700 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Agregar
+          </button>
+        </div>
       </div>
+      <div id="translates-tag-filter-bar" class="flex flex-wrap gap-2 mb-4 hidden"></div>
 
       {% set xlan_files = translates_meta.get('files', {}) %}
+      <div id="view-translates-mosaic">
       {% if xlan_files %}
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {% for fname, finfo in xlan_files.items() %}
-        <div class="bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden">
+        <div class="xlan-card bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden" data-tags="{{ (finfo.tags or []) | join(',') }}">
           <a href="/viewer/{{ project.id }}/xlan/{{ fname }}" class="block p-5">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 text-lg">🌐</div>
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
-                {% if finfo.description %}
-                <div class="text-xs text-ink-400 mt-0.5 line-clamp-2">{{ finfo.description }}</div>
-                {% endif %}
+                {% if finfo.description %}<div class="text-xs text-ink-400 mt-0.5 line-clamp-2">{{ finfo.description }}</div>{% endif %}
                 <div class="text-xs text-ink-300 mt-1">{{ fname }}</div>
               </div>
             </div>
           </a>
-          <div class="border-t border-ink-50 px-5 py-2.5 flex justify-between items-center">
+          <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
             <span class="text-xs bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full">.xlan</span>
-            <button onclick="deleteTranslate('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 transition-colors">Eliminar</button>
+            {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
+            <button onclick="openFileTagModal('translates','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
+            <button onclick="deleteTranslate('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 ml-1">Eliminar</button>
           </div>
         </div>
         {% endfor %}
@@ -130,19 +146,21 @@
       {% else %}
       <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center">
         <div class="text-4xl mb-3">🌐</div>
-        <p class="text-ink-400 text-sm">Aún no hay textos traducidos. Usa <strong>Agregar traducción</strong> para procesar un texto.</p>
+        <p class="text-ink-400 text-sm">Aún no hay textos. Usa <strong>Agregar</strong> para procesar un texto.</p>
       </div>
       {% endif %}
-
-      <div class="mt-4">
-        <button onclick="toggleOrganizer('translates')" class="text-sm text-ink-400 hover:text-ink-700 underline-offset-2 hover:underline transition-colors">
-          🗂 Organizar en categorías
-        </button>
-      </div>
-      <div id="organizer-translates" class="hidden mt-4">
-        <div class="bg-white rounded-xl border border-ink-100 p-5">
-          <textarea id="organizer-translates-json" class="w-full h-48 border border-ink-200 rounded-lg p-3 text-xs font-mono text-ink-700 focus:outline-none focus:ring-2 focus:ring-ink-200">{{ translates_meta | tojson(indent=2) }}</textarea>
-          <button onclick="saveOrganizer('translates')" class="mt-3 px-4 py-2 bg-ink-900 text-white text-xs font-medium rounded-lg hover:bg-ink-700 transition-colors">Guardar estructura</button>
+      </div>{# end view-translates-mosaic #}
+      <!-- Tree view -->
+      <div id="view-translates-tree" class="hidden">
+        <div class="bg-white rounded-2xl border border-ink-100 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm font-medium text-ink-700">Organiza arrastrando — doble clic en carpeta para renombrar</p>
+            <div class="flex gap-2">
+              <button onclick="addFolder('translates')" class="px-3 py-1.5 border border-ink-200 text-ink-600 text-xs rounded-lg hover:bg-ink-50">+ Carpeta</button>
+              <button onclick="saveTree('translates')" class="px-3 py-1.5 bg-ink-900 text-white text-xs rounded-lg hover:bg-ink-700">Guardar</button>
+            </div>
+          </div>
+          <div id="tree-translates"></div>
         </div>
       </div>
     </section>
@@ -151,7 +169,7 @@
 </div>
 
 <!-- Upload Modal -->
-<div id="upload-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+<div id="upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
   <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeUploadModal()"></div>
   <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
     <h2 class="text-xl font-bold text-ink-900 mb-6">Subir documento</h2>
@@ -182,166 +200,571 @@
   </div>
 </div>
 
-<!-- Translate Modal -->
-<div id="translate-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeTranslateModal()"></div>
-  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 z-10">
-    <h2 class="text-xl font-bold text-ink-900 mb-2">Agregar texto traducido</h2>
-    <p class="text-sm text-ink-500 mb-6">Pega el texto en <strong>{{ languages.get(project.base, project.base) }}</strong> y el sistema generará un borrador .xlan.</p>
-    <form id="translate-form" onsubmit="submitTranslate(event)">
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-ink-700 mb-1.5">Título</label>
-        <input id="trans-title" type="text" required placeholder="Título del texto" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+<!-- Translate Modal — 3 states: input → processing → done -->
+<div id="translate-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" id="trans-backdrop"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg z-10 overflow-hidden">
+
+    <!-- ① INPUT STATE -->
+    <div id="trans-input-view">
+      <div class="px-8 pt-8 pb-0">
+        <h2 class="text-xl font-bold text-ink-900 mb-1">Agregar texto interactivo</h2>
+        <p class="text-sm text-ink-500 mb-5">
+          Texto en <strong>{{ languages.get(project.target, project.target) }}</strong> —
+          notas en <strong>{{ languages.get(project.base, project.base) }}</strong>.
+          El agente IA segmenta y traduce automáticamente.
+        </p>
+        <div class="flex border-b border-ink-100">
+          <button id="tab-btn-text" onclick="switchTranslateTab('text')" class="px-4 py-2 text-sm font-medium border-b-2 border-ink-900 text-ink-900 -mb-px">Pegar texto</button>
+          <button id="tab-btn-file" onclick="switchTranslateTab('file')" class="px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px">Subir archivo</button>
+        </div>
       </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-ink-700 mb-1.5">Descripción (opcional)</label>
-        <input id="trans-desc" type="text" placeholder="Breve descripción" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      <div class="px-8 py-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Título</label>
+          <input id="trans-title" type="text" placeholder="Título del texto" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Descripción (opcional)</label>
+          <input id="trans-desc" type="text" placeholder="Breve descripción" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+        </div>
+        <!-- Tab: paste text -->
+        <div id="tab-pane-text">
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Texto en {{ languages.get(project.target, project.target) }}</label>
+          <textarea id="trans-text" rows="7" placeholder="Pega aquí el texto..." class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-y"></textarea>
+        </div>
+        <!-- Tab: upload file -->
+        <div id="tab-pane-file" class="hidden">
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Archivo de texto</label>
+          <div id="trans-drop-zone" class="border-2 border-dashed border-ink-200 rounded-xl p-6 text-center cursor-pointer hover:border-ink-400 transition-colors" onclick="document.getElementById('trans-file-input').click()">
+            <div class="text-3xl mb-2">📄</div>
+            <div class="text-sm text-ink-500" id="trans-file-label">Haz clic o arrastra un archivo aquí</div>
+            <div class="text-xs text-ink-300 mt-1">PDF · DOCX · TXT · MD</div>
+          </div>
+          <input id="trans-file-input" type="file" accept=".pdf,.docx,.txt,.md" class="hidden" onchange="onTransFileSelect(this)" />
+        </div>
+        <div id="translate-error" class="text-red-500 text-sm mt-3 hidden"></div>
+        <div class="flex gap-3 mt-5">
+          <button type="button" onclick="closeTranslateModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button type="button" id="translate-btn" onclick="submitTranslate()" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Generar con IA
+          </button>
+        </div>
       </div>
-      <div class="mb-6">
-        <label class="block text-sm font-medium text-ink-700 mb-1.5">Texto en {{ languages.get(project.base, project.base) }}</label>
-        <textarea id="trans-text" required rows="7" placeholder="Pega aquí el texto a procesar..." class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-y"></textarea>
+    </div>
+
+    <!-- ② PROCESSING STATE -->
+    <div id="trans-processing-view" class="hidden px-8 py-8">
+      <div class="flex items-center gap-3 mb-5">
+        <div id="trans-spinner" class="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin flex-shrink-0"></div>
+        <div>
+          <h2 class="text-base font-bold text-ink-900" id="trans-proc-title">Generando .xlan con IA…</h2>
+          <p class="text-xs text-ink-400">Esto puede tardar entre 30 segundos y varios minutos según la longitud del texto.</p>
+        </div>
       </div>
-      <div id="translate-error" class="text-red-500 text-sm mb-4 hidden"></div>
-      <div id="translate-success" class="text-green-600 text-sm mb-4 hidden bg-green-50 rounded-lg px-4 py-3 border border-green-100"></div>
-      <div class="flex gap-3">
-        <button type="button" onclick="closeTranslateModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
-        <button type="submit" id="translate-btn" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors">Procesar texto</button>
+      <!-- Progress log -->
+      <div id="trans-progress-log" class="bg-ink-50 rounded-xl px-4 py-3 text-xs font-mono text-ink-600 max-h-56 overflow-y-auto space-y-1 border border-ink-100"></div>
+      <!-- Done section (hidden until complete) -->
+      <div id="trans-done-section" class="hidden mt-4 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
+        <p class="text-sm font-medium text-green-800 mb-2" id="trans-done-msg"></p>
+        <a id="trans-done-link" href="#" class="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
+          Ver archivo
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
       </div>
-    </form>
+      <!-- Error section -->
+      <div id="trans-proc-error" class="hidden mt-4 bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-700" id="trans-proc-error-msg"></div>
+      <button onclick="closeTranslateModal()" class="mt-4 w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cerrar</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Tag Manager Modal -->
+<div id="tag-manager-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeTagManagerModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10">
+    <h2 class="text-lg font-bold text-ink-900 mb-1">Gestionar etiquetas</h2>
+    <p class="text-xs text-ink-400 mb-5" id="tag-manager-section-label"></p>
+    <div id="tag-manager-list" class="flex flex-wrap gap-2 mb-4 min-h-8"></div>
+    <div class="flex gap-2">
+      <input id="new-tag-input" type="text" placeholder="Nueva etiqueta..." class="flex-1 border border-ink-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" onkeydown="if(event.key==='Enter'){event.preventDefault();addGlobalTag();}" />
+      <button onclick="addGlobalTag()" class="px-4 py-2 bg-ink-900 text-white text-sm rounded-xl hover:bg-ink-700 transition-colors">Añadir</button>
+    </div>
+    <button onclick="closeTagManagerModal()" class="mt-4 w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cerrar</button>
+  </div>
+</div>
+
+<!-- File Tag Assignment Modal -->
+<div id="file-tag-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeFileTagModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10">
+    <h2 class="text-lg font-bold text-ink-900 mb-1">Asignar etiquetas</h2>
+    <p class="text-xs text-ink-400 mb-5" id="file-tag-modal-name"></p>
+    <div id="file-tag-options" class="flex flex-wrap gap-2 mb-4"></div>
+    <p class="text-xs text-ink-300 mb-5">Haz clic para asignar / quitar. Crea etiquetas desde el botón "🏷 Etiquetas" de la sección.</p>
+    <button onclick="saveFileTags()" class="w-full px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
+    <button onclick="closeFileTagModal()" class="mt-2 w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
 const PROJECT_ID = '{{ project.id }}';
+const DOCS_META    = {{ docs_meta | tojson }};
+const XLAN_META    = {{ translates_meta | tojson }};
+let treeMeta = { docs: JSON.parse(JSON.stringify(DOCS_META)), translates: JSON.parse(JSON.stringify(XLAN_META)) };
 
-function openUploadModal() {
-  document.getElementById('upload-modal').classList.remove('hidden');
-  document.getElementById('upload-modal').classList.add('flex');
-}
+// ── Modal helpers ────────────────────────────────────────────────
+function showModal(id) { const m=document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); }
+function hideModal(id) { const m=document.getElementById(id); m.classList.add('hidden'); m.classList.remove('flex'); }
+function showError(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.classList.remove('hidden'); }
+
+// ── Upload modal ─────────────────────────────────────────────────
+function openUploadModal() { showModal('upload-modal'); }
 function closeUploadModal() {
-  document.getElementById('upload-modal').classList.add('hidden');
-  document.getElementById('upload-modal').classList.remove('flex');
+  hideModal('upload-modal');
   document.getElementById('upload-form').reset();
   document.getElementById('drop-label').textContent = 'Haz clic o arrastra un archivo aquí';
   document.getElementById('upload-error').classList.add('hidden');
 }
-
 function onFileSelect(input) {
   if (input.files[0]) {
     document.getElementById('drop-label').textContent = input.files[0].name;
-    if (!document.getElementById('upload-display').value) {
+    if (!document.getElementById('upload-display').value)
       document.getElementById('upload-display').value = input.files[0].name.replace(/\.[^.]+$/, '');
-    }
   }
 }
-
 async function submitUpload(e) {
   e.preventDefault();
   const file = document.getElementById('file-input').files[0];
   if (!file) { showError('upload-error', 'Selecciona un archivo'); return; }
   const btn = document.getElementById('upload-btn');
-  btn.disabled = true; btn.textContent = 'Subiendo...';
-
+  btn.disabled=true; btn.textContent='Subiendo...';
   const fd = new FormData();
   fd.append('file', file);
   fd.append('display_name', document.getElementById('upload-display').value);
   fd.append('description', document.getElementById('upload-desc').value);
-
   try {
     const res = await fetch(`/api/projects/${PROJECT_ID}/docs`, {method:'POST', body:fd});
     const data = await res.json();
-    if (!res.ok) { showError('upload-error', data.detail || 'Error'); btn.disabled=false; btn.textContent='Subir'; return; }
+    if (!res.ok) { showError('upload-error', data.detail||'Error'); btn.disabled=false; btn.textContent='Subir'; return; }
     window.location.reload();
-  } catch(err) { showError('upload-error', 'Error de conexión'); btn.disabled=false; btn.textContent='Subir'; }
+  } catch(err) { showError('upload-error','Error de conexión'); btn.disabled=false; btn.textContent='Subir'; }
 }
+const dz = document.getElementById('drop-zone');
+if (dz) {
+  dz.addEventListener('dragover', e=>{e.preventDefault(); dz.classList.add('border-ink-500','bg-ink-50');});
+  dz.addEventListener('dragleave', ()=>dz.classList.remove('border-ink-500','bg-ink-50'));
+  dz.addEventListener('drop', e=>{
+    e.preventDefault(); dz.classList.remove('border-ink-500','bg-ink-50');
+    const f=e.dataTransfer.files[0];
+    if(f){const inp=document.getElementById('file-input'); const dt=new DataTransfer(); dt.items.add(f); inp.files=dt.files; onFileSelect(inp);}
+  });
+}
+
+// ── Translate modal — agent pipeline with SSE ────────────────────
+let translateTab = 'text';
+let _agentES = null;  // active EventSource
 
 function openTranslateModal() {
-  document.getElementById('translate-modal').classList.remove('hidden');
-  document.getElementById('translate-modal').classList.add('flex');
+  switchTranslateTab('text');
+  document.getElementById('trans-input-view').classList.remove('hidden');
+  document.getElementById('trans-processing-view').classList.add('hidden');
+  showModal('translate-modal');
 }
 function closeTranslateModal() {
-  document.getElementById('translate-modal').classList.add('hidden');
-  document.getElementById('translate-modal').classList.remove('flex');
-  document.getElementById('translate-form').reset();
+  if (_agentES) { _agentES.close(); _agentES = null; }
+  hideModal('translate-modal');
+  document.getElementById('trans-title').value = '';
+  document.getElementById('trans-desc').value = '';
+  document.getElementById('trans-text').value = '';
+  document.getElementById('trans-file-label').textContent = 'Haz clic o arrastra un archivo aquí';
   document.getElementById('translate-error').classList.add('hidden');
-  document.getElementById('translate-success').classList.add('hidden');
+  document.getElementById('trans-input-view').classList.remove('hidden');
+  document.getElementById('trans-processing-view').classList.add('hidden');
+  document.getElementById('trans-done-section').classList.add('hidden');
+  document.getElementById('trans-proc-error').classList.add('hidden');
+  document.getElementById('trans-progress-log').innerHTML = '';
+  document.getElementById('trans-spinner').classList.remove('hidden');
+  document.getElementById('trans-proc-title').textContent = 'Generando .xlan con IA…';
 }
-
-async function submitTranslate(e) {
-  e.preventDefault();
-  const btn = document.getElementById('translate-btn');
-  btn.disabled = true; btn.textContent = 'Procesando...';
+function switchTranslateTab(tab) {
+  translateTab = tab;
+  const on = 'px-4 py-2 text-sm font-medium border-b-2 border-ink-900 text-ink-900 -mb-px';
+  const off = 'px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px';
+  document.getElementById('tab-btn-text').className = tab==='text' ? on : off;
+  document.getElementById('tab-btn-file').className = tab==='file' ? on : off;
+  document.getElementById('tab-pane-text').classList.toggle('hidden', tab!=='text');
+  document.getElementById('tab-pane-file').classList.toggle('hidden', tab!=='file');
+}
+function onTransFileSelect(input) {
+  if (input.files[0]) {
+    document.getElementById('trans-file-label').textContent = input.files[0].name;
+    if (!document.getElementById('trans-title').value)
+      document.getElementById('trans-title').value = input.files[0].name.replace(/\.[^.]+$/, '');
+  }
+}
+function _appendLog(msg) {
+  const log = document.getElementById('trans-progress-log');
+  const line = document.createElement('div');
+  line.textContent = msg;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+async function submitTranslate() {
   const errEl = document.getElementById('translate-error');
-  const sucEl = document.getElementById('translate-success');
   errEl.classList.add('hidden');
-  sucEl.classList.add('hidden');
+  const title = document.getElementById('trans-title').value.trim() || 'Sin título';
+  const desc  = document.getElementById('trans-desc').value.trim();
 
-  const body = {
-    title: document.getElementById('trans-title').value.trim(),
-    description: document.getElementById('trans-desc').value.trim(),
-    raw_text: document.getElementById('trans-text').value.trim(),
-  };
+  // Validate
+  if (translateTab === 'text') {
+    if (!document.getElementById('trans-text').value.trim()) {
+      errEl.textContent = 'El texto no puede estar vacío'; errEl.classList.remove('hidden'); return;
+    }
+  } else {
+    if (!document.getElementById('trans-file-input').files[0]) {
+      errEl.textContent = 'Selecciona un archivo'; errEl.classList.remove('hidden'); return;
+    }
+  }
+
+  // Switch to processing view
+  document.getElementById('trans-input-view').classList.add('hidden');
+  document.getElementById('trans-processing-view').classList.remove('hidden');
+  document.getElementById('trans-progress-log').innerHTML = '';
+
   try {
-    const res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/translate`, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
-    });
-    const data = await res.json();
-    if (!res.ok) { showError('translate-error', data.detail || 'Error'); btn.disabled=false; btn.textContent='Procesar texto'; return; }
-    sucEl.textContent = `¡Listo! Se creó "${body.title}" con ${data.segments_created} segmentos. Redirigiendo...`;
-    sucEl.classList.remove('hidden');
-    setTimeout(() => window.location.href = `/viewer/${PROJECT_ID}/xlan/${data.filename}`, 1500);
-  } catch(err) { showError('translate-error', 'Error de conexión'); btn.disabled=false; btn.textContent='Procesar texto'; }
+    let res;
+    if (translateTab === 'text') {
+      res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({title, description: desc, raw_text: document.getElementById('trans-text').value.trim()})
+      });
+    } else {
+      const fd = new FormData();
+      fd.append('file', document.getElementById('trans-file-input').files[0]);
+      fd.append('title', title); fd.append('description', desc);
+      res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start-file`, {method:'POST', body:fd});
+    }
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({detail:'Error desconocido'}));
+      _showTransProcError(err.detail || 'Error al iniciar el agente'); return;
+    }
+    const {job_id, blocks} = await res.json();
+    _appendLog(`Texto extraído: ${blocks} bloque(s). Iniciando agente IA…`);
+
+    // Open SSE stream
+    _agentES = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
+    _agentES.onmessage = function(e) {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'heartbeat') return;
+      if (msg.type === 'progress' || msg.type === 'info') {
+        _appendLog(msg.msg);
+      } else if (msg.type === 'done') {
+        _agentES.close(); _agentES = null;
+        _showTransDone(msg.filename, msg.blocks, msg.segments);
+      } else if (msg.type === 'error') {
+        _agentES.close(); _agentES = null;
+        _showTransProcError(msg.msg);
+      }
+    };
+    _agentES.onerror = function() {
+      if (_agentES) { _agentES.close(); _agentES = null; }
+      _showTransProcError('Error de conexión con el servidor');
+    };
+  } catch(err) {
+    _showTransProcError('Error: ' + err.message);
+  }
+}
+function _showTransDone(filename, blocks, segments) {
+  document.getElementById('trans-spinner').classList.add('hidden');
+  document.getElementById('trans-proc-title').textContent = '¡.xlan generado!';
+  document.getElementById('trans-done-msg').textContent =
+    `Creado "${filename}" con ${blocks} bloques y ${segments} segmentos.`;
+  document.getElementById('trans-done-link').href = `/viewer/${PROJECT_ID}/xlan/${filename}`;
+  document.getElementById('trans-done-section').classList.remove('hidden');
+}
+function _showTransProcError(msg) {
+  document.getElementById('trans-spinner').classList.add('hidden');
+  document.getElementById('trans-proc-title').textContent = 'Error en el agente';
+  const el = document.getElementById('trans-proc-error');
+  el.textContent = msg; el.classList.remove('hidden');
 }
 
-async function deleteDoc(projectId, filename) {
-  if (!confirm(`¿Eliminar "${filename}"?`)) return;
-  await fetch(`/api/projects/${projectId}/docs/${filename}`, {method:'DELETE'});
+// ── Delete ───────────────────────────────────────────────────────
+async function deleteDoc(pid, fn) {
+  if (!confirm(`¿Eliminar "${fn}"?`)) return;
+  await fetch(`/api/projects/${pid}/docs/${fn}`, {method:'DELETE'});
   window.location.reload();
 }
-async function deleteTranslate(projectId, filename) {
-  if (!confirm(`¿Eliminar "${filename}"?`)) return;
-  await fetch(`/api/projects/${projectId}/translates/${filename}`, {method:'DELETE'});
+async function deleteTranslate(pid, fn) {
+  if (!confirm(`¿Eliminar "${fn}"?`)) return;
+  await fetch(`/api/projects/${pid}/translates/${fn}`, {method:'DELETE'});
   window.location.reload();
 }
 
-function toggleOrganizer(section) {
-  const el = document.getElementById(`organizer-${section}`);
-  el.classList.toggle('hidden');
+// ── View toggle (mosaic / tree) ──────────────────────────────────
+function setView(section, mode) {
+  const mosaic=document.getElementById(`view-${section}-mosaic`);
+  const tree=document.getElementById(`view-${section}-tree`);
+  const btnM=document.getElementById(`btn-${section}-mosaic`);
+  const btnT=document.getElementById(`btn-${section}-tree`);
+  if (mode==='mosaic') {
+    mosaic.classList.remove('hidden'); tree.classList.add('hidden');
+    btnM.className='px-3 py-1.5 bg-ink-900 text-white'; btnT.className='px-3 py-1.5 text-ink-500 hover:bg-ink-50';
+  } else {
+    tree.classList.remove('hidden'); mosaic.classList.add('hidden');
+    btnT.className='px-3 py-1.5 bg-ink-900 text-white'; btnM.className='px-3 py-1.5 text-ink-500 hover:bg-ink-50';
+    renderTree(section);
+  }
 }
 
-async function saveOrganizer(section) {
-  const raw = document.getElementById(`organizer-${section}-json`).value;
-  let parsed;
-  try { parsed = JSON.parse(raw); } catch(e) { alert('JSON inválido'); return; }
+// ── Tag filter ───────────────────────────────────────────────────
+const activeTagFilter = {docs: null, translates: null};
+function toggleTagFilter(section, tag) {
+  activeTagFilter[section] = activeTagFilter[section]===tag ? null : tag;
+  applyTagFilter(section);
+  document.querySelectorAll(`#${section}-tag-filter-bar button[data-tag]`).forEach(btn=>{
+    btn.classList.toggle('bg-blue-600', btn.dataset.tag===activeTagFilter[section]);
+    btn.classList.toggle('text-white', btn.dataset.tag===activeTagFilter[section]);
+    btn.classList.toggle('border-blue-600', btn.dataset.tag===activeTagFilter[section]);
+  });
+}
+function clearTagFilter(section) { activeTagFilter[section]=null; applyTagFilter(section); }
+function applyTagFilter(section) {
+  const filter = activeTagFilter[section];
+  const cardClass = section==='docs' ? '.doc-card' : '.xlan-card';
+  document.querySelectorAll(cardClass).forEach(card=>{
+    if (!filter) { card.style.display=''; return; }
+    const tags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+    card.style.display = tags.includes(filter) ? '' : 'none';
+  });
+}
+
+// ── Tag Manager modal ────────────────────────────────────────────
+let tagManagerSection = null;
+function openTagManagerModal(section) {
+  tagManagerSection = section;
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  const avail = meta.available_tags || [];
+  document.getElementById('tag-manager-section-label').textContent = section==='docs' ? 'Etiquetas para Documentación' : 'Etiquetas para Textos interactivos';
+  renderTagManagerList(avail);
+  showModal('tag-manager-modal');
+}
+function closeTagManagerModal() { hideModal('tag-manager-modal'); }
+function renderTagManagerList(tags) {
+  const el = document.getElementById('tag-manager-list');
+  el.innerHTML = tags.length ? tags.map(t=>`
+    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-full">
+      ${t}
+      <button onclick="deleteGlobalTag('${t}')" class="text-amber-400 hover:text-red-500 font-bold leading-none">×</button>
+    </span>`).join('') : '<span class="text-xs text-ink-300">Sin etiquetas aún.</span>';
+}
+async function addGlobalTag() {
+  const inp = document.getElementById('new-tag-input');
+  const tag = inp.value.trim();
+  if (!tag) return;
+  const meta = tagManagerSection==='docs' ? DOCS_META : XLAN_META;
+  const avail = [...new Set([...(meta.available_tags||[]), tag])];
+  const res = await fetch(`/api/projects/${PROJECT_ID}/${tagManagerSection}/tags`, {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({available_tags: avail})
+  });
+  if (res.ok) { meta.available_tags=avail; renderTagManagerList(avail); inp.value=''; renderTagFilterBar(tagManagerSection, avail); }
+}
+async function deleteGlobalTag(tag) {
+  const meta = tagManagerSection==='docs' ? DOCS_META : XLAN_META;
+  const avail = (meta.available_tags||[]).filter(t=>t!==tag);
+  const res = await fetch(`/api/projects/${PROJECT_ID}/${tagManagerSection}/tags`, {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({available_tags: avail})
+  });
+  if (res.ok) { meta.available_tags=avail; renderTagManagerList(avail); renderTagFilterBar(tagManagerSection, avail); }
+}
+function renderTagFilterBar(section, tags) {
+  const bar = document.getElementById(`${section}-tag-filter-bar`);
+  if (!tags || !tags.length) { bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+  bar.innerHTML = `<span class="text-xs text-ink-400 self-center">Filtrar:</span>` +
+    tags.map(t=>`<button onclick="toggleTagFilter('${section}','${t}')" data-tag="${t}" class="px-2.5 py-1 text-xs rounded-full border border-ink-200 text-ink-500 hover:border-blue-400 hover:text-blue-600 transition-colors">${t}</button>`).join('') +
+    `<button onclick="clearTagFilter('${section}')" class="px-2.5 py-1 text-xs text-ink-300 hover:text-ink-600">Limpiar</button>`;
+}
+
+// ── File Tag Assignment modal ─────────────────────────────────────
+let fileTagState = {section: null, filename: null, currentTags: []};
+function openFileTagModal(section, filename) {
+  fileTagState.section = section;
+  fileTagState.filename = filename;
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  fileTagState.currentTags = [...((meta.files||{})[filename]?.tags || [])];
+  const avail = meta.available_tags || [];
+  document.getElementById('file-tag-modal-name').textContent = (meta.files||{})[filename]?.display_name || filename;
+  const opts = document.getElementById('file-tag-options');
+  if (!avail.length) { opts.innerHTML='<span class="text-xs text-ink-300">Crea etiquetas primero desde "🏷 Etiquetas".</span>'; }
+  else {
+    opts.innerHTML = avail.map(t=>{
+      const active = fileTagState.currentTags.includes(t);
+      return `<button onclick="toggleFileTag('${t}')" id="ftag-${CSS.escape(t)}"
+        class="px-3 py-1.5 text-xs rounded-full border transition-colors ${active ? 'bg-amber-100 border-amber-400 text-amber-800' : 'border-ink-200 text-ink-500 hover:border-amber-300'}">${t}</button>`;
+    }).join('');
+  }
+  showModal('file-tag-modal');
+}
+function toggleFileTag(tag) {
+  const idx = fileTagState.currentTags.indexOf(tag);
+  if (idx>-1) fileTagState.currentTags.splice(idx,1); else fileTagState.currentTags.push(tag);
+  const btn = document.getElementById(`ftag-${CSS.escape(tag)}`);
+  if (btn) {
+    const active = fileTagState.currentTags.includes(tag);
+    btn.className = `px-3 py-1.5 text-xs rounded-full border transition-colors ${active ? 'bg-amber-100 border-amber-400 text-amber-800' : 'border-ink-200 text-ink-500 hover:border-amber-300'}`;
+  }
+}
+async function saveFileTags() {
+  const {section, filename, currentTags} = fileTagState;
+  const ep = section==='docs' ? `docs/${filename}/meta` : `translates/${filename}/meta`;
+  const res = await fetch(`/api/projects/${PROJECT_ID}/${ep}`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tags: currentTags})
+  });
+  if (res.ok) window.location.reload();
+  else alert('Error al guardar etiquetas');
+}
+function closeFileTagModal() { hideModal('file-tag-modal'); }
+
+// ── SortableJS tree organizer ────────────────────────────────────
+let folderCounter = Date.now();
+function getFileMeta(section, filename) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  return (meta.files||{})[filename] || {};
+}
+function getUncategorized(section) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  const all = Object.keys(meta.files||{});
+  const used = new Set();
+  function collect(cats) { (cats||[]).forEach(c=>{(c.items||[]).forEach(f=>used.add(f)); collect(c.subcategories);}); }
+  collect(meta.categories);
+  return all.filter(f=>!used.has(f));
+}
+function renderTreeItem(filename, section) {
+  const info = getFileMeta(section, filename);
+  return `<div class="org-item flex items-center gap-2 px-3 py-2 bg-white border border-ink-100 rounded-lg hover:border-ink-300 cursor-grab" data-filename="${filename}">
+    <span class="text-ink-200 select-none">⠿</span>
+    <span class="text-sm text-ink-700 truncate flex-1">${info.display_name||filename}</span>
+    <span class="text-xs text-ink-300">${filename.endsWith('.xlan')?'.xlan':''}</span>
+  </div>`;
+}
+function renderFolder(cat, section, depth=0) {
+  const pl = depth*12;
+  const itemsHtml = (cat.items||[]).map(f=>renderTreeItem(f,section)).join('');
+  const subHtml = (cat.subcategories||[]).map(s=>renderFolder(s,section,depth+1)).join('');
+  return `<div class="org-folder border border-ink-100 rounded-xl overflow-hidden" data-cat-id="${cat.id}" style="margin-left:${pl}px">
+    <div class="org-folder-header flex items-center gap-2 px-3 py-2 bg-ink-50 border-b border-ink-100 cursor-grab" data-cat-id="${cat.id}">
+      <span class="text-ink-300 select-none">⠿</span>
+      <span class="text-base">📁</span>
+      <span class="folder-name text-sm font-medium text-ink-700 flex-1 outline-none" contenteditable="true" spellcheck="false">${cat.name}</span>
+      <button onclick="addSubfolder('${section}','${cat.id}')" class="text-xs text-ink-400 hover:text-blue-600 px-1">+ Sub</button>
+      <button onclick="deleteFolderById('${section}','${cat.id}')" class="text-xs text-red-400 hover:text-red-600 px-1">×</button>
+    </div>
+    <div class="org-folder-items sortable-list space-y-1 p-2 min-h-10 bg-white" data-cat-id="${cat.id}">
+      ${itemsHtml}${subHtml}
+    </div>
+  </div>`;
+}
+function renderTree(section) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  const container = document.getElementById(`tree-${section}`);
+  const uncategorized = getUncategorized(section);
+  const uncatHtml = uncategorized.map(f=>renderTreeItem(f,section)).join('');
+  const catsHtml = (meta.categories||[]).map(c=>renderFolder(c,section)).join('');
+  container.innerHTML = `
+    <div class="mb-3">
+      <p class="text-xs text-ink-400 uppercase tracking-widest mb-2 px-1">Sin categoría</p>
+      <div class="sortable-list space-y-1 min-h-10 p-2 border border-dashed border-ink-200 rounded-xl" id="root-${section}">${uncatHtml}</div>
+    </div>
+    <div class="space-y-2" id="folders-${section}">${catsHtml}</div>`;
+  initSortables(section);
+}
+function initSortables(section) {
+  const group = {name:`${section}-items`, pull:true, put:true};
+  document.querySelectorAll(`#tree-${section} .sortable-list`).forEach(el=>{
+    if (el._sortable) el._sortable.destroy();
+    el._sortable = Sortable.create(el, {group, animation:150, ghostClass:'opacity-50', handle:'.org-item'});
+  });
+  const foldersEl = document.getElementById(`folders-${section}`);
+  if (foldersEl && !foldersEl._sortable) {
+    foldersEl._sortable = Sortable.create(foldersEl, {group:{name:`${section}-folders`,pull:false,put:false}, animation:150, ghostClass:'opacity-50', handle:'.org-folder-header'});
+  }
+}
+function addFolder(section) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  const id = `cat_${folderCounter++}`;
+  if (!meta.categories) meta.categories=[];
+  meta.categories.push({id, name:'Nueva carpeta', items:[], subcategories:[]});
+  renderTree(section);
+}
+function addSubfolder(section, parentId) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  const id = `cat_${folderCounter++}`;
+  function addTo(cats) {
+    for (const c of cats) {
+      if (c.id===parentId) { if(!c.subcategories)c.subcategories=[]; c.subcategories.push({id,name:'Nueva subcarpeta',items:[],subcategories:[]}); return true; }
+      if (c.subcategories && addTo(c.subcategories)) return true;
+    }
+  }
+  addTo(meta.categories||[]);
+  renderTree(section);
+}
+function deleteFolderById(section, catId) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  function removeFrom(cats) {
+    const idx = cats.findIndex(c=>c.id===catId);
+    if (idx>-1) { cats.splice(idx,1); return true; }
+    return cats.some(c=>c.subcategories && removeFrom(c.subcategories));
+  }
+  removeFrom(meta.categories||[]);
+  renderTree(section);
+}
+function serializeFolder(folderEl) {
+  const catId = folderEl.dataset.catId;
+  const nameEl = folderEl.querySelector('.folder-name');
+  const name = nameEl ? nameEl.textContent.trim() : 'Carpeta';
+  const items=[], subcategories=[];
+  const listEl = folderEl.querySelector('.org-folder-items');
+  if (listEl) {
+    listEl.querySelectorAll(':scope > .org-item').forEach(item=>items.push(item.dataset.filename));
+    listEl.querySelectorAll(':scope > .org-folder').forEach(sub=>subcategories.push(serializeFolder(sub)));
+  }
+  return {id:catId, name, items, subcategories};
+}
+function serializeTree(section) {
+  const meta = section==='docs' ? DOCS_META : XLAN_META;
+  const result = JSON.parse(JSON.stringify(meta));
+  const rootList = document.getElementById(`root-${section}`);
+  const rootItems = [];
+  if (rootList) rootList.querySelectorAll(':scope > .org-item').forEach(item=>rootItems.push(item.dataset.filename));
+  const foldersContainer = document.getElementById(`folders-${section}`);
+  const categories = [];
+  if (foldersContainer) foldersContainer.querySelectorAll(':scope > .org-folder').forEach(f=>categories.push(serializeFolder(f)));
+  result.categories = categories;
+  result._uncategorized = rootItems;
+  return result;
+}
+async function saveTree(section) {
+  const data = serializeTree(section);
   const res = await fetch(`/api/projects/${PROJECT_ID}/${section}/metadata`, {
-    method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(parsed)
+    method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
   });
   if (res.ok) { alert('Estructura guardada'); window.location.reload(); }
   else { alert('Error al guardar'); }
 }
 
-function showError(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.classList.remove('hidden');
-}
-
-// Drag-and-drop on upload modal
-const dz = document.getElementById('drop-zone');
-if (dz) {
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('border-ink-500','bg-ink-50'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('border-ink-500','bg-ink-50'));
-  dz.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('border-ink-500','bg-ink-50');
-    const f = e.dataTransfer.files[0];
-    if (f) {
-      const inp = document.getElementById('file-input');
-      const dt = new DataTransfer(); dt.items.add(f); inp.files = dt.files;
-      onFileSelect(inp);
-    }
-  });
-}
+// ── Init tag filter bars from server data ────────────────────────
+(function initTagBars() {
+  const dAvail = DOCS_META.available_tags || [];
+  const xAvail = XLAN_META.available_tags || [];
+  if (dAvail.length) renderTagFilterBar('docs', dAvail);
+  if (xAvail.length) renderTagFilterBar('translates', xAvail);
+})();
 </script>
 {% endblock %}
