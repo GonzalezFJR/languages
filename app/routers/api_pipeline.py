@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Request
 from pydantic import BaseModel
 from typing import Optional
 
@@ -15,8 +15,9 @@ class TranslateRequest(BaseModel):
 
 
 @router.post("/{project_id}/pipeline/translate")
-async def run_pipeline(project_id: str, body: TranslateRequest):
-    meta = load_metadata(project_id)
+async def run_pipeline(request: Request, project_id: str, body: TranslateRequest):
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
     if not meta:
         raise HTTPException(404, "Proyecto no encontrado")
 
@@ -27,6 +28,7 @@ async def run_pipeline(project_id: str, body: TranslateRequest):
         description=body.description,
         text_language=meta["target"],
         notes_language=meta["base"],
+        user_dir=ud,
     )
     return {
         "ok": True,
@@ -39,12 +41,14 @@ async def run_pipeline(project_id: str, body: TranslateRequest):
 
 @router.post("/{project_id}/pipeline/translate-file")
 async def run_pipeline_from_file(
+    request: Request,
     project_id: str,
     file: UploadFile = File(...),
     title: str = Form(""),
     description: str = Form(""),
 ):
-    meta = load_metadata(project_id)
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
     if not meta:
         raise HTTPException(404, "Proyecto no encontrado")
 
@@ -63,6 +67,7 @@ async def run_pipeline_from_file(
         description=description,
         text_language=meta["target"],
         notes_language=meta["base"],
+        user_dir=ud,
     )
     return {
         "ok": True,

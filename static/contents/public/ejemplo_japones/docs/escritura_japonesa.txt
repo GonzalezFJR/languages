@@ -1,0 +1,77 @@
+SISTEMAS DE ESCRITURA JAPONESA
+================================
+
+El japonés utiliza tres sistemas de escritura principales, a menudo
+combinados en una misma oración. Además, puede usar rōmaji (letras
+latinas) en contextos modernos.
+
+
+1. HIRAGANA (ひらがな)
+   46 caracteres básicos. Representa sonidos japoneses nativos.
+   Se usa para: partículas, terminaciones verbales, palabras sin kanji.
+
+   あ (a)  い (i)  う (u)  え (e)  お (o)
+   か (ka) き (ki) く (ku) け (ke) こ (ko)
+   さ (sa) し (shi) す (su) せ (se) そ (so)
+   た (ta) ち (chi) つ (tsu) て (te) と (to)
+   な (na) に (ni) ぬ (nu) ね (ne) の (no)
+
+   Ejemplo: わたし は がくせい です。
+   (Watashi wa gakusei desu. = Soy estudiante.)
+
+
+2. KATAKANA (カタカナ)
+   46 caracteres que representan los mismos sonidos que el hiragana.
+   Se usa para: palabras extranjeras, onomatopeyas, énfasis, nombres
+   de plantas/animales en textos científicos.
+
+   ア (a)  イ (i)  ウ (u)  エ (e)  オ (o)
+   カ (ka) キ (ki) ク (ku) ケ (ke) コ (ko)
+   サ (sa) シ (shi) ス (su) セ (se) ソ (so)
+
+   Ejemplo: コーヒー (kōhī) = café (del inglés "coffee")
+            パソコン (pasokon) = ordenador (de "personal computer")
+            テレビ (terebi) = televisión (de "television")
+
+
+3. KANJI (漢字)
+   Caracteres de origen chino. Cada uno tiene significado propio.
+   Suelen tener dos lecturas:
+   - 音読み (on'yomi): lectura de origen chino
+   - 訓読み (kun'yomi): lectura japonesa nativa
+
+   Ejemplos básicos:
+   山 (yama / san) = montaña
+   川 (kawa / sen) = río
+   日 (hi / nichi) = día, sol
+   月 (tsuki / getsu) = luna, mes
+   水 (mizu / sui) = agua
+   火 (hi / ka) = fuego
+   木 (ki / moku) = árbol, madera
+   人 (hito / jin) = persona
+   大 (ōkii / dai) = grande
+   小 (chiisai / shō) = pequeño
+
+   ⚠️ Un kanji puede tener múltiples lecturas según el contexto:
+   日 → にち (nichi) en 日曜日 (nichiyōbi, domingo)
+   日 → ひ (hi) en 今日 (kyō, hoy) — ¡lectura irregular!
+
+
+4. RŌMAJI (ローマ字)
+   Letras latinas. Se usa en señalización, tecnología y para
+   estudiantes que aún no dominan kana/kanji.
+
+   El sistema más común es el Hepburn:
+   し = shi (no "si")
+   ち = chi (no "ti")
+   つ = tsu (no "tu")
+   ふ = fu (no "hu")
+
+
+COMBINACIÓN EN UNA ORACIÓN
+───────────────────────────
+   私はコーヒーを飲みます。
+   ↑kanji ↑hira ↑katakana ↑hira ↑kanji ↑hira
+
+   Watashi wa kōhī wo nomimasu.
+   Yo bebo café.

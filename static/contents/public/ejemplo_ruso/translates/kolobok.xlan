@@ -1,0 +1,365 @@
+{
+  "meta": {
+    "title": "Колобок — El panecillo redondo",
+    "description": "Cuento tradicional ruso sobre un panecillo que cobra vida, escapa rodando y se encuentra con varios animales del bosque. Nivel A2-B1.",
+    "text_language": "ru",
+    "notes_language": "es",
+    "created_at": "2026-01-01T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "Колобок",
+          "translation": "El panecillo redondo (Kolobok)",
+          "info": "Колобок (kolobok) = panecillo redondo, bollo. Viene de коло (kolo) = círculo (raíz eslava antigua). Es un personaje del folclore ruso similar al 'Gingerbread Man' anglosajón.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "Жили-были старик со старухой.",
+          "translation": "Había una vez un viejo y una vieja.",
+          "info": "Жили-были (zhili-byli) = érase una vez (lit. 'vivían-existían'). Es la fórmula de inicio de los cuentos rusos. Старик (starik) = anciano. Старуха (starukha) = anciana. Со = con (variante de с antes de ciertas consonantes).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "Попросил старик старуху:",
+          "translation": "El viejo le pidió a la vieja:",
+          "info": "Попросил (poprosil) = pidió (pasado perfectivo de попросить, poprosit' = pedir). En ruso el orden es flexible: aquí verbo-sujeto-objeto, estilo narrativo.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "«Испеки мне колобок».",
+          "translation": "«Hazme un panecillo».",
+          "info": "Испеки (ispeki) = hornea/haz (imperativo de испечь, ispech' = hornear). Мне (mne) = para mí (dativo de я). Колобок = acusativo (objeto directo). «» son las comillas rusas (ёлочки).",
+          "styles": [
+            "italic"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "Старуха замесила тесто,",
+          "translation": "La vieja amasó la masa,",
+          "info": "Замесила (zamesila) = amasó (pasado fem. de замесить, zamesit' = amasar). Тесто (testo) = masa (para pan). El verbo concuerda en género: замесила (fem.) porque старуха es femenino.",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": " скатала колобок,",
+          "translation": " moldeó un panecillo redondo,",
+          "info": "Скатала (skatala) = enrolló, dio forma redonda (de скатать, skatat'). El prefijo с- indica 'formar enrollando'. Muestra cómo los prefijos verbales rusos cambian el significado base.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "#dbeafe",
+            "highlight_alpha": 0.35,
+            "bold": true,
+            "italic": false,
+            "text_color": "",
+            "comment": ""
+          }
+        },
+        {
+          "id": "p4_s3",
+          "text": " изжарила его в масле",
+          "translation": " lo frió en aceite",
+          "info": "Изжарила (izzharila) = frió completamente (de изжарить, izzharit' = freír del todo). Его (yevo) = lo (acusativo de он). В масле (v masle) = en aceite (preposicional de масло, maslo = aceite/mantequilla).",
+          "styles": []
+        },
+        {
+          "id": "p4_s4",
+          "text": " и положила на окно остудить.",
+          "translation": " y lo puso en la ventana a enfriar.",
+          "info": "Положила (polozhila) = puso (de положить, polozhit'). На окно (na okno) = en la ventana (acusativo, dirección). Остудить (ostudit') = enfriar (infinitivo de propósito). En Rusia se ponían los alimentos en la ventana para enfriar.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "Колобок полежал-полежал,",
+          "translation": "El panecillo estuvo allí un rato,",
+          "info": "Полежал-полежал (polezhal-polezhal) = estuvo tumbado un rato. La repetición del verbo indica duración. Полежать = yacer un rato (по- = un poco + лежать = yacer).",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": " да и покатился с окна на дорожку.",
+          "translation": " y se echó a rodar de la ventana al camino.",
+          "info": "Да и (da i) = y entonces (conector narrativo). Покатился (pokatilsya) = se echó a rodar (reflexivo, prefijo по- = inicio de acción). С окна (s okna) = desde la ventana (genitivo). На дорожку (na dorozhku) = hacia el camino (acusativo, dirección).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "Катится колобок по дорожке,",
+          "translation": "Rueda el panecillo por el camino,",
+          "info": "Катится (katitsya) = rueda (presente narrativo, más vívido que el pasado). По дорожке (po dorozhke) = por el camino (dativo con по = a lo largo de). Дорожка = diminutivo de дорога (camino).",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "text_color": "",
+            "comment": "zxczxc"
+          }
+        },
+        {
+          "id": "p6_s2",
+          "text": " а навстречу ему заяц.",
+          "translation": " y de frente le sale una liebre.",
+          "info": "А (a) = y/pero (conjunción suave). Навстречу (navstrechu) = al encuentro, de frente (preposición + dativo). Ему (yemu) = le / a él (dativo de он). Заяц (zayats) = liebre.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "#fce7f3",
+            "highlight_alpha": 0.35,
+            "bold": true,
+            "italic": false,
+            "text_color": "",
+            "comment": "zxczxc"
+          }
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p7_s1",
+          "text": "«Колобок, колобок, я тебя съем!»",
+          "translation": "«Panecillo, panecillo, ¡te voy a comer!»",
+          "info": "Я тебя съем (ya tebya s'yem) = te comeré / te voy a comer. Съем = futuro perfectivo de съесть (s'yest' = comerse). Тебя = acusativo de ты (tú). Esta frase se repite con cada animal.",
+          "styles": [
+            "italic"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p8_s1",
+          "text": "«Не ешь меня, заяц.",
+          "translation": "«No me comas, liebre.",
+          "info": "Не ешь (ne yesh') = no comas (imperativo negativo de есть, yest' = comer). Меня (menya) = me (acusativo de я). El imperativo negativo en ruso usa не + imperativo.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p8_s2",
+          "text": " Я тебе песенку спою».",
+          "translation": " Te cantaré una cancioncita».",
+          "info": "Тебе (tebe) = te, a ti (dativo). Песенку (pesenku) = cancioncita (diminutivo de песня, pesnya = canción). Спою (spoyu) = cantaré (futuro perfectivo de спеть, spet' = cantar). Los diminutivos son muy frecuentes en ruso.",
+          "styles": [
+            "italic"
+          ],
+          "user_note": {
+            "highlight_color": "",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "text_color": "",
+            "comment": ""
+          }
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p9_s1",
+          "text": "«Я колобок, колобок,",
+          "translation": "«Yo soy el panecillo, panecillo,",
+          "info": "Я колобок = Yo soy el panecillo. En ruso no se usa el verbo 'ser' (быть) en presente. La canción del Kolobok es una de las más reconocibles del folclore ruso infantil.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p9_s2",
+          "text": " по амбару метён, по сусекам скребён,",
+          "translation": " barrido del granero, raspado de los rincones,",
+          "info": "По амбару метён (po ambaru metyón) = barrido del granero. По сусекам скребён (po susekam skrebyón) = raspado de los rincones. Participios pasivos que describen el origen humilde de los ingredientes. Амбар = granero. Сусеки = rincones del cofre de harina.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p9_s3",
+          "text": " на сметане мешён, в печку сажён.",
+          "translation": " amasado con crema agria, horneado en el horno.",
+          "info": "На сметане мешён = amasado con smetana (crema agria rusa, ingrediente básico). В печку сажён = puesto en el horno (печка, pechka = horno ruso tradicional de leña). Todos son participios pasivos cortos.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p9_s4",
+          "text": " Я от дедушки ушёл, я от бабушки ушёл,",
+          "translation": " Escapé del abuelito, escapé de la abuelita,",
+          "info": "Я ушёл (ya ushól) = yo me fui / escapé (pasado de уйти, uytí = irse). От (ot) + genitivo = de (origen/escape). Дедушки, бабушки = formas cariñosas de дед y баба (genitivo). El Kolobok enumera a todos los que ha burlado.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p9_s5",
+          "text": " а от тебя, заяц, и подавно уйду!»",
+          "translation": " ¡y de ti, liebre, con más razón escaparé!»",
+          "info": "И подавно (i podavno) = con más razón, mucho más fácilmente. Уйду (uydu) = me iré (futuro perfectivo de уйти). От тебя = de ti (genitivo). El Kolobok se muestra arrogante y seguro de sí mismo.",
+          "styles": [
+            "italic"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p10_s1",
+          "text": "И покатился дальше.",
+          "translation": "Y siguió rodando.",
+          "info": "И (i) = y. Покатился (pokatilsya) = se echó a rodar. Дальше (dal'she) = más lejos, adelante (comparativo de далеко, daleko = lejos). Fórmula de transición entre encuentros.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p11_s1",
+          "text": "Встретил волка, встретил медведя —",
+          "translation": "Se encontró con el lobo, se encontró con el oso —",
+          "info": "Встретил (vstretil) = se encontró con (pasado de встретить). Волка (volka) = lobo (acusativo de волк). Медведя (medvedya) = oso (acusativo de медведь). El cuento sigue el mismo patrón con cada animal.",
+          "styles": []
+        },
+        {
+          "id": "p11_s2",
+          "text": " от всех убежал.",
+          "translation": " de todos escapó.",
+          "info": "От всех (ot vsekh) = de todos (genitivo plural de все, vse = todos). Убежал (ubezhal) = escapó corriendo (pasado de убежать, ubezhat' = escapar corriendo). Resumen rápido de los encuentros previos.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p12_s1",
+          "text": "А навстречу ему лиса.",
+          "translation": "Y de frente le sale una zorra.",
+          "info": "Лиса (lisa) = zorra. En los cuentos rusos, la zorra (лиса/лисица) es el animal más astuto, equivalente al zorro en las fábulas europeas. El encuentro final siempre es distinto.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p13_s1",
+          "text": "«Какая хорошая песенка!",
+          "translation": "«¡Qué canción tan bonita!",
+          "info": "Какая (kakaya) = qué, cuán (adjetivo exclamativo fem.). Хорошая (khoroshaya) = buena, bonita. Песенка (pesenka) = cancioncita. La zorra usa halagos en vez de amenazas — su estrategia es diferente.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p13_s2",
+          "text": " Сядь ко мне на носок",
+          "translation": " Siéntate en la punta de mi nariz",
+          "info": "Сядь (syad') = siéntate (imperativo de сесть, sest' = sentarse). Ко мне (ko mne) = a mí / hacia mí (variante de к + dativo). На носок (na nosok) = en la punta de la nariz (acusativo, dirección). Носок aquí = punta de la nariz (diminutivo de нос, nos = nariz).",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p13_s3",
+          "text": " и спой ещё разок».",
+          "translation": " y canta otra vez».",
+          "info": "Спой (spoy) = canta (imperativo de спеть). Ещё разок (yeshchó razok) = una vez más (diminutivo de раз, raz = vez). La zorra atrae al Kolobok con su vanidad.",
+          "styles": [
+            "italic"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p14_s1",
+          "text": "Колобок прыгнул лисе на нос",
+          "translation": "El panecillo saltó a la nariz de la zorra",
+          "info": "Прыгнул (prygul) = saltó (pasado de прыгнуть, prygnut' = saltar). Лисе (lise) = a la zorra (dativo). На нос (na nos) = sobre la nariz (acusativo, dirección). El Kolobok cae en la trampa por vanidad.",
+          "styles": []
+        },
+        {
+          "id": "p14_s2",
+          "text": " и запел свою песенку.",
+          "translation": " y se puso a cantar su cancioncita.",
+          "info": "Запел (zapel) = se puso a cantar (pasado de запеть, zapet' = empezar a cantar; prefijo за- = inicio). Свою (svoyu) = su (pronombre posesivo reflexivo, acusativo fem.).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p15_s1",
+          "text": "А лиса — ам! —",
+          "translation": "¡Y la zorra — ñam! —",
+          "info": "Ам! (am!) = ¡ñam! (onomatopeya de morder/comer de un bocado). La acción es instantánea, marcada por los guiones que crean pausa dramática.",
+          "styles": []
+        },
+        {
+          "id": "p15_s2",
+          "text": " и съела колобка.",
+          "translation": " y se comió al panecillo.",
+          "info": "Съела (s'yela) = se comió (pasado fem. perfectivo de съесть, s'yest' = comerse). Колобка (kolobka) = al panecillo (genitivo/acusativo animado, ya que Колобок actúa como ser vivo en el cuento). El final es abrupto y definitivo.",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

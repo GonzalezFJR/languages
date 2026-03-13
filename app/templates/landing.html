@@ -11,9 +11,14 @@
       <a href="/" class="flex items-center gap-2">
         <span class="text-2xl font-bold tracking-tight text-ink-900">Lextor</span>
       </a>
-      <a href="/home" class="px-5 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
-        Comenzar →
-      </a>
+      <div class="flex items-center gap-3">
+        <a href="/login" class="px-5 py-2 border border-ink-200 text-ink-600 text-sm font-medium rounded-full hover:border-ink-400 hover:text-ink-900 transition-colors">
+          Log in
+        </a>
+        <a href="/home" class="px-5 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
+          Haz una prueba →
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -114,15 +119,10 @@
       </div>
 
       <div class="grid md:grid-cols-2 gap-8 mt-8">
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🗂️</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">Formato .xlan abierto</h3>
-          <p class="text-ink-500 leading-relaxed">Tus textos se almacenan en un formato JSON legible. Cada segmento lleva su texto original, traducción y anotaciones gramaticales.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🌍</div>
+        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm md:col-span-2 text-center">
+          <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5 text-2xl mx-auto">🌍</div>
           <h3 class="font-semibold text-ink-900 text-xl mb-2">10 idiomas soportados</h3>
-          <p class="text-ink-500 leading-relaxed">Traduce entre español, inglés, alemán, francés, italiano, portugués, ruso, chino, japonés y árabe en cualquier dirección.</p>
+          <p class="text-ink-500 leading-relaxed max-w-xl mx-auto">Traduce entre español, inglés, alemán, francés, italiano, portugués, ruso, chino, japonés y árabe en cualquier dirección.</p>
         </div>
       </div>
     </div>
@@ -132,10 +132,15 @@
   <section class="py-24 px-6 text-center">
     <div class="max-w-xl mx-auto">
       <h2 class="text-3xl md:text-4xl font-bold text-ink-900 mb-4">¿Listo para traducir y leer?</h2>
-      <p class="text-ink-500 text-lg mb-8">Pega un texto y empieza a leerlo en dos idiomas. Sin registro, sin complicaciones.</p>
-      <a href="/home" class="inline-block px-10 py-4 bg-ink-900 text-white font-bold rounded-full text-lg hover:bg-ink-700 transition-all hover:scale-105 shadow-xl shadow-ink-900/20">
-        Ir a mis proyectos →
-      </a>
+      <p class="text-ink-500 text-lg mb-8">Pega un texto y empieza a leerlo en dos idiomas.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/home" class="inline-block px-10 py-4 bg-ink-900 text-white font-bold rounded-full text-lg hover:bg-ink-700 transition-all hover:scale-105 shadow-xl shadow-ink-900/20">
+          Haz una prueba →
+        </a>
+        <a href="/login" class="inline-block px-10 py-4 border border-ink-200 text-ink-600 font-bold rounded-full text-lg hover:border-ink-400 hover:text-ink-900 transition-all">
+          Log in
+        </a>
+      </div>
     </div>
   </section>
 

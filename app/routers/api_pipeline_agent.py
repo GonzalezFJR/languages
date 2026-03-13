@@ -14,7 +14,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from typing import AsyncGenerator
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -40,9 +40,10 @@ class StartTextRequest(BaseModel):
 # ── Endpoints ────────────────────────────────────────────────────
 
 @router.post("/{project_id}/pipeline/agent-start")
-async def agent_start_text(project_id: str, body: StartTextRequest):
+async def agent_start_text(request: Request, project_id: str, body: StartTextRequest):
     """Start an agent job from pasted text."""
-    meta = load_metadata(project_id)
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
     if not meta:
         raise HTTPException(404, "Proyecto no encontrado")
     if not body.raw_text.strip():
@@ -58,18 +59,21 @@ async def agent_start_text(project_id: str, body: StartTextRequest):
         blocks=blocks,
         title=body.title or "Sin título",
         description=body.description,
+        user_dir=ud,
     )
 
 
 @router.post("/{project_id}/pipeline/agent-start-file")
 async def agent_start_file(
+    request: Request,
     project_id: str,
     file: UploadFile = File(...),
     title: str = Form(""),
     description: str = Form(""),
 ):
     """Start an agent job from an uploaded file (PDF, DOCX, TXT, MD)."""
-    meta = load_metadata(project_id)
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
     if not meta:
         raise HTTPException(404, "Proyecto no encontrado")
 
@@ -95,6 +99,7 @@ async def agent_start_file(
         blocks=blocks,
         title=used_title,
         description=description,
+        user_dir=ud,
     )
 
 
@@ -135,6 +140,7 @@ async def _enqueue_job(
     blocks: list[dict],
     title: str,
     description: str,
+    user_dir: str = "public",
 ) -> dict:
     job_id = str(uuid.uuid4())
     queue: asyncio.Queue = asyncio.Queue()
@@ -148,6 +154,7 @@ async def _enqueue_job(
         description=description,
         text_language=meta.get("target", "en"),
         notes_language=meta.get("base", "es"),
+        user_dir=user_dir,
     )
 
     def _send(msg: dict) -> None:

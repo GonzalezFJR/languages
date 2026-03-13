@@ -35,10 +35,8 @@ logs/
 # Docker
 .docker/
 
-# Uploaded user content (keep example, ignore real user data)
-static/contents/*/
-!static/contents/ejemplo_ingles/
-!static/contents/ejemplo_ingles/**
+# Uploaded user content — track public examples, ignore admin / user data
+static/contents/admin/
 
 # Coverage
 .coverage

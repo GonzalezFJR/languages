@@ -11,10 +11,18 @@
       <a href="/" class="flex items-center gap-2">
         <span class="text-xl font-bold tracking-tight text-ink-900">Lextor</span>
       </a>
-      <button onclick="openCreateModal()" class="px-4 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors flex items-center gap-1.5">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        Nuevo proyecto
-      </button>
+      <div class="flex items-center gap-3">
+        {% if current_user %}
+        <span class="text-sm text-ink-400">{{ current_user }}</span>
+        <a href="/logout" class="text-sm text-ink-500 hover:text-ink-700 transition-colors">Cerrar sesión</a>
+        {% else %}
+        <a href="/login" class="text-sm text-ink-500 hover:text-ink-700 transition-colors">Log in</a>
+        {% endif %}
+        <button onclick="openCreateModal()" class="px-4 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nuevo proyecto
+        </button>
+      </div>
     </div>
   </nav>
 

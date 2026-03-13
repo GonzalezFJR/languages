@@ -1,0 +1,27 @@
+{
+  "categories": [
+    {
+      "id": "cat_gramatica",
+      "name": "Gramática",
+      "subcategories": [],
+      "items": ["casos_rusos.txt", "alfabeto_cirilico.txt"]
+    }
+  ],
+  "available_tags": ["Gramática", "Escritura", "Referencia"],
+  "files": {
+    "casos_rusos.txt": {
+      "name": "casos_rusos.txt",
+      "display_name": "Los 6 Casos del Ruso",
+      "description": "Guía de los seis casos gramaticales rusos con ejemplos y usos.",
+      "tags": ["Gramática", "Referencia"],
+      "uploaded_at": "2026-01-01T00:00:00"
+    },
+    "alfabeto_cirilico.txt": {
+      "name": "alfabeto_cirilico.txt",
+      "display_name": "El Alfabeto Cirílico",
+      "description": "Las 33 letras del alfabeto ruso con pronunciación y ejemplos.",
+      "tags": ["Escritura", "Referencia"],
+      "uploaded_at": "2026-01-01T00:00:00"
+    }
+  }
+}

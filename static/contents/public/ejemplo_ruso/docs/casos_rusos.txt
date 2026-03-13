@@ -1,0 +1,107 @@
+LOS 6 CASOS DEL RUSO
+======================
+
+El ruso tiene seis casos gramaticales que indican la función de
+un sustantivo, adjetivo o pronombre en la oración. Cada caso
+responde a preguntas específicas y cambia la terminación de la palabra.
+
+
+1. NOMINATIVO (Именительный падеж)
+   Pregunta: Кто? Что? (¿Quién? ¿Qué?)
+   Uso: sujeto de la oración, predicado nominal.
+   Es la forma base del diccionario.
+
+   Мама читает книгу.
+   Mamá lee un libro.
+   → "мама" está en nominativo (es el sujeto).
+
+   Это студент.
+   Este es un estudiante.
+   → "студент" en nominativo (predicado nominal).
+
+
+2. GENITIVO (Родительный падеж)
+   Pregunta: Кого? Чего? (¿De quién? ¿De qué?)
+   Uso: posesión, ausencia, cantidad, después de некоторых preposiciones.
+
+   Книга брата.
+   El libro del hermano.
+   → "брата" = genitivo de "брат" (hermano).
+
+   У меня нет машины.
+   No tengo coche.
+   → "машины" = genitivo de "машина" (coche). Нет + genitivo = no tener.
+
+   ⚠️ Muchos números requieren genitivo:
+   Два стола (dos mesas) — genitivo singular.
+   Пять столов (cinco mesas) — genitivo plural.
+
+
+3. DATIVO (Дательный падеж)
+   Pregunta: Кому? Чему? (¿A quién? ¿A qué?)
+   Uso: objeto indirecto, receptor, con ciertos verbos y expresiones.
+
+   Я дал книгу другу.
+   Le di el libro a un amigo.
+   → "другу" = dativo de "друг" (amigo).
+
+   Мне нравится музыка.
+   Me gusta la música.
+   → "мне" = dativo de "я" (yo). Нравится + dativo = gustar.
+
+
+4. ACUSATIVO (Винительный падеж)
+   Pregunta: Кого? Что? (¿A quién? ¿Qué?)
+   Uso: objeto directo, dirección de movimiento.
+
+   Я читаю книгу.
+   Leo un libro.
+   → "книгу" = acusativo de "книга" (libro).
+
+   Я иду в школу.
+   Voy a la escuela.
+   → "школу" = acusativo de "школа" (escuela). В + acusativo = dirección.
+
+   ⚠️ Para sustantivos masculinos inanimados, el acusativo = nominativo.
+      Para animados, el acusativo = genitivo.
+
+
+5. INSTRUMENTAL (Творительный падеж)
+   Pregunta: Кем? Чем? (¿Con quién? ¿Con qué?)
+   Uso: instrumento, compañía, profesión (con быть), después de с.
+
+   Я пишу ручкой.
+   Escribo con un bolígrafo.
+   → "ручкой" = instrumental de "ручка" (bolígrafo).
+
+   Я гуляю с другом.
+   Paseo con un amigo.
+   → "другом" = instrumental de "друг" (amigo). С + instrumental = con.
+
+   Она стала врачом.
+   Ella se hizo médica.
+   → "врачом" = instrumental de "врач" (médico). Стать + instrumental = hacerse.
+
+
+6. PREPOSICIONAL (Предложный падеж)
+   Pregunta: О ком? О чём? Где? (¿De quién? ¿De qué? ¿Dónde?)
+   Uso: siempre con preposición. Ubicación (в, на), tema (о/об).
+
+   Я живу в Москве.
+   Vivo en Moscú.
+   → "Москве" = preposicional de "Москва". В + preposicional = ubicación.
+
+   Мы говорим о книге.
+   Hablamos sobre el libro.
+   → "книге" = preposicional de "книга". О + preposicional = sobre/acerca de.
+
+
+RESUMEN DE TERMINACIONES (sustantivos masculinos en -∅/-ь):
+──────────────────────────────────────────────────────────────
+Caso          Singular        Ejemplo (стол = mesa)
+Nominativo    -∅              стол
+Genitivo      -а / -я         стола
+Dativo        -у / -ю         столу
+Acusativo     = nom. o gen.   стол (inanimado)
+Instrumental  -ом / -ем       столом
+Preposicional -е              столе

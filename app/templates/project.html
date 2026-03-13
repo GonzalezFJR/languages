@@ -24,14 +24,14 @@
     </div>
   </nav>
 
-  <main class="max-w-6xl mx-auto px-6 py-10">
+  <main class="max-w-6xl mx-auto px-6 py-10 flex flex-col">
 
-    <!-- Section: Documentación -->
-    <section class="mb-14" id="sec-docs">
+    <!-- Section: Otros documentos -->
+    <section id="sec-docs" class="order-last">
       <div class="flex flex-wrap items-center gap-3 mb-3">
         <div class="flex-1">
-          <h2 class="text-xl font-bold text-ink-900">Documentación</h2>
-          <p class="text-sm text-ink-400 mt-0.5">Gramáticas, guías y material de referencia.</p>
+          <h2 class="text-xl font-bold text-ink-900">Otros documentos</h2>
+          <p class="text-sm text-ink-400 mt-0.5">Documentación de apoyo.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="openTagManagerModal('docs')" class="px-3 py-1.5 border border-ink-200 text-ink-500 text-xs font-medium rounded-full hover:border-ink-400 hover:text-ink-700 transition-colors">🏷 Etiquetas</button>
@@ -61,7 +61,6 @@
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
                 {% if finfo.description %}<div class="text-xs text-ink-400 mt-0.5 truncate">{{ finfo.description }}</div>{% endif %}
-                <div class="text-xs text-ink-300 mt-1">{{ fname }}</div>
               </div>
             </div>
           </a>
@@ -99,7 +98,7 @@
     </section>
 
     <!-- Section: Textos Interactivos -->
-    <section id="sec-translates">
+    <section id="sec-translates" class="order-first mb-14">
       <div class="flex flex-wrap items-center gap-3 mb-3">
         <div class="flex-1">
           <h2 class="text-xl font-bold text-ink-900">Textos interactivos</h2>
@@ -131,12 +130,10 @@
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
                 {% if finfo.description %}<div class="text-xs text-ink-400 mt-0.5 line-clamp-2">{{ finfo.description }}</div>{% endif %}
-                <div class="text-xs text-ink-300 mt-1">{{ fname }}</div>
               </div>
             </div>
           </a>
           <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
-            <span class="text-xs bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full">.xlan</span>
             {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
             <button onclick="openFileTagModal('translates','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
             <button onclick="openFileSettingsModal('translates','{{ fname }}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
@@ -262,7 +259,7 @@
       <div class="flex items-center gap-3 mb-5">
         <div id="trans-spinner" class="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin flex-shrink-0"></div>
         <div>
-          <h2 class="text-base font-bold text-ink-900" id="trans-proc-title">Generando .xlan con IA…</h2>
+          <h2 class="text-base font-bold text-ink-900" id="trans-proc-title">Generando texto con IA…</h2>
           <p class="text-xs text-ink-400">Esto puede tardar entre 30 segundos y varios minutos según la longitud del texto.</p>
         </div>
       </div>
@@ -446,7 +443,7 @@ function closeTranslateModal() {
   document.getElementById('trans-proc-error').classList.add('hidden');
   document.getElementById('trans-progress-log').innerHTML = '';
   document.getElementById('trans-spinner').classList.remove('hidden');
-  document.getElementById('trans-proc-title').textContent = 'Generando .xlan con IA…';
+  document.getElementById('trans-proc-title').textContent = 'Generando texto con IA…';
 }
 function switchTranslateTab(tab) {
   translateTab = tab;
@@ -538,7 +535,7 @@ async function submitTranslate() {
 }
 function _showTransDone(filename, blocks, segments) {
   document.getElementById('trans-spinner').classList.add('hidden');
-  document.getElementById('trans-proc-title').textContent = '¡.xlan generado!';
+  document.getElementById('trans-proc-title').textContent = '¡Texto generado!';
   document.getElementById('trans-done-msg').textContent =
     `Creado "${filename}" con ${blocks} bloques y ${segments} segmentos.`;
   document.getElementById('trans-done-link').href = `/viewer/${PROJECT_ID}/xlan/${filename}`;
@@ -797,7 +794,6 @@ function renderTreeItem(filename, section) {
   return `<div class="org-item flex items-center gap-2 px-3 py-2 bg-white border border-ink-100 rounded-lg hover:border-ink-300 cursor-grab" data-filename="${filename}">
     <span class="text-ink-200 select-none">⠿</span>
     <span class="text-sm text-ink-700 truncate flex-1">${info.display_name||filename}</span>
-    <span class="text-xs text-ink-300">${filename.endsWith('.xlan')?'.xlan':''}</span>
   </div>`;
 }
 function renderFolder(cat, section, depth=0) {

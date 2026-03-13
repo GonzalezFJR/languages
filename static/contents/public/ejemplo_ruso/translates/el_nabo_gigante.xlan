@@ -1,0 +1,224 @@
+{
+  "meta": {
+    "title": "Репка — El nabo gigante",
+    "description": "Cuento popular ruso acumulativo en el que un abuelo planta un nabo que crece tanto que necesita la ayuda de toda la familia para arrancarlo. Nivel A1-A2.",
+    "text_language": "ru",
+    "notes_language": "es",
+    "created_at": "2026-01-01T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "Репка",
+          "translation": "El nabo",
+          "info": "Репка (repka) = nabo (diminutivo cariñoso de репа, repa). El diminutivo con -ка es muy común en ruso para dar un tono afectuoso o infantil.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "Посадил дед репку.",
+          "translation": "El abuelo plantó un nabo.",
+          "info": "Посадил (posadil) = plantó (pasado de посадить, posadit' = plantar). Дед (ded) = abuelo. Репку (repku) = nabo (acusativo de репка). En ruso el verbo suele ir al inicio en cuentos.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "Выросла репка",
+          "translation": "Creció el nabo",
+          "info": "Выросла (vyrosla) = creció (pasado femenino de вырасти, vyrasti = crecer). El verbo concuerda en género con el sujeto en pasado: выросла (fem.) porque репка es femenino.",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": " большая-пребольшая.",
+          "translation": " muy, pero que muy grande.",
+          "info": "Большая (bol'shaya) = grande (adjetivo fem., concuerda con репка). Пребольшая (prebol'shaya) = grandísima. El prefijo пре- intensifica el adjetivo. La repetición con guion (большая-пребольшая) es un recurso típico de los cuentos rusos.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "Стал дед репку тянуть.",
+          "translation": "El abuelo se puso a arrancar el nabo.",
+          "info": "Стал (stal) = se puso a, empezó a (pasado de стать + infinitivo = empezar a). Тянуть (tyanut') = tirar de, arrancar. Репку = acusativo de репка.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": " Тянет-потянет —",
+          "translation": " Tira que te tira,",
+          "info": "Тянет-потянет (tyanet-potyanet) = tira y tira (presente narrativo). La forma con по- indica esfuerzo repetido. Es una fórmula fija de este cuento, como un estribillo.",
+          "styles": []
+        },
+        {
+          "id": "p3_s3",
+          "text": " вытянуть не может.",
+          "translation": " pero no puede arrancarlo.",
+          "info": "Вытянуть (vytyanut') = sacar, arrancar (perfectivo de тянуть con prefijo вы- = sacar). Не может (ne mozhet) = no puede. El orden «infinitivo + не может» es frecuente en cuentos.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "Позвал дед бабку.",
+          "translation": "El abuelo llamó a la abuela.",
+          "info": "Позвал (pozval) = llamó (pasado de позвать, pozvat' = llamar/convocar). Бабку (babku) = abuela (acusativo de бабка, babka, forma coloquial/cariñosa de бабушка).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "Бабка за дедку,",
+          "translation": "La abuela se agarró al abuelo,",
+          "info": "За (za) + acusativo = agarrarse a / detrás de. Дедку (dedku) = abuelo (acusativo del diminutivo дедка). Esta estructura «X за Y» se repite como un estribillo acumulativo.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": " дедка за репку.",
+          "translation": " el abuelo al nabo.",
+          "info": "La cadena crece: cada personaje nuevo se agarra al anterior. Estructura repetitiva típica de los cuentos acumulativos (cuentos en cadena).",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": " Тянут-потянут —",
+          "translation": " Tiran que te tiran,",
+          "info": "Тянут-потянут (tyanut-potyanut) = tiran y tiran (tercera persona plural). Ahora son dos personas tirando, por eso el verbo está en plural.",
+          "styles": []
+        },
+        {
+          "id": "p5_s4",
+          "text": " вытянуть не могут.",
+          "translation": " pero no pueden arrancarlo.",
+          "info": "Не могут (ne mogut) = no pueden (3a persona plural de мочь, moch' = poder). El cuento repite esta fórmula en cada intento fallido.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "Позвала бабка внучку.",
+          "translation": "La abuela llamó a la nieta.",
+          "info": "Позвала (pozvala) = llamó (fem., concuerda con бабка). Внучку (vnuchku) = nieta (acusativo de внучка, vnuchka). Cada nuevo párrafo introduce un nuevo ayudante.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p7_s1",
+          "text": "Внучка за бабку, бабка за дедку, дедка за репку.",
+          "translation": "La nieta se agarró a la abuela, la abuela al abuelo, el abuelo al nabo.",
+          "info": "La cadena crece con cada personaje. Este patrón acumulativo es el corazón del cuento y ayuda a memorizar vocabulario y estructuras por repetición.",
+          "styles": []
+        },
+        {
+          "id": "p7_s2",
+          "text": " Тянут-потянут — вытянуть не могут.",
+          "translation": " Tiran que te tiran, pero no pueden arrancarlo.",
+          "info": "El estribillo se repite idéntico. En ruso la repetición en cuentos populares tiene un ritmo casi poético.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p8_s1",
+          "text": "Позвала внучка Жучку.",
+          "translation": "La nieta llamó a Zhuchka (la perrita).",
+          "info": "Жучка (Zhuchka) = nombre típico para un perro en cuentos rusos (diminutivo de жук, zhuk = escarabajo, por el color oscuro). Es femenino.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p9_s1",
+          "text": "Позвала Жучка кошку.",
+          "translation": "Zhuchka llamó a la gata.",
+          "info": "Кошку (koshku) = gata (acusativo de кошка, koshka = gata). La cadena sigue creciendo: nabo → abuelo → abuela → nieta → perrita → gata.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p10_s1",
+          "text": "Позвала кошка мышку.",
+          "translation": "La gata llamó al ratoncito.",
+          "info": "Мышку (myshku) = ratoncito (acusativo del diminutivo мышка, myshka, de мышь, mysh' = ratón). El ratón es el último y más pequeño ayudante.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p11_s1",
+          "text": "Мышка за кошку, кошка за Жучку, Жучка за внучку, внучка за бабку, бабка за дедку, дедка за репку.",
+          "translation": "El ratoncito se agarró a la gata, la gata a la perrita, la perrita a la nieta, la nieta a la abuela, la abuela al abuelo, el abuelo al nabo.",
+          "info": "La cadena completa. Seis participantes. Cada nombre está en acusativo (tras за). Esta enumeración larga es el clímax del cuento.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p12_s1",
+          "text": "Тянут-потянут —",
+          "translation": "Tiran que te tiran...",
+          "info": "El estribillo una última vez. La tensión narrativa está en si esta vez lo lograrán.",
+          "styles": []
+        },
+        {
+          "id": "p12_s2",
+          "text": " вытянули репку!",
+          "translation": " ¡y arrancaron el nabo!",
+          "info": "Вытянули (vytyanuli) = arrancaron (pasado plural perfectivo). ¡Por fin el verbo cambia a perfectivo! La acción se completa. El cambio de не могут a вытянули marca el final feliz.",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

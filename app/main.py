@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from pathlib import Path
 
 from app.config import settings
+from app.auth import get_user_content_dir, get_current_user
 from app.routers import pages, api_projects, api_documents, api_pipeline, api_pipeline_agent
 
 app = FastAPI(
@@ -18,7 +20,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-Path("static/contents").mkdir(parents=True, exist_ok=True)
+
+class UserScopeMiddleware(BaseHTTPMiddleware):
+    """Injects user_dir and current_user into request.state for every request."""
+    async def dispatch(self, request: Request, call_next):
+        request.state.user_dir = get_user_content_dir(request)
+        request.state.current_user = get_current_user(request)
+        response = await call_next(request)
+        return response
+
+
+app.add_middleware(UserScopeMiddleware)
+
+Path("static/contents/public").mkdir(parents=True, exist_ok=True)
+Path("static/contents/admin").mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

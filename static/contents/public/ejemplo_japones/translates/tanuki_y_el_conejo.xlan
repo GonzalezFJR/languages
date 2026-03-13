@@ -1,0 +1,273 @@
+{
+  "meta": {
+    "title": "たぬきとうさぎ — El Tanuki y el Conejo",
+    "description": "Fábula tradicional japonesa en la que el conejo astuto castiga al tanuki por su mal comportamiento. Nivel N4-N3.",
+    "text_language": "ja",
+    "notes_language": "es",
+    "created_at": "2026-01-01T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "たぬきとうさぎ",
+          "translation": "El tanuki y el conejo",
+          "info": "たぬき (tanuki) = perro mapache japonés, animal del folclore frecuentemente travieso. うさぎ (usagi) = conejo. と (to) = y (partícula conjuntiva).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "むかし、",
+          "translation": "Hace mucho tiempo,",
+          "info": "むかし (mukashi) = hace mucho tiempo, antiguamente. Versión abreviada de むかしむかし.",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": "ある山に",
+          "translation": "en cierta montaña",
+          "info": "ある (aru) = cierto/a (adjetivo prenominal). 山 (yama) = montaña. に (ni) = partícula de ubicación.",
+          "styles": []
+        },
+        {
+          "id": "p1_s3",
+          "text": "おじいさんとおばあさんが",
+          "translation": "un anciano y una anciana",
+          "info": "おじいさん (ojiisan) = anciano/abuelo. おばあさん (obaasan) = anciana/abuela. と (to) = y. が (ga) = partícula de sujeto.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "underline": true,
+            "underline_color": "#3b82f6",
+            "text_color": "",
+            "comment": ""
+          }
+        },
+        {
+          "id": "p1_s4",
+          "text": "住んでいました。",
+          "translation": "vivían.",
+          "info": "住んでいました (sunde imashita) = vivían (forma continua pasada educada de 住む, sumu = vivir).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "ある日、",
+          "translation": "Un día,",
+          "info": "ある日 (aru hi) = un día, cierto día. Expresión temporal muy común para iniciar un nuevo episodio en una narración.",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": "わるいたぬきが",
+          "translation": "un tanuki malvado",
+          "info": "わるい (warui) = malo, malvado. たぬき (tanuki) = perro mapache. が (ga) = partícula de sujeto. En el folclore japonés, los tanuki suelen ser traviesos o engañosos.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "underline": true,
+            "underline_color": "#ef4444",
+            "text_color": "",
+            "comment": ""
+          }
+        },
+        {
+          "id": "p2_s3",
+          "text": "おばあさんの畑を",
+          "translation": "estropeó el huerto",
+          "info": "おばあさんの (obaasan no) = de la anciana (posesivo). 畑 (hatake) = huerto, campo de cultivo. を (wo) = partícula de objeto directo.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "#fce7f3",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "underline": false,
+            "underline_color": "#f59e0b",
+            "text_color": "",
+            "comment": ""
+          }
+        },
+        {
+          "id": "p2_s4",
+          "text": "荒らしました。",
+          "translation": "de la anciana.",
+          "info": "荒らしました (arashimashita) = devastó, estropeó (pasado educado de 荒らす, arasu = devastar). Indica una acción destructiva completada.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "おじいさんはたぬきを捕まえて、",
+          "translation": "El anciano atrapó al tanuki,",
+          "info": "捕まえて (tsukamaete) = atrapando (forma -te de 捕まえる, tsukamaeru = atrapar). La forma -te conecta acciones secuenciales.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "underline": false,
+            "underline_color": "#f59e0b",
+            "text_color": "",
+            "comment": ""
+          }
+        },
+        {
+          "id": "p3_s2",
+          "text": "木にしばりました。",
+          "translation": "y lo ató a un árbol.",
+          "info": "木 (ki) = árbol. に (ni) = a (destino de la acción). しばりました (shibarimashita) = ató (pasado de しばる, shibaru = atar).",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "#d1fae5",
+            "highlight_alpha": 0.35,
+            "bold": false,
+            "italic": false,
+            "underline": false,
+            "underline_color": "#f59e0b",
+            "text_color": "",
+            "comment": ""
+          }
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "しかし、",
+          "translation": "Sin embargo,",
+          "info": "しかし (shikashi) = sin embargo, pero. Conjunción formal que introduce un contraste. Menos coloquial que でも (demo).",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": "たぬきはおばあさんをだまして",
+          "translation": "el tanuki engañó a la anciana",
+          "info": "だまして (damashite) = engañando (forma -te de だます, damasu = engañar). おばあさんを = la anciana como objeto del engaño.",
+          "styles": [],
+          "user_note": {
+            "highlight_color": "",
+            "highlight_alpha": 0.35,
+            "bold": true,
+            "italic": false,
+            "underline": true,
+            "underline_color": "#f59e0b",
+            "text_color": "",
+            "comment": ""
+          }
+        },
+        {
+          "id": "p4_s3",
+          "text": "逃げてしまいました。",
+          "translation": "y escapó.",
+          "info": "逃げて (nigete) = escapando (forma -te de 逃げる, nigeru = escapar). しまいました (shimaimashita) = completó la acción (auxiliar que indica que algo se completó, a menudo con matiz de arrepentimiento).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "山のうさぎはこれを聞いて、",
+          "translation": "El conejo de la montaña oyó esto,",
+          "info": "山の (yama no) = de la montaña (posesivo). うさぎ (usagi) = conejo. これ (kore) = esto. 聞いて (kiite) = habiendo oído (forma -te de 聞く, kiku = oír/escuchar).",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": "おじいさんとおばあさんのために",
+          "translation": "y por el bien del anciano y la anciana",
+          "info": "のために (no tame ni) = por/para (partícula compuesta de propósito/beneficio). Indica que la acción se hace en beneficio de alguien.",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": "たぬきをこらしめることにしました。",
+          "translation": "decidió castigar al tanuki.",
+          "info": "こらしめる (korashimeru) = castigar, escarmentar. ことにしました (koto ni shimashita) = decidió hacer (expresión de decisión deliberada: verbo + ことにする).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "うさぎはたぬきを山にさそいました。",
+          "translation": "El conejo invitó al tanuki a la montaña.",
+          "info": "さそいました (sasoimashita) = invitó (pasado de さそう, sasou = invitar). 山に (yama ni) = a la montaña (dirección).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p7_s1",
+          "text": "「たきぎを集めに行こう」",
+          "translation": "«Vamos a recoger leña»",
+          "info": "たきぎ (takigi) = leña. 集めに (atsume ni) = para recoger (propósito). 行こう (ikou) = vamos (forma volitiva de 行く, iku = ir). Las 「」son comillas japonesas.",
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "id": "p7_s2",
+          "text": "とうさぎは言いました。",
+          "translation": "dijo el conejo.",
+          "info": "と (to) = partícula de cita (introduce lo dicho). 言いました (iimashita) = dijo (pasado educado de 言う, iu = decir).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p8_s1",
+          "text": "たぬきが背中にたきぎを背負うと、",
+          "translation": "Cuando el tanuki cargó la leña a su espalda,",
+          "info": "背中 (senaka) = espalda. 背負う (seou) = cargar en la espalda. と (to) = cuando (conector temporal). に (ni) = en (ubicación).",
+          "styles": []
+        },
+        {
+          "id": "p8_s2",
+          "text": "うさぎはこっそり火をつけました。",
+          "translation": "el conejo le prendió fuego a escondidas.",
+          "info": "こっそり (kossori) = a escondidas, sigilosamente (adverbio). 火をつけました (hi wo tsukemashita) = prendió fuego (火 = fuego, つける = encender/poner).",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

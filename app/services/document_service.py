@@ -11,52 +11,52 @@ from app.services.project_service import get_project_path
 ALLOWED_DOC_EXTENSIONS = {".pdf", ".txt", ".doc", ".docx", ".md"}
 
 
-def load_section_metadata(project_id: str, section: str) -> dict:
-    meta_path = get_project_path(project_id) / section / "metadata.json"
+def load_section_metadata(project_id: str, section: str, user_dir: str = "public") -> dict:
+    meta_path = get_project_path(project_id, user_dir) / section / "metadata.json"
     if not meta_path.exists():
         return {"categories": [], "files": {}}
     with open(meta_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def save_section_metadata(project_id: str, section: str, data: dict):
-    meta_path = get_project_path(project_id) / section / "metadata.json"
+def save_section_metadata(project_id: str, section: str, data: dict, user_dir: str = "public"):
+    meta_path = get_project_path(project_id, user_dir) / section / "metadata.json"
     with open(meta_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def list_docs(project_id: str) -> dict:
-    return load_section_metadata(project_id, "docs")
+def list_docs(project_id: str, user_dir: str = "public") -> dict:
+    return load_section_metadata(project_id, "docs", user_dir)
 
 
-def list_translates(project_id: str) -> dict:
-    return load_section_metadata(project_id, "translates")
+def list_translates(project_id: str, user_dir: str = "public") -> dict:
+    return load_section_metadata(project_id, "translates", user_dir)
 
 
-def update_file_meta(project_id: str, section: str, filename: str, updates: dict) -> dict:
-    meta = load_section_metadata(project_id, section)
+def update_file_meta(project_id: str, section: str, filename: str, updates: dict, user_dir: str = "public") -> dict:
+    meta = load_section_metadata(project_id, section, user_dir)
     if filename not in meta.get("files", {}):
         raise ValueError(f"Archivo no encontrado: {filename}")
     for key in ("display_name", "description", "tags"):
         if key in updates:
             meta["files"][filename][key] = updates[key]
-    save_section_metadata(project_id, section, meta)
+    save_section_metadata(project_id, section, meta, user_dir)
     return meta["files"][filename]
 
 
-def update_available_tags(project_id: str, section: str, tags: list) -> list:
-    meta = load_section_metadata(project_id, section)
+def update_available_tags(project_id: str, section: str, tags: list, user_dir: str = "public") -> list:
+    meta = load_section_metadata(project_id, section, user_dir)
     meta["available_tags"] = tags
-    save_section_metadata(project_id, section, meta)
+    save_section_metadata(project_id, section, meta, user_dir)
     return tags
 
 
-def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_name: str = "", description: str = "", tags: Optional[list] = None) -> dict:
+def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_name: str = "", description: str = "", tags: Optional[list] = None, user_dir: str = "public") -> dict:
     suffix = Path(filename).suffix.lower()
     if suffix not in ALLOWED_DOC_EXTENSIONS:
         raise ValueError(f"Extensión no permitida: {suffix}")
 
-    docs_path = get_project_path(project_id) / "docs"
+    docs_path = get_project_path(project_id, user_dir) / "docs"
     dest = docs_path / filename
 
     safe_name = filename
@@ -70,7 +70,7 @@ def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_na
     with open(dest, "wb") as f:
         f.write(content)
 
-    meta = load_section_metadata(project_id, "docs")
+    meta = load_section_metadata(project_id, "docs", user_dir)
     meta["files"][safe_name] = {
         "name": safe_name,
         "display_name": display_name or Path(safe_name).stem,
@@ -78,34 +78,34 @@ def save_uploaded_doc(project_id: str, filename: str, content: bytes, display_na
         "tags": tags or [],
         "uploaded_at": datetime.utcnow().isoformat(),
     }
-    save_section_metadata(project_id, "docs", meta)
+    save_section_metadata(project_id, "docs", meta, user_dir)
     return meta["files"][safe_name]
 
 
-def delete_doc(project_id: str, filename: str):
-    docs_path = get_project_path(project_id) / "docs"
+def delete_doc(project_id: str, filename: str, user_dir: str = "public"):
+    docs_path = get_project_path(project_id, user_dir) / "docs"
     target = docs_path / filename
     if target.exists():
         target.unlink()
-    meta = load_section_metadata(project_id, "docs")
+    meta = load_section_metadata(project_id, "docs", user_dir)
     meta["files"].pop(filename, None)
     meta["categories"] = _remove_file_from_categories(meta["categories"], filename)
-    save_section_metadata(project_id, "docs", meta)
+    save_section_metadata(project_id, "docs", meta, user_dir)
 
 
-def delete_translate(project_id: str, filename: str):
-    translates_path = get_project_path(project_id) / "translates"
+def delete_translate(project_id: str, filename: str, user_dir: str = "public"):
+    translates_path = get_project_path(project_id, user_dir) / "translates"
     target = translates_path / filename
     if target.exists():
         target.unlink()
-    meta = load_section_metadata(project_id, "translates")
+    meta = load_section_metadata(project_id, "translates", user_dir)
     meta["files"].pop(filename, None)
     meta["categories"] = _remove_file_from_categories(meta["categories"], filename)
-    save_section_metadata(project_id, "translates", meta)
+    save_section_metadata(project_id, "translates", meta, user_dir)
 
 
-def update_section_metadata(project_id: str, section: str, data: dict):
-    save_section_metadata(project_id, section, data)
+def update_section_metadata(project_id: str, section: str, data: dict, user_dir: str = "public"):
+    save_section_metadata(project_id, section, data, user_dir)
 
 
 def _remove_file_from_categories(categories: list, filename: str) -> list:
@@ -117,11 +117,11 @@ def _remove_file_from_categories(categories: list, filename: str) -> list:
     return result
 
 
-def get_doc_path(project_id: str, filename: str) -> Optional[Path]:
-    p = get_project_path(project_id) / "docs" / filename
+def get_doc_path(project_id: str, filename: str, user_dir: str = "public") -> Optional[Path]:
+    p = get_project_path(project_id, user_dir) / "docs" / filename
     return p if p.exists() else None
 
 
-def get_translate_path(project_id: str, filename: str) -> Optional[Path]:
-    p = get_project_path(project_id) / "translates" / filename
+def get_translate_path(project_id: str, filename: str, user_dir: str = "public") -> Optional[Path]:
+    p = get_project_path(project_id, user_dir) / "translates" / filename
     return p if p.exists() else None

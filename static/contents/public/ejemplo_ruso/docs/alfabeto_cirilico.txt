@@ -1,0 +1,62 @@
+EL ALFABETO CIRÍLICO RUSO
+===========================
+
+El ruso utiliza el alfabeto cirílico, que consta de 33 letras.
+Algunas se parecen a las latinas pero pueden sonar distinto.
+
+
+LETRAS VOCALES (10)
+─────────────────────
+А а  [a]     como la "a" española. Ejemplo: мама (mamá)
+Е е  [ye]    como "ye". Ejemplo: нет (no)
+Ё ё  [yo]    como "yo". Siempre acentuada. Ejemplo: ёж (erizo)
+И и  [i]     como la "i" española. Ejemplo: книга (libro)
+О о  [o]     como "o" (acentuada) o reducida a [a] (átona). Ejemplo: молоко (leche)
+У у  [u]     como la "u" española. Ejemplo: утро (mañana)
+Ы ы  [ɨ]     sin equivalente español. Entre "i" y "u". Ejemplo: мы (nosotros)
+Э э  [e]     como "e" abierta. Ejemplo: это (esto)
+Ю ю  [yu]    como "yu". Ejemplo: юг (sur)
+Я я  [ya]    como "ya". Ejemplo: яблоко (manzana)
+
+
+LETRAS CONSONANTES (21)
+─────────────────────────
+Б б  [b]     como "b". Ejemplo: брат (hermano)
+В в  [v]     como "v". ¡No confundir con B latina! Ejemplo: вода (agua)
+Г г  [g]     como "g" en "gato". Ejemplo: город (ciudad)
+Д д  [d]     como "d". Ejemplo: дом (casa)
+Ж ж  [ʐ]     como "j" francesa en "je". Ejemplo: жизнь (vida)
+З з  [z]     como "z" inglesa. Ejemplo: зима (invierno)
+К к  [k]     como "k/c". Ejemplo: кот (gato)
+Л л  [l]     como "l". Ejemplo: луна (luna)
+М м  [m]     como "m". Ejemplo: мир (mundo/paz)
+Н н  [n]     como "n". ¡No confundir con H latina! Ejemplo: нос (nariz)
+П п  [p]     como "p". Ejemplo: парк (parque)
+Р р  [r]     como "r" española (vibrante). ¡No confundir con P latina! Ejemplo: рука (mano)
+С с  [s]     como "s". ¡No confundir con C latina! Ejemplo: солнце (sol)
+Т т  [t]     como "t". Ejemplo: там (allí)
+Ф ф  [f]     como "f". Ejemplo: фото (foto)
+Х х  [x]     como "j" española. Ejemplo: хлеб (pan)
+Ц ц  [ts]    como "ts". Ejemplo: цена (precio)
+Ч ч  [tɕ]    como "ch" española. Ejemplo: час (hora)
+Ш ш  [ʂ]     como "sh" inglesa. Ejemplo: школа (escuela)
+Щ щ  [ɕː]    "sh" larga y suave. Ejemplo: щенок (cachorro)
+
+
+SIGNOS (2)
+───────────
+Ъ ъ  signo duro — separa consonante de vocal yotizada.
+                   Ejemplo: объект (objeto)
+Ь ь  signo blando — suaviza (palataliza) la consonante anterior.
+                     Ejemplo: мать (madre)
+
+
+⚠️ FALSOS AMIGOS GRÁFICOS
+──────────────────────────
+Letra rusa  →  Parece  →  Pero suena
+В в           B b         [v]
+Н н           H h         [n]
+Р р           P p         [r]
+С с           C c         [s]
+У у           Y y         [u]
+Х х           X x         [j] española

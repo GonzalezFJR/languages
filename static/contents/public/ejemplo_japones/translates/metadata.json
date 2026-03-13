@@ -1,0 +1,27 @@
+{
+  "categories": [
+    {
+      "id": "cat_cuentos",
+      "name": "Cuentos y relatos",
+      "subcategories": [],
+      "items": ["momotaro.xlan", "tanuki_y_el_conejo.xlan"]
+    }
+  ],
+  "available_tags": ["Cuento", "Clásico", "N5-N4", "N4-N3"],
+  "files": {
+    "momotaro.xlan": {
+      "name": "momotaro.xlan",
+      "display_name": "Momotarō — El chico del melocotón",
+      "description": "Cuento popular japonés sobre un niño nacido de un melocotón. Nivel N5-N4.",
+      "tags": ["Cuento", "Clásico", "N5-N4"],
+      "created_at": "2026-01-01T00:00:00"
+    },
+    "tanuki_y_el_conejo.xlan": {
+      "name": "tanuki_y_el_conejo.xlan",
+      "display_name": "El Tanuki y el Conejo",
+      "description": "Fábula tradicional japonesa sobre la astucia del conejo. Nivel N4-N3.",
+      "tags": ["Cuento", "Clásico", "N4-N3"],
+      "created_at": "2026-01-01T00:00:00"
+    }
+  }
+}

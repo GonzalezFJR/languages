@@ -3,13 +3,17 @@ from pathlib import Path
 
 
 class Settings(BaseSettings):
-    app_name: str = "Xlan Language Platform"
+    app_name: str = "Lextor"
     app_env: str = "development"
     debug: bool = True
     secret_key: str = "change-me-in-production"
     host: str = "0.0.0.0"
     port: int = 8000
     contents_dir: str = "static/contents"
+
+    # Admin credentials
+    admin_user: str = "admin"
+    admin_password: str = "admin"
 
     # LLM pipeline
     llm_provider: str = "openai"          # openai | anthropic | google | ...

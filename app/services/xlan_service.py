@@ -8,22 +8,22 @@ from app.services.project_service import get_project_path
 from app.services.document_service import load_section_metadata, save_section_metadata
 
 
-def load_xlan(project_id: str, filename: str) -> Optional[dict]:
-    xlan_path = get_project_path(project_id) / "translates" / filename
+def load_xlan(project_id: str, filename: str, user_dir: str = "public") -> Optional[dict]:
+    xlan_path = get_project_path(project_id, user_dir) / "translates" / filename
     if not xlan_path.exists():
         return None
     with open(xlan_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def save_xlan(project_id: str, filename: str, data: dict):
-    xlan_path = get_project_path(project_id) / "translates" / filename
+def save_xlan(project_id: str, filename: str, data: dict, user_dir: str = "public"):
+    xlan_path = get_project_path(project_id, user_dir) / "translates" / filename
     with open(xlan_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def register_xlan_in_metadata(project_id: str, filename: str, display_name: str, description: str, tags: list = None):
-    meta = load_section_metadata(project_id, "translates")
+def register_xlan_in_metadata(project_id: str, filename: str, display_name: str, description: str, tags: list = None, user_dir: str = "public"):
+    meta = load_section_metadata(project_id, "translates", user_dir)
     meta["files"][filename] = {
         "name": filename,
         "display_name": display_name,
@@ -31,11 +31,11 @@ def register_xlan_in_metadata(project_id: str, filename: str, display_name: str,
         "tags": tags or [],
         "created_at": datetime.utcnow().isoformat(),
     }
-    save_section_metadata(project_id, "translates", meta)
+    save_section_metadata(project_id, "translates", meta, user_dir)
 
 
-def update_block_note(project_id: str, filename: str, block_index: int, note: dict) -> dict:
-    xlan = load_xlan(project_id, filename)
+def update_block_note(project_id: str, filename: str, block_index: int, note: dict, user_dir: str = "public") -> dict:
+    xlan = load_xlan(project_id, filename, user_dir)
     if not xlan:
         raise ValueError(f"Archivo no encontrado: {filename}")
     blocks = xlan.get("content", [])
@@ -46,12 +46,12 @@ def update_block_note(project_id: str, filename: str, block_index: int, note: di
     else:
         blocks[block_index]["user_note"] = note
     xlan["content"] = blocks
-    save_xlan(project_id, filename, xlan)
+    save_xlan(project_id, filename, xlan, user_dir)
     return blocks[block_index].get("user_note", {})
 
 
-def update_segment_note(project_id: str, filename: str, block_index: int, seg_id: str, note: Optional[dict]) -> dict:
-    xlan = load_xlan(project_id, filename)
+def update_segment_note(project_id: str, filename: str, block_index: int, seg_id: str, note: Optional[dict], user_dir: str = "public") -> dict:
+    xlan = load_xlan(project_id, filename, user_dir)
     if not xlan:
         raise ValueError(f"Archivo no encontrado: {filename}")
     blocks = xlan.get("content", [])
@@ -70,14 +70,14 @@ def update_segment_note(project_id: str, filename: str, block_index: int, seg_id
     if not found:
         raise ValueError(f"Segmento no encontrado: {seg_id}")
     xlan["content"] = blocks
-    save_xlan(project_id, filename, xlan)
+    save_xlan(project_id, filename, xlan, user_dir)
     target = next((s for s in segs if s.get("id") == seg_id), {})
     return target.get("user_note", {})
 
 
-def update_xlan_file_meta(project_id: str, filename: str, updates: dict) -> dict:
+def update_xlan_file_meta(project_id: str, filename: str, updates: dict, user_dir: str = "public") -> dict:
     from app.services.document_service import update_file_meta
-    return update_file_meta(project_id, "translates", filename, updates)
+    return update_file_meta(project_id, "translates", filename, updates, user_dir)
 
 
 def pipeline_text_to_xlan(
@@ -87,6 +87,7 @@ def pipeline_text_to_xlan(
     description: str,
     text_language: str,
     notes_language: str,
+    user_dir: str = "public",
 ) -> dict:
     """
     Pipeline placeholder: converts raw text into .xlan format.
@@ -133,7 +134,7 @@ def pipeline_text_to_xlan(
         "content": content,
     }
 
-    translates_path = get_project_path(project_id) / "translates"
+    translates_path = get_project_path(project_id, user_dir) / "translates"
     dest = translates_path / filename
     counter = 1
     while dest.exists():
@@ -141,8 +142,8 @@ def pipeline_text_to_xlan(
         dest = translates_path / filename
         counter += 1
 
-    save_xlan(project_id, filename, xlan_data)
-    register_xlan_in_metadata(project_id, filename, title, description)
+    save_xlan(project_id, filename, xlan_data, user_dir)
+    register_xlan_in_metadata(project_id, filename, title, description, user_dir=user_dir)
 
     return {"filename": filename, "xlan": xlan_data}
 

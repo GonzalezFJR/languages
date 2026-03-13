@@ -1,0 +1,27 @@
+{
+  "categories": [
+    {
+      "id": "cat_gramatica",
+      "name": "Gramática",
+      "subcategories": [],
+      "items": ["particulas_basicas.txt", "escritura_japonesa.txt"]
+    }
+  ],
+  "available_tags": ["Gramática", "Escritura", "Referencia"],
+  "files": {
+    "particulas_basicas.txt": {
+      "name": "particulas_basicas.txt",
+      "display_name": "Partículas Básicas del Japonés",
+      "description": "Guía de las partículas más importantes: は, が, を, に, で, と, も, の.",
+      "tags": ["Gramática", "Referencia"],
+      "uploaded_at": "2026-01-01T00:00:00"
+    },
+    "escritura_japonesa.txt": {
+      "name": "escritura_japonesa.txt",
+      "display_name": "Sistemas de Escritura Japonesa",
+      "description": "Introducción a Hiragana, Katakana y Kanji con ejemplos.",
+      "tags": ["Escritura", "Referencia"],
+      "uploaded_at": "2026-01-01T00:00:00"
+    }
+  }
+}

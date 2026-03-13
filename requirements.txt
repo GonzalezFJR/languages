@@ -6,6 +6,7 @@ aiofiles==23.2.1
 pydantic==2.6.1
 pydantic-settings==2.2.1
 python-dotenv==1.0.1
+itsdangerous>=2.2.0
 
 # Text extraction
 pypdf>=4.1.0

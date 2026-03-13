@@ -1,0 +1,7 @@
+{
+  "id": "ejemplo_ruso",
+  "name": "Documentos en ruso",
+  "base": "es",
+  "target": "ru",
+  "created_at": "2026-01-01T00:00:00"
+}

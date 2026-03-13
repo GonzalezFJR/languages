@@ -1,0 +1,103 @@
+PARTÍCULAS BÁSICAS DEL JAPONÉS
+================================
+
+Las partículas (助詞, joshi) son palabras cortas que se colocan después
+de sustantivos, verbos u otras palabras para indicar su función
+gramatical en la oración. Son fundamentales en japonés.
+
+
+1. は (wa) — Partícula de tema
+   Marca el TEMA de la oración (de qué se está hablando).
+   No confundir con el hiragana は (ha); como partícula se pronuncia "wa".
+
+   私は学生です。
+   Watashi wa gakusei desu.
+   Yo soy estudiante. (lit. "En cuanto a mí, soy estudiante")
+
+   ⚠️ No confundir con が (ga). は marca el tema; が marca el sujeto gramatical.
+
+
+2. が (ga) — Partícula de sujeto
+   Marca el SUJETO de la oración, especialmente en oraciones nuevas
+   o para enfatizar quién realiza la acción.
+
+   猫がいます。
+   Neko ga imasu.
+   Hay un gato. (El gato existe/está aquí)
+
+   誰が来ましたか？
+   Dare ga kimashita ka?
+   ¿Quién vino?
+
+
+3. を (wo/o) — Partícula de objeto directo
+   Marca el OBJETO DIRECTO del verbo (lo que recibe la acción).
+   Se pronuncia "o" aunque se escribe を.
+
+   本を読みます。
+   Hon wo yomimasu.
+   Leo un libro. (lit. "Libro [obj] leo")
+
+   水を飲みます。
+   Mizu wo nomimasu.
+   Bebo agua.
+
+
+4. に (ni) — Partícula de dirección/ubicación/tiempo
+   Indica destino, ubicación, momento en el tiempo, o receptor.
+
+   学校に行きます。
+   Gakkou ni ikimasu.
+   Voy a la escuela. (dirección)
+
+   東京に住んでいます。
+   Toukyou ni sunde imasu.
+   Vivo en Tokio. (ubicación)
+
+   七時に起きます。
+   Shichi-ji ni okimasu.
+   Me levanto a las siete. (tiempo)
+
+
+5. で (de) — Partícula de medio/lugar de acción
+   Indica el LUGAR donde ocurre una acción o el MEDIO/instrumento.
+
+   図書館で勉強します。
+   Toshokan de benkyou shimasu.
+   Estudio en la biblioteca. (lugar de la acción)
+
+   箸で食べます。
+   Hashi de tabemasu.
+   Como con palillos. (instrumento)
+
+
+6. と (to) — Partícula de compañía / enumeración
+   Significa "con" (compañía) o "y" (unir elementos).
+
+   友達と映画を見ます。
+   Tomodachi to eiga wo mimasu.
+   Veo una película con un amigo.
+
+   犬と猫がいます。
+   Inu to neko ga imasu.
+   Hay un perro y un gato.
+
+
+7. も (mo) — Partícula de "también"
+   Reemplaza a は, が o を para indicar "también".
+
+   私も学生です。
+   Watashi mo gakusei desu.
+   Yo también soy estudiante.
+
+
+8. の (no) — Partícula posesiva / de conexión
+   Indica posesión o relación entre sustantivos (como "de" en español).
+
+   私の本
+   Watashi no hon
+   Mi libro (lit. "libro de mí")
+
+   日本の文化
+   Nihon no bunka
+   La cultura de Japón

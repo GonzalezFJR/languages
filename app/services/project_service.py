@@ -20,32 +20,33 @@ SUPPORTED_LANGUAGES = {
 }
 
 
-def get_project_path(project_id: str) -> Path:
-    return settings.contents_path / project_id
+def get_project_path(project_id: str, user_dir: str = "public") -> Path:
+    return settings.contents_path / user_dir / project_id
 
 
-def load_metadata(project_id: str) -> Optional[dict]:
-    meta_path = get_project_path(project_id) / "metadata.json"
+def load_metadata(project_id: str, user_dir: str = "public") -> Optional[dict]:
+    meta_path = get_project_path(project_id, user_dir) / "metadata.json"
     if not meta_path.exists():
         return None
     with open(meta_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def save_metadata(project_id: str, data: dict):
-    meta_path = get_project_path(project_id) / "metadata.json"
+def save_metadata(project_id: str, data: dict, user_dir: str = "public"):
+    meta_path = get_project_path(project_id, user_dir) / "metadata.json"
     with open(meta_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def list_projects() -> list[dict]:
-    base = settings.contents_path
+def list_projects(user_dir: str = "public") -> list[dict]:
+    base = settings.contents_path / user_dir
     if not base.exists():
+        base.mkdir(parents=True, exist_ok=True)
         return []
     projects = []
     for folder in sorted(base.iterdir()):
         if folder.is_dir():
-            meta = load_metadata(folder.name)
+            meta = load_metadata(folder.name, user_dir)
             if meta:
                 doc_count = _count_files(folder / "docs")
                 xlan_count = _count_files(folder / "translates", ext=".xlan")
@@ -63,9 +64,9 @@ def _count_files(path: Path, ext: Optional[str] = None) -> int:
     return len([f for f in path.iterdir() if f.is_file()])
 
 
-def create_project(name: str, base: str, target: str) -> dict:
+def create_project(name: str, base: str, target: str, user_dir: str = "public") -> dict:
     slug = _slugify(name)
-    project_path = settings.contents_path / slug
+    project_path = settings.contents_path / user_dir / slug
 
     if project_path.exists():
         raise ValueError(f"Ya existe un proyecto con ese nombre: '{slug}'")
@@ -89,12 +90,12 @@ def create_project(name: str, base: str, target: str) -> dict:
         "target": target,
         "created_at": datetime.utcnow().isoformat(),
     }
-    save_metadata(slug, metadata)
+    save_metadata(slug, metadata, user_dir)
     return metadata
 
 
-def delete_project(project_id: str):
-    project_path = get_project_path(project_id)
+def delete_project(project_id: str, user_dir: str = "public"):
+    project_path = get_project_path(project_id, user_dir)
     if not project_path.exists():
         raise ValueError(f"Proyecto no encontrado: '{project_id}'")
     shutil.rmtree(project_path)

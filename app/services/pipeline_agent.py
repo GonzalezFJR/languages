@@ -136,12 +136,14 @@ class XlanSession:
         description: str,
         text_language: str,
         notes_language: str,
+        user_dir: str = "public",
     ):
         self.project_id = project_id
         self.title = title
         self.description = description
         self.text_language = text_language
         self.notes_language = notes_language
+        self.user_dir = user_dir
         self.content: list[dict] = []
         self.seg_counter = 0
         self.on_progress: Optional[Callable[[str], None]] = None
@@ -250,7 +252,7 @@ class XlanSession:
         """Write the .xlan file and register it in section metadata. Returns filename."""
         slug = _slugify(self.title)
         filename = f"{slug}.xlan"
-        translates_path = get_project_path(self.project_id) / "translates"
+        translates_path = get_project_path(self.project_id, self.user_dir) / "translates"
         translates_path.mkdir(parents=True, exist_ok=True)
 
         dest = translates_path / filename
@@ -270,9 +272,9 @@ class XlanSession:
             },
             "content": self.content,
         }
-        save_xlan(self.project_id, filename, xlan_data)
+        save_xlan(self.project_id, filename, xlan_data, self.user_dir)
         register_xlan_in_metadata(
-            self.project_id, filename, self.title, self.description
+            self.project_id, filename, self.title, self.description, self.user_dir
         )
         self._emit(f"💾 Saved as: {filename}")
         return filename
