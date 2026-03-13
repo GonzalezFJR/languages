@@ -9,8 +9,7 @@
   <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-ink-100">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
-        <span class="text-2xl font-bold tracking-tight text-ink-900">xlan</span>
-        <span class="text-xs font-medium text-ink-400 uppercase tracking-widest mt-1">languages</span>
+        <span class="text-2xl font-bold tracking-tight text-ink-900">Lextor</span>
       </a>
       <a href="/home" class="px-5 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
         Comenzar →
@@ -23,23 +22,23 @@
     <div class="max-w-3xl mx-auto">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-ink-50 border border-ink-100 rounded-full text-xs text-ink-500 font-medium mb-8">
         <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-        Lectura interactiva · Traducción contextual · Tu ritmo
+        Traducción de textos · Lectura bilingüe simultánea · A tu ritmo
       </div>
 
       <h1 class="text-5xl md:text-7xl font-bold leading-tight text-ink-950 mb-6">
-        Aprende idiomas<br />
-        <span class="text-ink-400">leyendo de verdad</span>
+        Traduce textos y<br />
+        <span class="text-ink-400">léelos en dos idiomas</span>
       </h1>
 
       <p class="text-lg md:text-xl text-ink-500 leading-relaxed mb-10 max-w-2xl mx-auto">
-        Sube textos en el idioma que estudias. Organiza tu material.
-        Lee con traducción instantánea al pasar el ratón: palabra por palabra,
-        frase por frase, con contexto y explicaciones gramaticales.
+        Pega cualquier texto y obtén una traducción segmentada con notas gramaticales.
+        Lee en dos idiomas a la vez: pasa el ratón sobre cada fragmento para ver su traducción
+        y explicación, o alterna entre la vista bilingüe y la lectura continua.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <a href="/home" class="px-8 py-3.5 bg-ink-900 text-white font-semibold rounded-full text-base hover:bg-ink-700 transition-all hover:scale-105 shadow-lg shadow-ink-900/10">
-          Crear mi primer proyecto
+          Empezar a traducir
         </a>
         <a href="#how" class="px-8 py-3.5 border border-ink-200 text-ink-600 font-semibold rounded-full text-base hover:border-ink-400 hover:text-ink-900 transition-all">
           Cómo funciona
@@ -47,28 +46,43 @@
       </div>
     </div>
 
-    <!-- Floating demo card -->
-    <div class="mt-20 max-w-2xl w-full mx-auto">
-      <div class="bg-ink-50 rounded-2xl border border-ink-100 p-8 text-left shadow-xl shadow-ink-100/50 font-serif text-lg leading-loose text-ink-700">
-        <p class="text-xs font-sans font-medium text-ink-400 uppercase tracking-widest mb-4">Vista previa — texto interactivo</p>
-        <p>
-          <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="Era — pretérito imperfecto de 'to be'. Describe un estado en el pasado.">It was</span>
-          <span> </span>
-          <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="una noche — sustantivo femenino. 'A night' en inglés no tiene género gramatical.">a night</span>
-          <span> </span>
-          <span class="xlan-demo-seg xlan-demo-active px-0.5 rounded cursor-default" data-tip="oscura y tormentosa — dos adjetivos coordinados. En inglés el adjetivo precede siempre al sustantivo: 'a dark and stormy night'.">dark and stormy</span>
-          <span> when </span>
-          <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="el pequeño príncipe — sujeto de la oración. 'Little' = pequeño; 'prince' = príncipe.">the little prince</span>
-          <span> </span>
-          <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="llegó — pasado simple de 'to arrive'. Verbo irregular: arrive → arrived (regular en este caso).">arrived</span>
-          <span> on my planet.</span>
-        </p>
+    <!-- Floating demo card — bilingual side by side -->
+    <div class="mt-20 max-w-3xl w-full mx-auto">
+      <div class="bg-ink-50 rounded-2xl border border-ink-100 p-8 text-left shadow-xl shadow-ink-100/50">
+        <p class="text-xs font-sans font-medium text-ink-400 uppercase tracking-widest mb-5">Vista previa — lectura bilingüe simultánea</p>
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Original column -->
+          <div>
+            <p class="text-xs font-sans font-semibold text-blue-500 uppercase tracking-widest mb-3">🇬🇧 Texto original</p>
+            <div class="font-serif text-lg leading-loose text-ink-700">
+              <p>
+                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="Era — pretérito imperfecto de 'to be'.">It was</span>
+                <span> </span>
+                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="una noche — sustantivo.">a night</span>
+                <span> </span>
+                <span class="xlan-demo-seg xlan-demo-active px-0.5 rounded cursor-default" data-tip="oscura y tormentosa — adjetivos coordinados.">dark and stormy</span>
+                <span> when </span>
+                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="el pequeño príncipe — sujeto.">the little prince</span>
+                <span> </span>
+                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="llegó — pasado simple de 'to arrive'.">arrived</span>
+                <span> on my planet.</span>
+              </p>
+            </div>
+          </div>
+          <!-- Translation column -->
+          <div>
+            <p class="text-xs font-sans font-semibold text-amber-600 uppercase tracking-widest mb-3">🇪🇸 Traducción</p>
+            <div class="font-serif text-lg leading-loose text-ink-500">
+              <p>Era una noche oscura y tormentosa cuando el pequeño príncipe llegó a mi planeta.</p>
+            </div>
+          </div>
+        </div>
         <!-- Tooltip demo -->
-        <div class="mt-4 inline-flex items-start gap-3 bg-white border border-ink-200 rounded-xl px-4 py-3 text-sm shadow-md">
+        <div class="mt-5 inline-flex items-start gap-3 bg-white border border-ink-200 rounded-xl px-4 py-3 text-sm shadow-md">
           <div>
             <div class="font-sans font-semibold text-ink-900 mb-0.5">dark and stormy</div>
             <div class="text-ink-500 font-sans">→ <span class="text-ink-800">oscura y tormentosa</span></div>
-            <div class="text-xs text-ink-400 font-sans mt-1">Dos adjetivos coordinados que modifican 'night'. En inglés el adjetivo precede siempre al sustantivo.</div>
+            <div class="text-xs text-ink-400 font-sans mt-1">Dos adjetivos coordinados. En inglés el adjetivo precede siempre al sustantivo: <em>a dark and stormy night</em>.</div>
           </div>
         </div>
       </div>
@@ -78,24 +92,24 @@
   <!-- Features -->
   <section id="how" class="py-24 px-6 bg-ink-50 border-t border-ink-100">
     <div class="max-w-5xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-center text-ink-900 mb-4">Todo lo que necesitas para aprender</h2>
-      <p class="text-center text-ink-500 mb-16 text-lg">Un entorno completo para organizar y leer en tu idioma objetivo.</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-ink-900 mb-4">Traducción y lectura en dos idiomas</h2>
+      <p class="text-center text-ink-500 mb-16 text-lg">Todo lo que necesitas para leer textos traducidos de forma interactiva.</p>
 
       <div class="grid md:grid-cols-3 gap-8">
         <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5 text-2xl">📚</div>
+          <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🔄</div>
+          <h3 class="font-semibold text-ink-900 text-xl mb-2">Traducción automática</h3>
+          <p class="text-ink-500 leading-relaxed">Pega un texto en cualquier idioma y la IA lo segmenta, traduce y anota automáticamente para que puedas leerlo de forma bilingüe.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
+          <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-5 text-2xl">📖</div>
+          <h3 class="font-semibold text-ink-900 text-xl mb-2">Lectura bilingüe simultánea</h3>
+          <p class="text-ink-500 leading-relaxed">Lee el texto original y su traducción al mismo tiempo. Pasa el ratón sobre cualquier segmento para ver la traducción y una explicación gramatical.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
+          <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-5 text-2xl">📚</div>
           <h3 class="font-semibold text-ink-900 text-xl mb-2">Proyectos organizados</h3>
-          <p class="text-ink-500 leading-relaxed">Crea un proyecto por idioma. Organiza tu documentación y textos en categorías anidadas a tu medida.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🔍</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">Lectura con contexto</h3>
-          <p class="text-ink-500 leading-relaxed">Pasa el ratón sobre cualquier segmento del texto y obtén su traducción y una explicación gramatical al instante.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-5 text-2xl">⚡</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">Pipeline de traducción</h3>
-          <p class="text-ink-500 leading-relaxed">Pega un texto en tu idioma base y el sistema lo procesa automáticamente al formato <code class="text-xs bg-ink-100 px-1 rounded">.xlan</code> interactivo.</p>
+          <p class="text-ink-500 leading-relaxed">Organiza tus textos traducidos en proyectos por idioma. Añade documentación de referencia, etiquetas y categorías.</p>
         </div>
       </div>
 
@@ -103,12 +117,12 @@
         <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
           <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🗂️</div>
           <h3 class="font-semibold text-ink-900 text-xl mb-2">Formato .xlan abierto</h3>
-          <p class="text-ink-500 leading-relaxed">Tus textos se almacenan en un formato JSON legible. Cada segmento lleva su texto original, traducción y anotaciones.</p>
+          <p class="text-ink-500 leading-relaxed">Tus textos se almacenan en un formato JSON legible. Cada segmento lleva su texto original, traducción y anotaciones gramaticales.</p>
         </div>
         <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
           <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🌍</div>
           <h3 class="font-semibold text-ink-900 text-xl mb-2">10 idiomas soportados</h3>
-          <p class="text-ink-500 leading-relaxed">Inglés, alemán, francés, italiano, portugués, ruso, chino, japonés, árabe y español como idioma base o objetivo.</p>
+          <p class="text-ink-500 leading-relaxed">Traduce entre español, inglés, alemán, francés, italiano, portugués, ruso, chino, japonés y árabe en cualquier dirección.</p>
         </div>
       </div>
     </div>
@@ -117,8 +131,8 @@
   <!-- CTA -->
   <section class="py-24 px-6 text-center">
     <div class="max-w-xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-ink-900 mb-4">¿Listo para empezar?</h2>
-      <p class="text-ink-500 text-lg mb-8">Crea tu primer proyecto en segundos. Sin registro, sin complicaciones.</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-ink-900 mb-4">¿Listo para traducir y leer?</h2>
+      <p class="text-ink-500 text-lg mb-8">Pega un texto y empieza a leerlo en dos idiomas. Sin registro, sin complicaciones.</p>
       <a href="/home" class="inline-block px-10 py-4 bg-ink-900 text-white font-bold rounded-full text-lg hover:bg-ink-700 transition-all hover:scale-105 shadow-xl shadow-ink-900/20">
         Ir a mis proyectos →
       </a>
@@ -127,7 +141,7 @@
 
   <!-- Footer -->
   <footer class="py-8 px-6 border-t border-ink-100 text-center text-sm text-ink-400">
-    <span class="font-bold text-ink-600">xlan</span> languages — plataforma de lectura interactiva
+    <span class="font-bold text-ink-600">Lextor</span> — plataforma de traducción y lectura bilingüe
   </footer>
 
 </div>

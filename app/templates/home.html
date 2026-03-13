@@ -9,8 +9,7 @@
   <nav class="bg-white border-b border-ink-100 sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
-        <span class="text-xl font-bold tracking-tight text-ink-900">xlan</span>
-        <span class="text-xs font-medium text-ink-400 uppercase tracking-widest">languages</span>
+        <span class="text-xl font-bold tracking-tight text-ink-900">Lextor</span>
       </a>
       <button onclick="openCreateModal()" class="px-4 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors flex items-center gap-1.5">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -52,7 +51,9 @@
         </a>
         <div class="border-t border-ink-50 px-6 py-3 bg-ink-50/50 flex justify-between items-center">
           <span class="text-xs text-ink-400">{{ p.created_at[:10] if p.created_at else '' }}</span>
-          <button onclick="confirmDelete('{{ p.id }}', '{{ p.name }}')" class="text-xs text-red-400 hover:text-red-600 transition-colors">Eliminar</button>
+          <button onclick="event.preventDefault(); event.stopPropagation(); openSettingsModal('{{ p.id }}', '{{ p.name }}', '{{ p.base }}', '{{ p.target }}')" class="text-ink-300 hover:text-ink-600 transition-colors" title="Configuración del proyecto">
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+          </button>
         </div>
       </div>
       {% endfor %}
@@ -112,16 +113,61 @@
   </div>
 </div>
 
-<!-- Delete confirm -->
-<div id="delete-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
-  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10 text-center">
-    <div class="text-4xl mb-4">🗑️</div>
-    <h2 class="text-lg font-bold text-ink-900 mb-2">Eliminar proyecto</h2>
-    <p class="text-ink-500 text-sm mb-6">¿Seguro que quieres eliminar <strong id="delete-name"></strong>? Esta acción no se puede deshacer.</p>
-    <div class="flex gap-3">
-      <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
-      <button id="delete-confirm-btn" class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors">Eliminar</button>
+<!-- Project Settings Modal -->
+<div id="settings-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
+    <h2 class="text-xl font-bold text-ink-900 mb-6">Configuración del proyecto</h2>
+    <form id="settings-form" onsubmit="submitSettings(event)">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Título del proyecto</label>
+        <input id="settings-name" type="text" required
+          class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-ink-900 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div>
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Idioma base</label>
+          <select id="settings-base" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-ink-900 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400">
+            {% for code, name in languages.items() %}
+            <option value="{{ code }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Idioma objetivo</label>
+          <select id="settings-target" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-ink-900 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400">
+            {% for code, name in languages.items() %}
+            <option value="{{ code }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div id="settings-error" class="text-red-500 text-sm mb-4 hidden"></div>
+      <div class="flex gap-3 mb-6">
+        <button type="button" onclick="closeSettingsModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">
+          Cancelar
+        </button>
+        <button type="submit" id="settings-btn" class="flex-1 px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">
+          Guardar cambios
+        </button>
+      </div>
+    </form>
+    <!-- Delete zone -->
+    <div class="border-t border-ink-100 pt-5">
+      <div id="delete-zone-normal">
+        <p class="text-sm text-ink-500 mb-3">Zona peligrosa</p>
+        <button onclick="showDeleteConfirm()" class="w-full px-4 py-2.5 border border-red-200 text-red-500 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Eliminar proyecto
+        </button>
+      </div>
+      <div id="delete-zone-confirm" class="hidden">
+        <p class="text-sm text-red-600 font-medium mb-3">¿Estás seguro? Esta acción no se puede deshacer.</p>
+        <div class="flex gap-3">
+          <button onclick="hideDeleteConfirm()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button id="delete-confirm-final" class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors">Sí, eliminar</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -179,20 +225,71 @@
   }
 
   let deleteTarget = null;
-  function confirmDelete(id, name) {
-    deleteTarget = id;
-    document.getElementById('delete-name').textContent = name;
-    document.getElementById('delete-modal').classList.remove('hidden');
-    document.getElementById('delete-modal').classList.add('flex');
+  let settingsTarget = null;
+
+  function openSettingsModal(id, name, base, target) {
+    settingsTarget = id;
+    document.getElementById('settings-name').value = name;
+    document.getElementById('settings-base').value = base;
+    document.getElementById('settings-target').value = target;
+    document.getElementById('settings-error').classList.add('hidden');
+    hideDeleteConfirm();
+    document.getElementById('settings-modal').classList.remove('hidden');
+    document.getElementById('settings-modal').classList.add('flex');
   }
-  function closeDeleteModal() {
-    document.getElementById('delete-modal').classList.add('hidden');
-    document.getElementById('delete-modal').classList.remove('flex');
-    deleteTarget = null;
+  function closeSettingsModal() {
+    document.getElementById('settings-modal').classList.add('hidden');
+    document.getElementById('settings-modal').classList.remove('flex');
+    settingsTarget = null;
+    hideDeleteConfirm();
   }
-  document.getElementById('delete-confirm-btn').onclick = async () => {
-    if (!deleteTarget) return;
-    await fetch(`/api/projects/${deleteTarget}`, {method: 'DELETE'});
+  async function submitSettings(e) {
+    e.preventDefault();
+    const btn = document.getElementById('settings-btn');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+    const errEl = document.getElementById('settings-error');
+    errEl.classList.add('hidden');
+
+    const body = {
+      name: document.getElementById('settings-name').value.trim(),
+      base: document.getElementById('settings-base').value,
+      target: document.getElementById('settings-target').value,
+    };
+
+    try {
+      const res = await fetch(`/api/projects/${settingsTarget}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errEl.textContent = data.detail || 'Error al guardar';
+        errEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Guardar cambios';
+        return;
+      }
+      window.location.reload();
+    } catch (err) {
+      errEl.textContent = 'Error de conexión';
+      errEl.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Guardar cambios';
+    }
+  }
+  function showDeleteConfirm() {
+    document.getElementById('delete-zone-normal').classList.add('hidden');
+    document.getElementById('delete-zone-confirm').classList.remove('hidden');
+  }
+  function hideDeleteConfirm() {
+    document.getElementById('delete-zone-normal').classList.remove('hidden');
+    document.getElementById('delete-zone-confirm').classList.add('hidden');
+  }
+  document.getElementById('delete-confirm-final').onclick = async () => {
+    if (!settingsTarget) return;
+    await fetch(`/api/projects/${settingsTarget}`, {method: 'DELETE'});
     window.location.reload();
   };
 </script>

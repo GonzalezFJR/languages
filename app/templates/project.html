@@ -12,8 +12,7 @@
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       </a>
       <a href="/" class="flex items-center gap-1.5">
-        <span class="text-xl font-bold tracking-tight text-ink-900">xlan</span>
-        <span class="text-xs font-medium text-ink-400 uppercase tracking-widest">languages</span>
+        <span class="text-xl font-bold tracking-tight text-ink-900">Lextor</span>
       </a>
       <span class="text-ink-200">/</span>
       <span class="text-ink-600 font-medium truncate">{{ project.name }}</span>
@@ -69,7 +68,9 @@
           <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
             {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
             <button onclick="openFileTagModal('docs','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
-            <button onclick="deleteDoc('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 ml-1">Eliminar</button>
+            <button onclick="openFileSettingsModal('docs','{{ fname }}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+            </button>
           </div>
         </div>
         {% endfor %}
@@ -138,7 +139,9 @@
             <span class="text-xs bg-blue-50 text-blue-500 px-2 py-0.5 rounded-full">.xlan</span>
             {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
             <button onclick="openFileTagModal('translates','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
-            <button onclick="deleteTranslate('{{ project.id }}','{{ fname }}')" class="text-xs text-red-400 hover:text-red-600 ml-1">Eliminar</button>
+            <button onclick="openFileSettingsModal('translates','{{ fname }}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+            </button>
           </div>
         </div>
         {% endfor %}
@@ -306,6 +309,59 @@
     <p class="text-xs text-ink-300 mb-5">Haz clic para asignar / quitar. Crea etiquetas desde el botón "🏷 Etiquetas" de la sección.</p>
     <button onclick="saveFileTags()" class="w-full px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
     <button onclick="closeFileTagModal()" class="mt-2 w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+  </div>
+</div>
+
+<!-- File Settings Modal (docs & translates) -->
+<div id="file-settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeFileSettingsModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
+    <h2 class="text-xl font-bold text-ink-900 mb-6">Configuración del archivo</h2>
+    <form id="file-settings-form" onsubmit="submitFileSettings(event)">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Título</label>
+        <input id="fs-display-name" type="text"
+          class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-ink-900 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Descripción</label>
+        <input id="fs-description" type="text" placeholder="Breve descripción"
+          class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-ink-900 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-ink-700 mb-1.5">Etiquetas</label>
+        <div id="fs-tags-container" class="flex flex-wrap gap-2 mb-2 min-h-8"></div>
+        <p class="text-xs text-ink-300">Haz clic en una etiqueta para quitarla. Usa el campo para añadir nuevas.</p>
+        <div class="flex gap-2 mt-2">
+          <input id="fs-new-tag" type="text" placeholder="Nueva etiqueta..."
+            class="flex-1 border border-ink-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addFileSettingsTag();}" />
+          <button type="button" onclick="addFileSettingsTag()" class="px-4 py-2 bg-ink-900 text-white text-sm rounded-xl hover:bg-ink-700 transition-colors">Añadir</button>
+        </div>
+      </div>
+      <div id="fs-error" class="text-red-500 text-sm mb-4 hidden"></div>
+      <div class="flex gap-3 mb-6">
+        <button type="button" onclick="closeFileSettingsModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+        <button type="submit" id="fs-save-btn" class="flex-1 px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar cambios</button>
+      </div>
+    </form>
+    <!-- Delete zone -->
+    <div class="border-t border-ink-100 pt-5">
+      <div id="fs-delete-normal">
+        <p class="text-sm text-ink-500 mb-3">Zona peligrosa</p>
+        <button type="button" onclick="showFsDeleteConfirm()" class="w-full px-4 py-2.5 border border-red-200 text-red-500 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Eliminar archivo
+        </button>
+      </div>
+      <div id="fs-delete-confirm" class="hidden">
+        <p class="text-sm text-red-600 font-medium mb-3">¿Estás seguro? Esta acción no se puede deshacer.</p>
+        <div class="flex gap-3">
+          <button type="button" onclick="hideFsDeleteConfirm()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button type="button" onclick="confirmDeleteFile()" class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
@@ -495,16 +551,106 @@ function _showTransProcError(msg) {
   el.textContent = msg; el.classList.remove('hidden');
 }
 
-// ── Delete ───────────────────────────────────────────────────────
+// ── Delete (used by file settings modal) ─────────────────────────
 async function deleteDoc(pid, fn) {
-  if (!confirm(`¿Eliminar "${fn}"?`)) return;
   await fetch(`/api/projects/${pid}/docs/${fn}`, {method:'DELETE'});
   window.location.reload();
 }
 async function deleteTranslate(pid, fn) {
-  if (!confirm(`¿Eliminar "${fn}"?`)) return;
   await fetch(`/api/projects/${pid}/translates/${fn}`, {method:'DELETE'});
   window.location.reload();
+}
+
+// ── File Settings Modal ──────────────────────────────────────────
+let fsState = {section: null, filename: null, tags: []};
+function openFileSettingsModal(section, filename) {
+  fsState.section = section;
+  fsState.filename = filename;
+  const meta = section === 'docs' ? DOCS_META : XLAN_META;
+  const finfo = (meta.files || {})[filename] || {};
+  fsState.tags = [...(finfo.tags || [])];
+  document.getElementById('fs-display-name').value = finfo.display_name || '';
+  document.getElementById('fs-description').value = finfo.description || '';
+  document.getElementById('fs-error').classList.add('hidden');
+  hideFsDeleteConfirm();
+  renderFsTagsContainer();
+  showModal('file-settings-modal');
+}
+function closeFileSettingsModal() {
+  hideModal('file-settings-modal');
+  fsState = {section: null, filename: null, tags: []};
+}
+function renderFsTagsContainer() {
+  const el = document.getElementById('fs-tags-container');
+  if (!fsState.tags.length) {
+    el.innerHTML = '<span class="text-xs text-ink-300">Sin etiquetas.</span>';
+    return;
+  }
+  el.innerHTML = fsState.tags.map(t =>
+    `<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-full">
+      ${t}
+      <button type="button" onclick="removeFsTag('${t}')" class="text-amber-400 hover:text-red-500 font-bold leading-none">×</button>
+    </span>`
+  ).join('');
+}
+function removeFsTag(tag) {
+  fsState.tags = fsState.tags.filter(t => t !== tag);
+  renderFsTagsContainer();
+}
+function addFileSettingsTag() {
+  const inp = document.getElementById('fs-new-tag');
+  const tag = inp.value.trim();
+  if (!tag || fsState.tags.includes(tag)) return;
+  fsState.tags.push(tag);
+  renderFsTagsContainer();
+  inp.value = '';
+}
+async function submitFileSettings(e) {
+  e.preventDefault();
+  const btn = document.getElementById('fs-save-btn');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  const errEl = document.getElementById('fs-error');
+  errEl.classList.add('hidden');
+  const ep = fsState.section === 'docs'
+    ? `docs/${fsState.filename}/meta`
+    : `translates/${fsState.filename}/meta`;
+  const body = {
+    display_name: document.getElementById('fs-display-name').value.trim(),
+    description: document.getElementById('fs-description').value.trim(),
+    tags: fsState.tags
+  };
+  try {
+    const res = await fetch(`/api/projects/${PROJECT_ID}/${ep}`, {
+      method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(()=>({detail:'Error'}));
+      errEl.textContent = data.detail || 'Error al guardar';
+      errEl.classList.remove('hidden');
+      btn.disabled = false; btn.textContent = 'Guardar cambios';
+      return;
+    }
+    window.location.reload();
+  } catch(err) {
+    errEl.textContent = 'Error de conexión';
+    errEl.classList.remove('hidden');
+    btn.disabled = false; btn.textContent = 'Guardar cambios';
+  }
+}
+function showFsDeleteConfirm() {
+  document.getElementById('fs-delete-normal').classList.add('hidden');
+  document.getElementById('fs-delete-confirm').classList.remove('hidden');
+}
+function hideFsDeleteConfirm() {
+  document.getElementById('fs-delete-normal').classList.remove('hidden');
+  document.getElementById('fs-delete-confirm').classList.add('hidden');
+}
+function confirmDeleteFile() {
+  if (fsState.section === 'docs') {
+    deleteDoc(PROJECT_ID, fsState.filename);
+  } else {
+    deleteTranslate(PROJECT_ID, fsState.filename);
+  }
 }
 
 // ── View toggle (mosaic / tree) ──────────────────────────────────
