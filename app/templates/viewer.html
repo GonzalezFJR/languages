@@ -58,10 +58,28 @@
   }
   /* Block container — structural only, no hover effect */
   .xlan-block { border-radius: 4px; }
-  /* Segment has-note marker */
-  .seg-has-note { border-bottom: 2px solid #f59e0b; }
   /* Segment dblclick hint */
   .xlan-seg { cursor: text; }
+  /* Display settings floating panel */
+  #display-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    z-index: 45;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+  #display-panel.open { transform: translateX(0); }
+  #display-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 44;
+    background: rgba(0,0,0,0.15);
+    display: none;
+  }
+  #display-panel-backdrop.open { display: block; }
   /* Tooltip comment area */
   #tip-comment-wrap { border-top: 1px solid #f0f0f0; padding-top: 6px; margin-top: 6px; }
   #tip-comment-label { font-size: 10px; font-weight: 600; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
@@ -89,12 +107,11 @@
     <span class="text-xs text-ink-300 font-medium uppercase tracking-widest">{{ project.name }}</span>
     <span class="text-ink-200">/</span>
     <span class="text-sm font-medium text-ink-700 truncate flex-1">{{ file_info.display_name or filename }}</span>
-    {% if view_type == 'xlan' %}
-    <span class="text-xs bg-blue-50 text-blue-500 border border-blue-100 px-2 py-0.5 rounded-full flex-shrink-0">.xlan</span>
-    {% endif %}
-    <button onclick="openMetaModal()" class="flex items-center gap-1 px-3 py-1.5 border border-ink-200 text-ink-500 text-xs font-medium rounded-full hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0" title="Editar metadatos">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-      Metadatos
+    <button onclick="openMetaModal()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-ink-200 text-ink-400 hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0" title="Editar archivo">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    </button>
+    <button onclick="toggleDisplayPanel()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-ink-200 text-ink-400 hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0" title="Opciones de visualización">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
     </button>
 
     {% if view_type == 'doc' %}
@@ -235,7 +252,7 @@
                   <h{{ lv }} class="{{ hcls }}">
                     {% for seg in block.segments %}
                       {% set sn = seg.get('user_note') or {} %}
-                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') or sn.get('underline') %}
                       <span class="xlan-seg {% if sh %}seg-has-note{% endif %} {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
                             data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
                             data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
@@ -246,7 +263,7 @@
                   <p class="text-xl leading-loose text-ink-800 mb-5">
                     {% for seg in block.segments %}
                       {% set sn = seg.get('user_note') or {} %}
-                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
+                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') or sn.get('underline') %}
                       <span class="xlan-seg {% if sh %}seg-has-note{% endif %} {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
                             data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
                             data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
@@ -402,8 +419,7 @@
 <div id="meta-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
   <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeMetaModal()"></div>
   <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10">
-    <h2 class="text-xl font-bold text-ink-900 mb-1">Editar metadatos</h2>
-    <p class="text-xs text-ink-400 mb-6" id="meta-modal-fname"></p>
+    <h2 class="text-xl font-bold text-ink-900 mb-6">Editar archivo</h2>
     <div class="mb-4">
       <label class="block text-sm font-medium text-ink-700 mb-1.5">Título para mostrar</label>
       <input id="meta-title" type="text" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400" />
@@ -453,6 +469,21 @@
         <button id="ann-italic" onclick="toggleAnnStyle('italic')" class="px-3 py-1.5 border border-ink-200 rounded-lg text-sm italic transition-colors hover:bg-ink-50"><em>I</em></button>
       </div>
     </div>
+    <!-- Underline -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-ink-700 mb-2">Subrayado</label>
+      <div class="flex items-center gap-3">
+        <button id="ann-underline" onclick="toggleAnnStyle('underline')" class="px-3 py-1.5 border border-ink-200 rounded-lg text-sm transition-colors hover:bg-ink-50" style="text-decoration:underline">U</button>
+        <div class="flex gap-1.5">
+          <button class="ul-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#f59e0b" data-ulcolor="#f59e0b" onclick="setUnderlineColor('#f59e0b')" title="Ámbar"></button>
+          <button class="ul-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#ef4444" data-ulcolor="#ef4444" onclick="setUnderlineColor('#ef4444')" title="Rojo"></button>
+          <button class="ul-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#3b82f6" data-ulcolor="#3b82f6" onclick="setUnderlineColor('#3b82f6')" title="Azul"></button>
+          <button class="ul-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#22c55e" data-ulcolor="#22c55e" onclick="setUnderlineColor('#22c55e')" title="Verde"></button>
+          <button class="ul-preset w-6 h-6 rounded border-2 border-transparent hover:scale-110 transition-transform" style="background:#a855f7" data-ulcolor="#a855f7" onclick="setUnderlineColor('#a855f7')" title="Morado"></button>
+        </div>
+        <input id="ann-ulcolor-custom" type="color" value="#f59e0b" class="w-8 h-8 rounded cursor-pointer border border-ink-200" oninput="setUnderlineColor(this.value)" title="Color personalizado" />
+      </div>
+    </div>
     <!-- Comment -->
     <div class="mb-6">
       <label class="block text-sm font-medium text-ink-700 mb-1.5">Comentario personal</label>
@@ -464,6 +495,75 @@
       <button onclick="closeAnnotatePanel()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
       <button onclick="saveAnnotation()" class="flex-1 px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
     </div>
+  </div>
+</div>
+
+<!-- ════ DISPLAY SETTINGS PANEL (floating right) ════ -->
+<div id="display-panel-backdrop" onclick="toggleDisplayPanel()"></div>
+<div id="display-panel" class="bg-white border-l border-ink-200 shadow-2xl flex flex-col">
+  <div class="px-5 py-4 border-b border-ink-100 flex items-center justify-between">
+    <h3 class="text-sm font-bold text-ink-900">Opciones de visualización</h3>
+    <button onclick="toggleDisplayPanel()" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-400 hover:text-ink-700 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+    <!-- Font family -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Fuente</label>
+      <select id="dp-font" class="w-full border border-ink-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20">
+        <option value="'Lora', Georgia, serif" selected>Lora (serif)</option>
+        <option value="'Inter', sans-serif">Inter (sans-serif)</option>
+        <option value="'Georgia', serif">Georgia</option>
+        <option value="'Courier New', monospace">Courier New (mono)</option>
+        <option value="system-ui, sans-serif">Sistema</option>
+      </select>
+    </div>
+    <!-- Font size -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Tamaño del texto</label>
+      <div class="flex items-center gap-3">
+        <input id="dp-font-size" type="range" min="12" max="32" value="20" step="1" class="flex-1 accent-ink-900" />
+        <span id="dp-font-size-val" class="text-sm text-ink-600 font-medium w-10 text-right">20px</span>
+      </div>
+    </div>
+    <!-- Line height -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Interlineado</label>
+      <div class="flex items-center gap-3">
+        <input id="dp-line-height" type="range" min="1.2" max="3" value="2" step="0.1" class="flex-1 accent-ink-900" />
+        <span id="dp-line-height-val" class="text-sm text-ink-600 font-medium w-10 text-right">2.0</span>
+      </div>
+    </div>
+    <!-- Letter spacing -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Espaciado entre letras</label>
+      <div class="flex items-center gap-3">
+        <input id="dp-letter-spacing" type="range" min="-0.5" max="3" value="0" step="0.1" class="flex-1 accent-ink-900" />
+        <span id="dp-letter-spacing-val" class="text-sm text-ink-600 font-medium w-10 text-right">0px</span>
+      </div>
+    </div>
+    <!-- Max width -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Ancho del texto</label>
+      <div class="flex items-center gap-3">
+        <input id="dp-max-width" type="range" min="400" max="1200" value="672" step="10" class="flex-1 accent-ink-900" />
+        <span id="dp-max-width-val" class="text-sm text-ink-600 font-medium w-12 text-right">672px</span>
+      </div>
+    </div>
+    <!-- Theme quick toggles -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Color de fondo</label>
+      <div class="flex gap-2">
+        <button onclick="setDisplayBg('#ffffff')" class="dp-bg-preset w-8 h-8 rounded-lg border-2 border-ink-200 hover:scale-110 transition-transform" style="background:#ffffff" title="Blanco"></button>
+        <button onclick="setDisplayBg('#fffbeb')" class="dp-bg-preset w-8 h-8 rounded-lg border-2 border-transparent hover:scale-110 transition-transform" style="background:#fffbeb" title="Sepia"></button>
+        <button onclick="setDisplayBg('#f0fdf4')" class="dp-bg-preset w-8 h-8 rounded-lg border-2 border-transparent hover:scale-110 transition-transform" style="background:#f0fdf4" title="Verde claro"></button>
+        <button onclick="setDisplayBg('#f7f7f8')" class="dp-bg-preset w-8 h-8 rounded-lg border-2 border-transparent hover:scale-110 transition-transform" style="background:#f7f7f8" title="Gris"></button>
+      </div>
+    </div>
+  </div>
+  <div class="px-5 py-4 border-t border-ink-100">
+    <button onclick="resetDisplay()" class="w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Restablecer</button>
   </div>
 </div>
 
@@ -543,7 +643,9 @@ document.addEventListener('keydown', e => {
 
 // ── View switcher ────────────────────────────────────────────────
 const VIEWS = ['standard', 'split', 'table'];
+let _currentView = 'standard';
 function setView(name) {
+  _currentView = name;
   VIEWS.forEach(v => {
     const el = document.getElementById('view-' + v);
     const btn = document.getElementById('view-btn-' + v);
@@ -560,6 +662,11 @@ function setView(name) {
   });
   hideTooltip();
 }
+// Restore view from URL hash on load
+(function() {
+  const h = location.hash.replace('#','');
+  if (VIEWS.includes(h)) setView(h);
+})();
 
 // ── Table comments column toggle ─────────────────────────────────
 let _tableCommentsVisible = false;
@@ -623,17 +730,20 @@ function positionTooltip(e) {
 
       this.classList.add('seg-active');
 
-      // In split view: cross-highlight counterpart
-      const ref = this.dataset.segRef;          // right col → left col
+      // Cross-highlight counterpart in split view
+      const ref = this.dataset.segRef;  // right col → left col
       const id  = this.dataset.segId;
       if (ref) {
-        // this is a right-col (tr) element; highlight left col by segId=ref
-        const left = document.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
-        if (left) left.classList.add('seg-cross-active');
-      } else if (id) {
-        // this is a left-col element; highlight right col by segRef=id
-        const right = document.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
-        if (right) right.classList.add('seg-cross-active');
+        // This is a right-col (translation) element; highlight all left-col matches
+        document.querySelectorAll(`.xlan-seg[data-seg-id="${ref}"]`).forEach(el => el.classList.add('seg-cross-active'));
+      }
+      if (id) {
+        // Highlight all right-col counterparts by segRef
+        document.querySelectorAll(`.xlan-seg[data-seg-ref="${id}"]`).forEach(el => el.classList.add('seg-cross-active'));
+        // Also highlight same segId in other views
+        document.querySelectorAll(`.xlan-seg[data-seg-id="${id}"]`).forEach(el => {
+          if (el !== this) el.classList.add('seg-cross-active');
+        });
       }
 
       showTooltip(this, e);
@@ -644,11 +754,11 @@ function positionTooltip(e) {
       this.classList.remove('seg-active','seg-cross-active');
       const ref = this.dataset.segRef, id = this.dataset.segId;
       if (ref) {
-        const left = document.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
-        if (left) left.classList.remove('seg-active','seg-cross-active');
-      } else if (id) {
-        const right = document.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
-        if (right) right.classList.remove('seg-active','seg-cross-active');
+        document.querySelectorAll(`.xlan-seg[data-seg-id="${ref}"]`).forEach(el => el.classList.remove('seg-active','seg-cross-active'));
+      }
+      if (id) {
+        document.querySelectorAll(`.xlan-seg[data-seg-ref="${id}"]`).forEach(el => el.classList.remove('seg-active','seg-cross-active'));
+        document.querySelectorAll(`.xlan-seg[data-seg-id="${id}"]`).forEach(el => el.classList.remove('seg-active','seg-cross-active'));
       }
       hideTooltip();
     });
@@ -689,15 +799,105 @@ function positionTooltip(e) {
       if (note.text_color) css += `color:${note.text_color};`;
       if (note.bold) css += 'font-weight:bold;';
       if (note.italic) css += 'font-style:italic;';
+      if (note.underline) {
+        const ulc = note.underline_color || '#f59e0b';
+        css += `text-decoration:underline;text-decoration-color:${ulc};text-underline-offset:3px;text-decoration-thickness:2px;`;
+      }
       if (css) el.style.cssText = (el.style.cssText || '') + css;
     } catch(_) {}
   });
 })();
 
+// ── Display settings panel ──────────────────────────────────────
+let _displayPanelOpen = false;
+function toggleDisplayPanel() {
+  _displayPanelOpen = !_displayPanelOpen;
+  document.getElementById('display-panel').classList.toggle('open', _displayPanelOpen);
+  document.getElementById('display-panel-backdrop').classList.toggle('open', _displayPanelOpen);
+}
+
+// Real-time preview on input
+['dp-font-size','dp-line-height','dp-letter-spacing','dp-max-width'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => { updateDisplayLabels(); applyDisplay(); });
+});
+const dpFontSel = document.getElementById('dp-font');
+if (dpFontSel) dpFontSel.addEventListener('change', () => applyDisplay());
+
+function updateDisplayLabels() {
+  const fs = document.getElementById('dp-font-size');
+  const lh = document.getElementById('dp-line-height');
+  const ls = document.getElementById('dp-letter-spacing');
+  const mw = document.getElementById('dp-max-width');
+  if (fs) document.getElementById('dp-font-size-val').textContent = fs.value + 'px';
+  if (lh) document.getElementById('dp-line-height-val').textContent = parseFloat(lh.value).toFixed(1);
+  if (ls) document.getElementById('dp-letter-spacing-val').textContent = parseFloat(ls.value).toFixed(1) + 'px';
+  if (mw) document.getElementById('dp-max-width-val').textContent = mw.value + 'px';
+}
+
+function applyDisplay() {
+  const font = document.getElementById('dp-font')?.value || "'Lora', Georgia, serif";
+  const size = document.getElementById('dp-font-size')?.value || '20';
+  const lh   = document.getElementById('dp-line-height')?.value || '2';
+  const ls   = document.getElementById('dp-letter-spacing')?.value || '0';
+  const mw   = document.getElementById('dp-max-width')?.value || '672';
+
+  // Apply to content areas
+  const xlanContent = document.getElementById('xlan-content');
+  if (xlanContent) {
+    xlanContent.style.fontFamily = font;
+    xlanContent.style.letterSpacing = ls + 'px';
+  }
+  // Apply font size and line height to paragraphs and headings
+  document.querySelectorAll('#xlan-content p, .split-row .font-serif').forEach(el => {
+    el.style.fontSize = size + 'px';
+    el.style.lineHeight = lh;
+  });
+  // Apply max width to wrapper
+  const wrapper = document.getElementById('zoom-wrapper');
+  if (wrapper) wrapper.style.maxWidth = mw + 'px';
+
+  // Apply to doc viewer too
+  document.querySelectorAll('#doc-viewer .whitespace-pre-wrap').forEach(el => {
+    el.style.fontFamily = font;
+    el.style.fontSize = size + 'px';
+    el.style.lineHeight = lh;
+    el.style.letterSpacing = ls + 'px';
+  });
+
+  updateDisplayLabels();
+}
+
+function setDisplayBg(color) {
+  const xlanContent = document.getElementById('xlan-content');
+  if (xlanContent) xlanContent.style.backgroundColor = color;
+  document.querySelectorAll('#doc-viewer .whitespace-pre-wrap').forEach(el => {
+    el.style.backgroundColor = color;
+  });
+  document.querySelectorAll('.dp-bg-preset').forEach(btn => {
+    btn.style.borderColor = btn.style.backgroundColor === color || rgbToHex(btn.style.backgroundColor) === color ? '#1a1a2e' : 'transparent';
+  });
+}
+function rgbToHex(rgb) {
+  if (!rgb || rgb.startsWith('#')) return rgb;
+  const m = rgb.match(/\d+/g);
+  if (!m || m.length < 3) return rgb;
+  return '#' + m.slice(0,3).map(n => parseInt(n).toString(16).padStart(2,'0')).join('');
+}
+
+function resetDisplay() {
+  document.getElementById('dp-font').value = "'Lora', Georgia, serif";
+  document.getElementById('dp-font-size').value = '20';
+  document.getElementById('dp-line-height').value = '2';
+  document.getElementById('dp-letter-spacing').value = '0';
+  document.getElementById('dp-max-width').value = '672';
+  applyDisplay();
+  setDisplayBg('#ffffff');
+}
+
 // ── Metadata modal ───────────────────────────────────────────────
 let metaTags = [...(FILE_META.tags || [])];
 function openMetaModal() {
-  document.getElementById('meta-modal-fname').textContent = FILENAME;
   document.getElementById('meta-title').value = FILE_META.display_name || '';
   document.getElementById('meta-desc').value = FILE_META.description || '';
   metaTags = [...(FILE_META.tags || [])];
@@ -738,14 +938,14 @@ async function saveMetaModal() {
   const res = await fetch(`/api/projects/${PROJECT_ID}/${ep}`, {
     method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
   });
-  if (res.ok) { closeMetaModal(); window.location.reload(); }
+  if (res.ok) { closeMetaModal(); location.hash = _currentView; window.location.reload(); }
   else { document.getElementById('meta-error').textContent='Error al guardar'; document.getElementById('meta-error').classList.remove('hidden'); }
 }
 
 // ── Segment annotation panel ─────────────────────────────────────
 let annotateBlockIdx = null;
 let annotateSegId    = null;
-let annState = {highlight_color:'', bold:false, italic:false, text_color:'', comment:''};
+let annState = {highlight_color:'', bold:false, italic:false, underline:false, underline_color:'#f59e0b', text_color:'', comment:''};
 
 function openAnnotatePanel(blockIdx, segId, segText) {
   annotateBlockIdx = blockIdx;
@@ -760,6 +960,8 @@ function openAnnotatePanel(blockIdx, segId, segText) {
     highlight_color: note.highlight_color || '',
     bold:            note.bold    || false,
     italic:          note.italic  || false,
+    underline:       note.underline || false,
+    underline_color: note.underline_color || '#f59e0b',
     text_color:      note.text_color || '',
     comment:         note.comment || '',
   };
@@ -772,6 +974,11 @@ function openAnnotatePanel(blockIdx, segId, segText) {
   document.getElementById('ann-color-custom').value = annState.highlight_color || '#fef3c7';
   document.getElementById('ann-bold').className   = `px-3 py-1.5 border rounded-lg text-sm font-bold transition-colors ${annState.bold   ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
   document.getElementById('ann-italic').className = `px-3 py-1.5 border rounded-lg text-sm italic transition-colors ${annState.italic ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+  document.getElementById('ann-underline').className = `px-3 py-1.5 border rounded-lg text-sm transition-colors ${annState.underline ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+  document.getElementById('ann-ulcolor-custom').value = annState.underline_color || '#f59e0b';
+  document.querySelectorAll('.ul-preset').forEach(btn => {
+    btn.style.outline = btn.dataset.ulcolor === annState.underline_color ? '2px solid #1a1a2e' : 'none';
+  });
   document.querySelectorAll('.hl-preset').forEach(btn => {
     btn.style.outline = btn.dataset.color === annState.highlight_color ? '2px solid #1a1a2e' : 'none';
   });
@@ -794,27 +1001,40 @@ function setHighlight(color) {
 function toggleAnnStyle(style) {
   annState[style] = !annState[style];
   const btn = document.getElementById(`ann-${style}`);
-  btn.className = `px-3 py-1.5 border rounded-lg text-sm ${style==='bold'?'font-bold':'italic'} transition-colors ${annState[style] ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+  const styleDecor = style==='bold' ? 'font-bold' : style==='italic' ? 'italic' : '';
+  btn.className = `px-3 py-1.5 border rounded-lg text-sm ${styleDecor} transition-colors ${annState[style] ? 'bg-ink-900 text-white border-ink-900' : 'border-ink-200 hover:bg-ink-50'}`;
+}
+function setUnderlineColor(color) {
+  annState.underline_color = color;
+  annState.underline = true;
+  const btn = document.getElementById('ann-underline');
+  btn.className = 'px-3 py-1.5 border rounded-lg text-sm transition-colors bg-ink-900 text-white border-ink-900';
+  document.querySelectorAll('.ul-preset').forEach(b => {
+    b.style.outline = b.dataset.ulcolor === color ? '2px solid #1a1a2e' : 'none';
+  });
+  if (color && /^#[0-9a-fA-F]{6}$/.test(color)) document.getElementById('ann-ulcolor-custom').value = color;
 }
 async function saveAnnotation() {
   if (annotateBlockIdx === null || !annotateSegId) return;
   const note = {
-    highlight_color: annState.highlight_color,
-    bold:            annState.bold,
-    italic:          annState.italic,
-    text_color:      annState.text_color,
-    comment:         document.getElementById('ann-comment').value.trim(),
+    highlight_color:  annState.highlight_color,
+    bold:             annState.bold,
+    italic:           annState.italic,
+    underline:        annState.underline,
+    underline_color:  annState.underline_color,
+    text_color:       annState.text_color,
+    comment:          document.getElementById('ann-comment').value.trim(),
   };
   const url = `/api/projects/${PROJECT_ID}/translates/${FILENAME}/note/${annotateBlockIdx}/seg/${annotateSegId}`;
   const res = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(note)});
-  if (res.ok) { closeAnnotatePanel(); window.location.reload(); }
+  if (res.ok) { closeAnnotatePanel(); location.hash = _currentView; window.location.reload(); }
   else { document.getElementById('ann-error').textContent='Error al guardar'; document.getElementById('ann-error').classList.remove('hidden'); }
 }
 async function deleteAnnotation() {
   if (annotateBlockIdx === null || !annotateSegId) return;
   const url = `/api/projects/${PROJECT_ID}/translates/${FILENAME}/note/${annotateBlockIdx}/seg/${annotateSegId}`;
   await fetch(url, {method:'DELETE'});
-  closeAnnotatePanel(); window.location.reload();
+  closeAnnotatePanel(); location.hash = _currentView; window.location.reload();
 }
 </script>
 

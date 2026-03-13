@@ -117,10 +117,10 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # 4. Arrancar el servidor
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8020
 ```
 
-Accede a `http://localhost:8000`.
+Accede a `http://localhost:8020`.
 
 ---
 
@@ -208,4 +208,4 @@ languages/
 | `PUT` | `/api/projects/{id}/translates/metadata` | Actualizar estructura xlan |
 | `POST` | `/api/projects/{id}/pipeline/translate` | Procesar texto → .xlan |
 
-La documentación interactiva de la API está disponible en `http://localhost:8000/docs`.
+La documentación interactiva de la API está disponible en `http://localhost:8020/docs`.

@@ -72,27 +72,18 @@ A `.xlan` file is a JSON document with two top-level keys:
 **Key rules:**
 - The `text` field always contains text in the **study language** (exactly as it appears in the source).
 - The `translation` and `info` fields are always in the **notes language** (student's native language).
-- Each paragraph is split into **multiple segments** — meaningful linguistic units.
+- Each paragraph is split into **multiple segments** — meaningful linguistic units (words, expresions, phrases) that can be explained individually.
 - Each heading has exactly **one segment** with the full heading text.
 
 ---
 
 ## SEGMENTATION STRATEGY
 
-When processing a paragraph, divide it into 3–8 meaningful segments. Each segment should be:
+When processing a paragraph, divide it into any number of meaningful segments. Each segment should be:
 
 - A word or short phrase that forms a **semantic unit**: noun phrase, verb phrase, prepositional phrase, adverbial, clause, or fixed expression.
 - A good **vocabulary or grammar learning opportunity**.
-- **Not too short** (avoid splitting every individual word unless necessary for complex vocabulary).
 - **Not too long** (avoid segments longer than a full clause).
-
-**Good segmentation examples:**
-
-| Source text | Segments |
-|---|---|
-| "She walked slowly through the dark forest." | "She walked slowly" / "through the dark forest." |
-| "Despite the rain, he continued his journey." | "Despite the rain," / "he continued" / "his journey." |
-| "It was the best of times, it was the worst of times." | "It was the best of times," / "it was the worst of times." |
 
 **Avoid:**
 - Splitting at arbitrary word boundaries with no linguistic logic.
@@ -110,8 +101,9 @@ For each segment, provide a concise but useful linguistic note in the `notes_lan
 - **Idioms/expressions**: meaning, equivalent expressions in the notes language.
 - **Word formation**: prefixes, suffixes, etymology if relevant.
 - **Usage tips**: when to use this word/phrase vs alternatives.
+- **Transcription/pronunciation**: if the word is in a non-Latin script, provide a romanization and pronunciation guide.
 
-Keep notes **concise** (1–3 sentences). Do not write essays — students need quick reference notes.
+Keep notes **concise** (1–5 sentences). Do not write essays — students need quick reference notes.
 
 ---
 

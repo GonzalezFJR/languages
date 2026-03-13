@@ -152,6 +152,8 @@ class BlockNoteBody(BaseModel):
     highlight_alpha: float = 0.35
     bold: bool = False
     italic: bool = False
+    underline: bool = False
+    underline_color: Optional[str] = None
     text_color: Optional[str] = None
     comment: str = ""
 
