@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_basico",
+      "name": "Básico",
+      "subcategories": [],
+      "items": ["alfabeto_arabe.txt", "saludos_expresiones.txt"]
+    }
+  ],
+  "available_tags": ["Alfabeto", "Vocabulario", "Expresiones"],
+  "files": {
+    "alfabeto_arabe.txt": {
+      "name": "alfabeto_arabe.txt",
+      "display_name": "El alfabeto árabe",
+      "description": "Guía de las 28 letras, vocales, formas de conexión y números arábigos orientales.",
+      "tags": ["Alfabeto"],
+      "uploaded_at": "2026-01-15T00:00:00"
+    },
+    "saludos_expresiones.txt": {
+      "name": "saludos_expresiones.txt",
+      "display_name": "Saludos y expresiones básicas",
+      "description": "Frases esenciales: saludos, presentaciones, preguntas útiles y expresiones cotidianas.",
+      "tags": ["Vocabulario", "Expresiones"],
+      "uploaded_at": "2026-01-15T00:00:00"
+    }
+  }
 }

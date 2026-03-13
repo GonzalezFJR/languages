@@ -1,0 +1,77 @@
+COMMON CHINESE RADICALS & CHARACTERS
+=======================================
+
+Chinese characters are built from components called radicals
+(部首, bùshǒu). Learning the most common radicals helps you
+guess the meaning of unfamiliar characters.
+
+
+1. BASIC PICTOGRAPHIC CHARACTERS
+
+   人 (rén)  — person (looks like a person walking)
+   大 (dà)   — big (person with arms stretched wide)
+   小 (xiǎo) — small (three small strokes)
+   山 (shān) — mountain (three peaks)
+   水 (shuǐ) — water (flowing drops)
+   火 (huǒ)  — fire (flames)
+   日 (rì)   — sun / day (originally a circle with a dot)
+   月 (yuè)  — moon / month (crescent shape)
+   木 (mù)   — tree / wood (trunk with branches and roots)
+   口 (kǒu)  — mouth (a square opening)
+
+
+2. MOST USEFUL RADICALS
+
+   亻 (person radical) — used in: 你 (nǐ, you), 他 (tā, he),
+      们 (men, plural marker), 做 (zuò, to do)
+
+   氵 (water radical) — used in: 河 (hé, river), 海 (hǎi, sea),
+      洗 (xǐ, to wash), 汤 (tāng, soup)
+
+   女 (woman radical) — used in: 妈 (mā, mother), 她 (tā, she),
+      好 (hǎo, good — woman + child = good!)
+
+   讠 (speech radical) — used in: 说 (shuō, to speak), 话 (huà, words),
+      请 (qǐng, please), 谢 (xiè, to thank)
+
+   食/饣 (food radical) — used in: 饭 (fàn, rice/meal),
+      饿 (è, hungry), 饮 (yǐn, to drink)
+
+   心/忄 (heart radical) — used in: 想 (xiǎng, to think/miss),
+      快 (kuài, fast/happy), 忙 (máng, busy)
+
+
+3. HOW CHARACTERS WORK
+
+   Most characters combine a radical (meaning hint) with a
+   phonetic component (sound hint):
+
+   妈 mā (mother) = 女 (woman) + 马 mǎ (horse — gives sound "ma")
+   请 qǐng (please) = 讠 (speech) + 青 qīng (blue — gives sound)
+   洗 xǐ (wash) = 氵 (water) + 先 xiān (first — partial sound hint)
+
+   ⚠️ Sound hints are approximate — tones often differ!
+
+
+4. NUMBERS
+
+   一 yī    (one)       六 liù   (six)
+   二 èr    (two)       七 qī    (seven)
+   三 sān   (three)     八 bā    (eight)
+   四 sì    (four)      九 jiǔ   (nine)
+   五 wǔ    (five)      十 shí   (ten)
+
+   百 bǎi (hundred)     千 qiān (thousand)     万 wàn (ten thousand)
+
+   ⚠️ Chinese counts in units of 10,000 (万), not 1,000.
+   So 50,000 = 五万 (wǔ wàn), literally "five ten-thousands".
+
+
+5. STROKE ORDER RULES
+
+   Characters must be written following specific stroke orders:
+   1. Top to bottom: 三 (sān) — three horizontal strokes, top first
+   2. Left to right: 川 (chuān) — three vertical strokes, left first
+   3. Horizontal before vertical: 十 (shí) — horizontal, then vertical
+   4. Outside before inside: 月 (yuè) — outer frame, then inner strokes
+   5. Close the frame last: 国 (guó) — bottom stroke of 口 goes last

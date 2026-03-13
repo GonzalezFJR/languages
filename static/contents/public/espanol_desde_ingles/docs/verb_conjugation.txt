@@ -1,0 +1,79 @@
+SPANISH VERB CONJUGATION: A QUICK GUIDE
+=========================================
+
+Spanish verbs are classified by their infinitive endings:
+-AR (hablar), -ER (comer), -IR (vivir). Each follows a
+predictable conjugation pattern in regular forms.
+
+
+1. PRESENT TENSE (Presente de indicativo)
+
+   -AR verbs: HABLAR (to speak)
+   yo hablo          nosotros hablamos
+   tú hablas         vosotros habláis
+   él/ella habla     ellos/ellas hablan
+
+   -ER verbs: COMER (to eat)
+   yo como           nosotros comemos
+   tú comes          vosotros coméis
+   él/ella come      ellos/ellas comen
+
+   -IR verbs: VIVIR (to live)
+   yo vivo           nosotros vivimos
+   tú vives          vosotros vivís
+   él/ella vive      ellos/ellas viven
+
+   ⚠️ Note: -ER and -IR verbs share most endings.
+
+
+2. COMMON IRREGULAR VERBS (Present)
+
+   SER (to be — identity/characteristics)
+   yo soy, tú eres, él es, nosotros somos, ellos son
+
+   ESTAR (to be — location/temporary states)
+   yo estoy, tú estás, él está, nosotros estamos, ellos están
+
+   TENER (to have)
+   yo tengo, tú tienes, él tiene, nosotros tenemos, ellos tienen
+
+   IR (to go)
+   yo voy, tú vas, él va, nosotros vamos, ellos van
+
+   ⚠️ SER vs ESTAR is one of the trickiest concepts for English
+   speakers. SER = permanent. ESTAR = temporary/location.
+   "Ella es bonita" (She is pretty — permanent trait)
+   "Ella está cansada" (She is tired — temporary state)
+
+
+3. PAST TENSES
+
+   Pretérito (Simple Past) — completed actions:
+   hablé, hablaste, habló, hablamos, hablaron
+
+   Imperfecto (Imperfect) — ongoing/habitual past:
+   hablaba, hablabas, hablaba, hablábamos, hablaban
+
+   EN: "I spoke to her yesterday." → Hablé con ella ayer. (pretérito)
+   EN: "I used to speak Spanish as a child." → Hablaba español de niño. (imperfecto)
+
+
+4. PRONOUNS AND WORD ORDER
+
+   Subject pronouns are OPTIONAL in Spanish (the verb ending
+   tells you who):
+   "Hablo español" = "I speak Spanish" (no need for "yo")
+
+   Object pronouns go BEFORE the verb:
+   "Lo veo" = "I see him/it"
+   "Te quiero" = "I love you"
+
+
+5. GENDER AND ARTICLES
+
+   All nouns have grammatical gender (masculine or feminine):
+   el libro (the book — masc.)
+   la casa (the house — fem.)
+
+   Generally: -o endings = masculine, -a endings = feminine
+   ⚠️ Exceptions: el día (the day), la mano (the hand)

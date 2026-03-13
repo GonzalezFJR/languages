@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "title": "يوسف والبئر — Yūsuf y el pozo",
+    "description": "Relato tradicional sobre el profeta Yūsuf (José) basado en la tradición islámica. Texto simplificado para principiantes.",
+    "text_language": "ar",
+    "notes_language": "es",
+    "created_at": "2026-01-15T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "يُوسُفُ وَالبِئْرُ",
+          "translation": "Yūsuf y el pozo",
+          "info": "يُوسُف (Yūsuf) = José, nombre propio de origen hebreo. وَ (wa) = 'y', la conjunción más común en árabe. الْبِئْر (al-biʾr) = el pozo. الـ (al-) es el artículo definido 'el/la'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "كَانَ يَعْقُوبُ",
+          "translation": "Había (una vez) Yaʿqūb",
+          "info": "كَانَ (kāna) = fue/había, verbo fundamental en árabe para narrar en pasado (equivale a 'érase'). يَعْقُوب (Yaʿqūb) = Jacob, padre de Yūsuf.",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": " رَجُلًا صَالِحًا",
+          "translation": " un hombre piadoso",
+          "info": "رَجُل (rajul) = hombre. صَالِح (ṣāliḥ) = bueno, piadoso, recto. Ambos llevan tanwīn fatḥa (-an) porque son predicado de كان en acusativo.",
+          "styles": []
+        },
+        {
+          "id": "p1_s3",
+          "text": " وَكَانَ لَهُ اثْنَا عَشَرَ وَلَدًا.",
+          "translation": " y tenía doce hijos.",
+          "info": "وَ (wa) = y. لَهُ (lahu) = para él / tenía. اثْنَا عَشَرَ (iznā ʿashara) = doce. وَلَد (walad) = hijo/niño. La estructura كان له = 'tenía' (lit. 'era para él').",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "وَكَانَ يُوسُفُ أَحَبَّ أَوْلَادِهِ إِلَيْهِ.",
+          "translation": "Y Yūsuf era el más querido de sus hijos para él.",
+          "info": "أَحَبّ (aḥabb) = el más querido, superlativo de حَبّ (amor). أَوْلَاد (awlād) = hijos (plural de وَلَد). إِلَيْهِ (ilayhi) = para él/a él. ـهِ (-hi) = sufijo posesivo de 3ª persona masculina.",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": "فَغَارَ إِخْوَتُهُ مِنْهُ",
+          "translation": "Entonces sus hermanos sintieron celos de él",
+          "info": "فَـ (fa-) = entonces/así que, conjunción de consecuencia. غَارَ (ghāra) = sintió celos, del verbo غار يغار. إِخْوَة (ijwa) = hermanos. مِنْهُ (minhu) = de él.",
+          "styles": []
+        },
+        {
+          "id": "p2_s3",
+          "text": " وَأَرَادُوا أَنْ يُبْعِدُوهُ.",
+          "translation": " y quisieron alejarlo.",
+          "info": "أَرَادُوا (arādū) = quisieron, pasado plural de أَرَادَ (querer). أَنْ (an) = que (partícula de subjuntivo). يُبْعِدُوهُ (yubʿidūhu) = alejarlo. La raíz ب-ع-د (b-ʿ-d) significa 'lejanía'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "قَالَ أَحَدُهُمْ:",
+          "translation": "Dijo uno de ellos:",
+          "info": "قَالَ (qāla) = dijo, pasado de قال يقول (decir). أَحَد (aḥad) = uno. ـهُمْ (-hum) = sufijo posesivo 'de ellos'. En árabe se introduce el discurso directo con dos puntos o sin marca.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": " «أَلْقُوهُ فِي البِئْرِ».",
+          "translation": " «Arrojadlo al pozo».",
+          "info": "أَلْقُوا (alqū) = arrojad, imperativo plural de أَلْقَى (arrojar/lanzar). ـهُ (-hu) = lo (pronombre acusativo). فِي (fī) = en/dentro de, preposición de lugar. البِئْر (al-biʾr) = el pozo.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "فَأَخَذُوا يُوسُفَ",
+          "translation": "Entonces tomaron a Yūsuf",
+          "info": "فَـ (fa-) = entonces. أَخَذُوا (ajazū) = tomaron, pasado plural de أَخَذَ (tomar). يُوسُفَ lleva fatḥa final porque es objeto directo (acusativo) y es un nombre diptote.",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": " وَأَلْقَوْهُ فِي بِئْرٍ عَمِيقَةٍ.",
+          "translation": " y lo arrojaron a un pozo profundo.",
+          "info": "أَلْقَوْ (alqaw) = arrojaron. بِئْر (biʾr) = pozo, aquí indefinido (sin الـ) con kasra y tanwīn. عَمِيقَة (ʿamīqa) = profunda, adjetivo que concuerda con بئر en género (femenino en árabe).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "لَكِنَّ اللَّهَ كَانَ مَعَ يُوسُفَ.",
+          "translation": "Pero Dios estaba con Yūsuf.",
+          "info": "لَكِنَّ (lakinna) = pero/sin embargo, partícula enfática que rige acusativo. اللَّه (Allāh) = Dios. مَعَ (maʿa) = con, preposición de compañía.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": "مَرَّتْ قَافِلَةٌ",
+          "translation": "Pasó una caravana",
+          "info": "مَرَّتْ (marrat) = pasó, pasado femenino de مَرَّ (pasar). La ت final indica sujeto femenino. قَافِلَة (qāfila) = caravana, del verbo قَفَلَ (regresar).",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": " وَأَنْقَذُوهُ مِنَ البِئْرِ.",
+          "translation": " y lo rescataron del pozo.",
+          "info": "أَنْقَذُوا (anqazū) = rescataron, de أَنْقَذَ (rescatar). مِنَ (mina) = de/desde. La raíz ن-ق-ذ (n-q-z) implica 'salvación'.",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

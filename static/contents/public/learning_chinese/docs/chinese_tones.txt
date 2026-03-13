@@ -1,0 +1,92 @@
+CHINESE TONES: THE ESSENTIAL GUIDE
+=====================================
+
+Mandarin Chinese is a tonal language — the same syllable pronounced
+with different tones has completely different meanings. Mastering
+tones is the single most important step for comprehension.
+
+
+1. THE FOUR TONES (plus neutral)
+
+   1st tone (ˉ) — HIGH AND FLAT
+   Hold a high, steady pitch. Like singing a note.
+   mā (妈) = mother
+
+   2nd tone (ˊ) — RISING
+   Start mid-low and rise up. Like asking "huh?" in English.
+   má (麻) = hemp / numb
+
+   3rd tone (ˇ) — DIP (falling-rising)
+   Start mid, dip down, then rise. In connected speech,
+   often just goes low without the rise.
+   mǎ (马) = horse
+
+   4th tone (ˋ) — FALLING
+   Start high and drop sharply. Like saying "No!" firmly.
+   mà (骂) = to scold
+
+   5th tone (neutral) — LIGHT AND SHORT
+   Unstressed, short. Pitch depends on previous tone.
+   ma (吗) = question particle
+
+   ⚠️ Same sound "ma" = mother, hemp, horse, scold, or question
+   depending on tone. Tones are NOT optional!
+
+
+2. TONE CHANGE RULES
+
+   Third tone sandhi:
+   When two 3rd tones appear in sequence, the first one
+   changes to 2nd tone:
+   你好 nǐ hǎo → actually pronounced "ní hǎo"
+
+   一 (yī) tone changes:
+   Before 4th tone: yí (changes to 2nd tone)
+     一个 yí gè (one [item])
+   Before 1st/2nd/3rd tone: yì (changes to 4th tone)
+     一天 yì tiān (one day)
+
+   不 (bù) tone change:
+   Before 4th tone: bú
+     不是 bú shì (is not)
+
+
+3. INITIALS (CONSONANT SOUNDS)
+
+   Most are similar to English, except:
+   zh — like "j" in "juice" but with tongue curled back
+   ch — like "ch" in "church" but tongue curled back
+   sh — like "sh" in "she" but tongue curled back
+   r  — between English "r" and French "j"
+   z  — like "ds" in "beds"
+   c  — like "ts" in "cats"
+   q  — like "ch" in "cheese" (NOT like English "q")
+   x  — like "sh" but with tongue flat (NOT like English "x")
+
+   ⚠️ q, x, j only pair with ü (written as u after them).
+   "qu" is pronounced "chü", not "kw"!
+
+
+4. FINALS (VOWEL SOUNDS)
+
+   a   — open "ah" as in "father"
+   o   — "aw" as in British "saw"
+   e   — "uh" as in "duh" (not like English "e"!)
+   i   — "ee" as in "see"
+   u   — "oo" as in "food"
+   ü   — round lips for "oo", say "ee" (French "u")
+
+   Common combinations:
+   ai  — "eye"          ei  — "ay" as in "day"
+   ao  — "ow" as in "cow"   ou  — "oh"
+   an  — "ahn"          en  — "un" as in "fun"
+   ang — "ahng"         eng — "ung"
+   ian — "yen"          uan — "wahn"
+
+
+5. PRACTICE MINIMAL PAIRS
+
+   Try distinguishing these:
+   māo (猫 cat) vs. máo (毛 fur) vs. mào (帽 hat)
+   shī (诗 poetry) vs. shí (十 ten) vs. shǐ (史 history) vs. shì (是 is)
+   bāo (包 bag) vs. bǎo (宝 treasure) vs. bào (报 newspaper)

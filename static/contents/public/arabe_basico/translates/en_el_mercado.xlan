@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "title": "في السوق — En el mercado",
+    "description": "Diálogo cotidiano sobre compras en un mercado árabe. Vocabulario básico de compras, números y alimentos.",
+    "text_language": "ar",
+    "notes_language": "es",
+    "created_at": "2026-01-15T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "فِي السُّوقِ",
+          "translation": "En el mercado",
+          "info": "فِي (fī) = en, preposición de lugar. السُّوق (as-sūq) = el mercado. La س se asimila con الـ (asimilación solar): se dice 'as-sūq', no 'al-sūq'. El mercado tradicional árabe se llama también 'bazar'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "ذَهَبَتْ فَاطِمَةُ إِلَى السُّوقِ",
+          "translation": "Fátima fue al mercado",
+          "info": "ذَهَبَتْ (zahabat) = fue (ella), pasado femenino de ذَهَبَ (ir). فَاطِمَة (Fāṭima) = nombre propio femenino muy común. إِلَى (ilā) = a/hacia.",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": " لِتَشْتَرِيَ فَوَاكِهَ وَخُضْرَوَاتٍ.",
+          "translation": " para comprar frutas y verduras.",
+          "info": "لِـ (li-) = para (partícula de propósito + subjuntivo). تَشْتَرِي (tashtarī) = comprar (ella). فَوَاكِه (fawākih) = frutas (plural de فَاكِهَة). خُضْرَوَات (juḍrawāt) = verduras.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "قَالَتْ لِلْبَائِعِ:",
+          "translation": "Dijo al vendedor:",
+          "info": "قَالَتْ (qālat) = dijo (ella). لِلْـ (lil-) = contracción de لِ + الْـ = 'al/para el'. بَائِع (bāʾiʿ) = vendedor, de la raíz ب-ي-ع (b-y-ʿ, vender).",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": " «بِكَمْ هَذِهِ التُّفَّاحَاتُ؟»",
+          "translation": " «¿Cuánto cuestan estas manzanas?»",
+          "info": "بِكَمْ (bi-kam) = ¿por cuánto? / ¿a cuánto? بِـ = por, كَمْ = cuánto. هَذِهِ (hāzihi) = estas/esta (demostrativo femenino). تُفَّاحَات (tuffāḥāt) = manzanas, plural de تُفَّاحَة.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "أَجَابَ البَائِعُ:",
+          "translation": "Respondió el vendedor:",
+          "info": "أَجَابَ (ajāba) = respondió, de la raíz ج-و-ب (j-w-b, responder). Es un verbo de forma IV (أَفْعَلَ). البائع aquí lleva ḍamma (caso nominativo) porque es sujeto.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": " «الكِيلُو بِخَمْسَةِ دَرَاهِمَ».",
+          "translation": " «El kilo a cinco dírhams».",
+          "info": "الكِيلُو (al-kīlū) = el kilo. بِـ (bi-) = por/a (precio). خَمْسَة (jamsa) = cinco. دَرَاهِم (darāhim) = dírhams, plural de دِرْهَم (moneda usada en varios países árabes).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "«أُرِيدُ كِيلُوَيْنِ مِنْ فَضْلِكَ».",
+          "translation": "«Quiero dos kilos, por favor».",
+          "info": "أُرِيدُ (urīdu) = quiero, presente de أَرَادَ (querer). كِيلُوَيْن (kīluwayn) = dos kilos, forma dual (-ayn). مِنْ فَضْلِكَ (min faḍlika) = por favor (lit. 'de tu amabilidad').",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "اشْتَرَتْ فَاطِمَةُ أَيْضًا",
+          "translation": "Fátima compró también",
+          "info": "اِشْتَرَتْ (ishtarat) = compró (ella), forma VIII de la raíz ش-ر-ي (sh-r-y). أَيْضًا (ayḍan) = también.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": " طَمَاطِمَ وَخِيَارًا وَبَصَلًا.",
+          "translation": " tomates, pepinos y cebollas.",
+          "info": "طَمَاطِم (ṭamāṭim) = tomates. خِيَار (jiyār) = pepino(s). بَصَل (baṣal) = cebolla(s). Todos llevan tanwīn fatḥa (-an) por ser objetos directos en acusativo.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "ثُمَّ عَادَتْ إِلَى البَيْتِ سَعِيدَةً.",
+          "translation": "Luego volvió a casa contenta.",
+          "info": "ثُمَّ (zumma) = luego/después. عَادَتْ (ʿādat) = volvió (ella), de عَادَ (volver). البَيْت (al-bayt) = la casa. سَعِيدَة (saʿīda) = contenta/feliz, en acusativo como ḥāl (estado).",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_lecturas",
+      "name": "Lecturas",
+      "subcategories": [],
+      "items": ["le_petit_nicolas.xlan", "au_marche.xlan"]
+    }
+  ],
+  "available_tags": ["Literatura", "Cotidiano", "A2", "B1"],
+  "files": {
+    "le_petit_nicolas.xlan": {
+      "name": "le_petit_nicolas.xlan",
+      "display_name": "Le Petit Nicolas — La photo de classe",
+      "description": "Extracto adaptado de Le Petit Nicolas. Texto humorístico sobre la foto escolar. Nivel A2.",
+      "tags": ["Literatura", "A2"],
+      "created_at": "2026-02-01T00:00:00"
+    },
+    "au_marche.xlan": {
+      "name": "au_marche.xlan",
+      "display_name": "Au marché — En el mercado",
+      "description": "Escena cotidiana de compras en un mercado francés. Vocabulario de alimentos y cortesía.",
+      "tags": ["Cotidiano", "A2"],
+      "created_at": "2026-02-01T00:00:00"
+    }
+  }
 }

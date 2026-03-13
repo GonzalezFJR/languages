@@ -1,0 +1,68 @@
+GUÍA DE PRONUNCIACIÓN FRANCESA
+=================================
+
+El francés tiene una pronunciación que puede parecer compleja al
+hispanohablante, pero sigue reglas bastante regulares una vez que
+se conocen los patrones básicos.
+
+
+1. VOCALES NASALES (no existen en español)
+
+   Las vocales nasales se producen dejando pasar aire por la nariz:
+
+   an / en / em   → /ɑ̃/  como en "enfant" (niño), "temps" (tiempo)
+   on / om        → /ɔ̃/  como en "bon" (bueno), "maison" (casa)
+   in / im / ain  → /ɛ̃/  como en "vin" (vino), "pain" (pan)
+   un / um        → /œ̃/  como en "lundi" (lunes), "parfum" (perfume)
+
+   ⚠️ Truco: bloquea la nariz y nota la diferencia al decir
+   "beau" (bello) vs "bon" (bueno). En "bon" el aire sale por la nariz.
+
+
+2. LETRAS MUDAS
+
+   En francés, muchas letras finales NO se pronuncian:
+   - La -e final es generalmente muda: "table" → /tabl/
+   - Las consonantes finales s, t, d, x, p, z suelen ser mudas:
+     "petit" → /pəti/, "dans" → /dɑ̃/, "beaucoup" → /boku/
+   - La -h es SIEMPRE muda: "hôtel" → /otɛl/
+
+   ⚠️ Excepción: las consonantes C, R, F, L suelen pronunciarse
+   al final (regla nemotécnica: "CaReFuL").
+   "sac" → /sak/, "pour" → /puʀ/, "neuf" → /nœf/, "sel" → /sɛl/
+
+
+3. ACENTOS Y SIGNOS
+
+   é  (acento agudo)  → vocal cerrada /e/: "été" (verano)
+   è  (acento grave)  → vocal abierta /ɛ/: "mère" (madre)
+   ê  (circunflejo)   → vocal abierta /ɛ/: "fête" (fiesta)
+   ë  (diéresis)      → separación de vocales: "Noël" (Navidad)
+   ç  (cedilla)       → /s/ antes de a, o, u: "français" (francés)
+
+
+4. SONIDOS DIFÍCILES PARA HISPANOHABLANTES
+
+   R francesa: fricativa uvular /ʁ/. Se produce en la garganta,
+   como una "g" suave. MUY diferente a la R española.
+   Practica con: "rouge" (rojo), "Paris", "merci"
+
+   U francesa: /y/. Pon los labios como para decir "u" pero
+   intenta pronunciar una "i". No existe en español.
+   Practica con: "tu" (tú), "rue" (calle), "lune" (luna)
+
+   EU / OEU: /ø/ o /œ/. Labios redondeados diciendo "e".
+   Practica con: "deux" (dos), "bleu" (azul), "heure" (hora)
+
+
+5. LA LIAISON (enlace entre palabras)
+
+   Cuando una palabra termina en consonante muda y la siguiente
+   empieza por vocal, la consonante se pronuncia:
+
+   "les amis"    → /le.za.mi/    (los amigos)
+   "un homme"    → /œ̃.nɔm/      (un hombre)
+   "petit enfant"→ /pə.ti.tɑ̃.fɑ̃/ (niño pequeño)
+
+   ⚠️ La liaison es OBLIGATORIA entre artículo y sustantivo,
+   y entre pronombre sujeto y verbo.

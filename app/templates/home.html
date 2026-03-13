@@ -79,6 +79,18 @@
   </main>
 </div>
 
+<!-- Login Required Modal -->
+<div id="login-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10 text-center">
+    <div class="text-5xl mb-4">🔒</div>
+    <h2 class="text-xl font-bold text-ink-900 mb-2">Inicia sesión</h2>
+    <p class="text-sm text-ink-500 mb-6">Necesitas iniciar sesión para crear y gestionar proyectos.</p>
+    <a href="/login" class="block w-full px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors mb-3">Iniciar sesión</a>
+    <button onclick="closeLoginModal()" class="w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+  </div>
+</div>
+
 <!-- Create Modal -->
 <div id="create-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeCreateModal()"></div>
@@ -183,7 +195,19 @@
 
 {% block scripts %}
 <script>
+  const IS_LOGGED_IN = {{ 'true' if current_user else 'false' }};
+
+  function openLoginModal() {
+    document.getElementById('login-modal').classList.remove('hidden');
+    document.getElementById('login-modal').classList.add('flex');
+  }
+  function closeLoginModal() {
+    document.getElementById('login-modal').classList.add('hidden');
+    document.getElementById('login-modal').classList.remove('flex');
+  }
+
   function openCreateModal() {
+    if (!IS_LOGGED_IN) { openLoginModal(); return; }
     document.getElementById('create-modal').classList.remove('hidden');
     document.getElementById('create-modal').classList.add('flex');
     setTimeout(() => document.getElementById('proj-name').focus(), 50);
@@ -236,6 +260,7 @@
   let settingsTarget = null;
 
   function openSettingsModal(id, name, base, target) {
+    if (!IS_LOGGED_IN) { openLoginModal(); return; }
     settingsTarget = id;
     document.getElementById('settings-name').value = name;
     document.getElementById('settings-base').value = base;

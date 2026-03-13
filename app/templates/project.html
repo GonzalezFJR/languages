@@ -168,6 +168,18 @@
   </main>
 </div>
 
+<!-- Login Required Modal -->
+<div id="login-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 z-10 text-center">
+    <div class="text-5xl mb-4">🔒</div>
+    <h2 class="text-xl font-bold text-ink-900 mb-2">Inicia sesión</h2>
+    <p class="text-sm text-ink-500 mb-6">Necesitas iniciar sesión para agregar o subir contenido.</p>
+    <a href="/login" class="block w-full px-4 py-2.5 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors mb-3">Iniciar sesión</a>
+    <button onclick="closeLoginModal()" class="w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+  </div>
+</div>
+
 <!-- Upload Modal -->
 <div id="upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
   <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeUploadModal()"></div>
@@ -367,17 +379,31 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
 const PROJECT_ID = '{{ project.id }}';
+const IS_LOGGED_IN = {{ 'true' if current_user else 'false' }};
 const DOCS_META    = {{ docs_meta | tojson }};
 const XLAN_META    = {{ translates_meta | tojson }};
 let treeMeta = { docs: JSON.parse(JSON.stringify(DOCS_META)), translates: JSON.parse(JSON.stringify(XLAN_META)) };
 
-// ── Modal helpers ────────────────────────────────────────────────
+// ── Login modal helpers ───────────────────────────────────────────────
+function openLoginModal() {
+  const m = document.getElementById('login-modal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+}
+function closeLoginModal() {
+  const m = document.getElementById('login-modal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+}
+
+// ── Modal helpers ─────────────────────────────────────────────────────
 function showModal(id) { const m=document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); }
 function hideModal(id) { const m=document.getElementById(id); m.classList.add('hidden'); m.classList.remove('flex'); }
 function showError(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.classList.remove('hidden'); }
 
-// ── Upload modal ─────────────────────────────────────────────────
-function openUploadModal() { showModal('upload-modal'); }
+// ── Upload modal ─────────────────────────────────────────────────────
+function openUploadModal() {
+  if (!IS_LOGGED_IN) { openLoginModal(); return; }
+  showModal('upload-modal');
+}
 function closeUploadModal() {
   hideModal('upload-modal');
   document.getElementById('upload-form').reset();
@@ -424,6 +450,7 @@ let translateTab = 'text';
 let _agentES = null;  // active EventSource
 
 function openTranslateModal() {
+  if (!IS_LOGGED_IN) { openLoginModal(); return; }
   switchTranslateTab('text');
   document.getElementById('trans-input-view').classList.remove('hidden');
   document.getElementById('trans-processing-view').classList.add('hidden');

@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_culture",
+      "name": "Culture & Daily Life",
+      "subcategories": [],
+      "items": ["la_tortilla_de_patatas.xlan", "un_dia_en_la_ciudad.xlan"]
+    }
+  ],
+  "available_tags": ["Culture", "Food", "Travel", "A2", "B1"],
+  "files": {
+    "la_tortilla_de_patatas.xlan": {
+      "name": "la_tortilla_de_patatas.xlan",
+      "display_name": "La tortilla de patatas",
+      "description": "Spain's most iconic dish — vocabulary about food and cooking. Level A2-B1.",
+      "tags": ["Culture", "Food", "A2"],
+      "created_at": "2026-01-20T00:00:00"
+    },
+    "un_dia_en_la_ciudad.xlan": {
+      "name": "un_dia_en_la_ciudad.xlan",
+      "display_name": "Un día en la ciudad",
+      "description": "A day exploring a Spanish city. Daily routines, directions, and common interactions.",
+      "tags": ["Travel", "B1"],
+      "created_at": "2026-01-20T00:00:00"
+    }
+  }
 }

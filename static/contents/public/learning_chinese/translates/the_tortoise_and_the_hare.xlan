@@ -1,0 +1,197 @@
+{
+  "meta": {
+    "title": "龟兔赛跑 — The Tortoise and the Hare",
+    "description": "The classic Aesop's fable retold in simple Mandarin Chinese. Great for beginners learning basic sentence patterns and vocabulary.",
+    "text_language": "zh",
+    "notes_language": "en",
+    "created_at": "2026-02-10T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "龟兔赛跑",
+          "translation": "The Tortoise and the Hare Race",
+          "info": "龟 (guī) = tortoise. 兔 (tù) = rabbit/hare. 赛跑 (sài pǎo) = race (competition + run). This 4-character title is a classic 'chéngyǔ'-style structure. The fable is well known in China too.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "从前，",
+          "translation": "Once upon a time,",
+          "info": "从前 (cóngqián) = once upon a time / in the past. 从 = from, 前 = before. This is the standard fairy tale opening in Chinese, equivalent to 'Érase una vez'.",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": "森林里住着一只乌龟和一只兔子。",
+          "translation": "a tortoise and a hare lived in the forest.",
+          "info": "森林 (sēnlín) = forest. 里 (lǐ) = inside. 住着 (zhù zhe) = was living (住 = live + 着 = ongoing state). 一只 (yì zhī) = one (measure word for animals). 乌龟 (wūguī) = tortoise. 和 (hé) = and. 兔子 (tùzi) = rabbit.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "兔子跑得非常快，",
+          "translation": "The hare ran very fast,",
+          "info": "跑 (pǎo) = to run. 得 (de) = structural particle connecting verb to its complement. 非常 (fēicháng) = very/extremely. 快 (kuài) = fast. Structure: Verb + 得 + Adverb + Adjective is the standard way to describe how an action is done.",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": "他常常笑话乌龟走得太慢。",
+          "translation": "he often made fun of the tortoise for walking too slowly.",
+          "info": "常常 (chángcháng) = often. 笑话 (xiàohua) = to laugh at/make fun of (also means 'joke' as a noun). 走 (zǒu) = to walk. 太 (tài) = too (excessively). 慢 (màn) = slow. Note: 太...了 is the common pattern for 'too much'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "有一天，乌龟对兔子说：",
+          "translation": "One day, the tortoise said to the hare:",
+          "info": "有一天 (yǒu yì tiān) = one day (lit. 'there was one day'). 对 (duì) = to/toward (here: 'said to'). 说 (shuō) = to say/speak. The pattern X 对 Y 说 = 'X said to Y'.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": "«我们来比赛跑步吧！»",
+          "translation": "'Let's have a running race!'",
+          "info": "我们 (wǒmen) = we. 来 (lái) = let's (suggesting action). 比赛 (bǐsài) = to compete/competition. 跑步 (pǎobù) = running. 吧 (ba) = sentence-final particle suggesting 'let's' or softening a command.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "兔子哈哈大笑：",
+          "translation": "The hare laughed loudly:",
+          "info": "哈哈 (hāhā) = haha (onomatopoeia). 大笑 (dà xiào) = to laugh loudly/heartily (大 = big + 笑 = laugh). Chinese uses many onomatopoeia: 哈哈, 嘻嘻 (xīxī, hehe), 呵呵 (hēhē, mild laugh).",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": "«好啊！你肯定会输的。»",
+          "translation": "'Sure! You will definitely lose.'",
+          "info": "好啊 (hǎo a) = sure!/okay! (啊 adds enthusiasm). 肯定 (kěndìng) = definitely/certainly. 会 (huì) = will (future). 输 (shū) = to lose (opposite: 赢 yíng = to win). 的 (de) here adds certainty.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "比赛开始了。",
+          "translation": "The race began.",
+          "info": "比赛 (bǐsài) = race/competition. 开始 (kāishǐ) = to begin/start. 了 (le) = completed action particle (shows the action happened). 开始了 = has started / started.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": "兔子一下子就跑得很远，",
+          "translation": "The hare quickly ran very far,",
+          "info": "一下子 (yíxiàzi) = in an instant/all at once. 就 (jiù) = then/right away (emphasizes quickness). 很远 (hěn yuǎn) = very far. 远 (yuǎn) = far (opposite: 近 jìn = near).",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": "他回头看了看，乌龟还在后面慢慢地走。",
+          "translation": "he looked back, and the tortoise was still slowly walking behind.",
+          "info": "回头 (huítóu) = to turn around/look back. 看了看 (kàn le kàn) = took a look (verb + 了 + verb = doing briefly). 还 (hái) = still. 在后面 (zài hòumiàn) = behind. 慢慢地 (mànmàn de) = slowly (reduplication = gentler/more casual).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "兔子心想：«时间还很多，我先睡一会儿吧。»",
+          "translation": "The hare thought: 'There's still plenty of time, let me take a nap first.'",
+          "info": "心想 (xīn xiǎng) = thought to himself (心 = heart + 想 = think). 时间 (shíjiān) = time. 还很多 = still a lot. 先 (xiān) = first. 睡 (shuì) = to sleep. 一会儿 (yíhuìr) = a little while. 吧 softens the decision.",
+          "styles": []
+        },
+        {
+          "id": "p6_s2",
+          "text": "于是，他在一棵大树下睡着了。",
+          "translation": "So, he fell asleep under a big tree.",
+          "info": "于是 (yúshì) = so/therefore. 在 (zài) = at/under. 一棵 (yì kē) = one (棵 is the measure word for trees). 大树 (dà shù) = big tree. 下 (xià) = under. 睡着了 (shuì zháo le) = fell asleep (着 here means 'successfully achieved').",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p7_s1",
+          "text": "乌龟一直不停地走，走，走。",
+          "translation": "The tortoise kept walking, walking, walking without stopping.",
+          "info": "一直 (yìzhí) = continuously/all along. 不停地 (bù tíng de) = without stopping (不 = not, 停 = stop, 地 = adverbial particle). The repetition 走，走，走 emphasizes the persistent, steady effort.",
+          "styles": []
+        },
+        {
+          "id": "p7_s2",
+          "text": "他走过了兔子身边，",
+          "translation": "He walked past the hare,",
+          "info": "走过了 (zǒu guò le) = walked past (走 = walk + 过 = past/through + 了 = completed). 身边 (shēnbiān) = side/beside (身 = body + 边 = side).",
+          "styles": []
+        },
+        {
+          "id": "p7_s3",
+          "text": "继续向前走。",
+          "translation": "and continued walking forward.",
+          "info": "继续 (jìxù) = to continue. 向前 (xiàng qián) = forward (向 = toward + 前 = front). 走 (zǒu) = to walk. Simple but powerful sentence showing the tortoise's determination.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p8_s1",
+          "text": "兔子醒来的时候，",
+          "translation": "When the hare woke up,",
+          "info": "醒来 (xǐng lái) = to wake up (醒 = awake + 来 = come). 的时候 (de shíhou) = when/at the time of. This is the standard way to say 'when' for simultaneous events in Chinese.",
+          "styles": []
+        },
+        {
+          "id": "p8_s2",
+          "text": "乌龟已经到了终点。",
+          "translation": "the tortoise had already reached the finish line.",
+          "info": "已经 (yǐjīng) = already. 到了 (dào le) = arrived/reached (到 = arrive + 了 = completed). 终点 (zhōngdiǎn) = finish line/destination (终 = end + 点 = point).",
+          "styles": []
+        },
+        {
+          "id": "p8_s3",
+          "text": "乌龟赢了！",
+          "translation": "The tortoise won!",
+          "info": "赢了 (yíng le) = won (赢 = to win + 了 = completed action). The moral: 坚持就是胜利 (jiānchí jiùshì shènglì) = perseverance is victory — a very popular Chinese saying.",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

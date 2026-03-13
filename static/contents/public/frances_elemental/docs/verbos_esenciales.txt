@@ -1,0 +1,86 @@
+VERBOS ESENCIALES EN FRANCÉS
+==============================
+
+Los verbos franceses se agrupan en tres conjugaciones principales:
+1er grupo (-ER): parler (hablar) — el más numeroso (~90%)
+2o grupo (-IR con -issons): finir (terminar)
+3er grupo (irregular): être, avoir, aller, faire, etc.
+
+
+1. ÊTRE (Ser / Estar)
+
+   Presente:
+   je suis          nous sommes
+   tu es             vous êtes
+   il/elle est       ils/elles sont
+
+   Equivale a "ser" Y "estar" del español:
+   Je suis espagnol.     → Soy español. (ser)
+   Je suis fatigué.      → Estoy cansado. (estar)
+
+
+2. AVOIR (Tener / Haber)
+
+   Presente:
+   j'ai              nous avons
+   tu as              vous avez
+   il/elle a          ils/elles ont
+
+   ⚠️ En francés se usa "avoir" donde español usa "tener":
+   J'ai faim.  → Tengo hambre. (lit. "tengo hambre", no "estoy hambriento")
+   J'ai 20 ans. → Tengo 20 años. (en español tampoco se usa "ser/estar")
+   J'ai froid.  → Tengo frío.
+
+   También se usa como auxiliar para el passé composé:
+   J'ai mangé. → He comido.
+
+
+3. ALLER (Ir)
+
+   Presente:
+   je vais            nous allons
+   tu vas              vous allez
+   il/elle va          ils/elles vont
+
+   Futuro próximo (como "ir a + infinitivo" en español):
+   Je vais manger. → Voy a comer.
+   Il va pleuvoir. → Va a llover.
+
+
+4. FAIRE (Hacer)
+
+   Presente:
+   je fais            nous faisons
+   tu fais             vous faites
+   il/elle fait        ils/elles font
+
+   Se usa en muchas expresiones:
+   faire du sport      → hacer deporte
+   faire la cuisine    → cocinar (lit. "hacer la cocina")
+   faire beau          → hacer buen tiempo
+   faire les courses   → hacer la compra
+
+
+5. VERBOS DEL 1er GRUPO (-ER): PARLER (Hablar)
+
+   Presente:
+   je parle           nous parlons
+   tu parles           vous parlez
+   il/elle parle       ils/elles parlent
+
+   ⚠️ Las terminaciones -e, -es, -e, -ent son MUDAS.
+   Así que je parle, tu parles, il parle, ils parlent
+   suenan IGUAL: /paʀl/.
+
+   Otros verbos: aimer (amar), manger (comer), travailler (trabajar),
+   habiter (vivir/habitar), regarder (mirar), écouter (escuchar).
+
+
+6. LA NEGACIÓN
+
+   En francés, la negación rodea al verbo con NE...PAS:
+   Je ne parle pas français. → No hablo francés.
+   Il n'aime pas le café.    → No le gusta el café.
+
+   ⚠️ En el habla coloquial, el "ne" se omite frecuentemente:
+   "Je parle pas" = "Je ne parle pas" (informal)

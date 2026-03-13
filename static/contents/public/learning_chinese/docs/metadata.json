@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_fundamentals",
+      "name": "Fundamentals",
+      "subcategories": [],
+      "items": ["chinese_tones.txt", "radicals_characters.txt"]
+    }
+  ],
+  "available_tags": ["Pronunciation", "Characters", "Reference"],
+  "files": {
+    "chinese_tones.txt": {
+      "name": "chinese_tones.txt",
+      "display_name": "Chinese Tones Guide",
+      "description": "The four tones, tone change rules, initials, finals, and practice minimal pairs.",
+      "tags": ["Pronunciation", "Reference"],
+      "uploaded_at": "2026-02-10T00:00:00"
+    },
+    "radicals_characters.txt": {
+      "name": "radicals_characters.txt",
+      "display_name": "Radicals & Characters",
+      "description": "Common radicals, how characters work, numbers, and stroke order rules.",
+      "tags": ["Characters", "Reference"],
+      "uploaded_at": "2026-02-10T00:00:00"
+    }
+  }
 }

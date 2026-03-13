@@ -1,0 +1,70 @@
+EL ALFABETO ÁRABE: GUÍA BÁSICA
+================================
+
+El alfabeto árabe consta de 28 letras consonánticas. Se escribe de
+derecha a izquierda. Las vocales cortas se representan con signos
+diacríticos (harakat) sobre o bajo las consonantes.
+
+
+1. CARACTERÍSTICAS GENERALES
+   - Se escribe de DERECHA a IZQUIERDA.
+   - Cada letra tiene hasta 4 formas: aislada, inicial, media y final.
+   - No existen letras mayúsculas ni minúsculas.
+   - Las vocales cortas (a, i, u) se escriben como marcas opcionales.
+
+
+2. PRIMERAS LETRAS
+
+   أ (alif)  — Soporte de vocal. No tiene sonido propio.
+   ب (ba')   — Sonido: /b/ como en "barco".
+   ت (ta')   — Sonido: /t/ como en "toro".
+   ث (za')   — Sonido: /θ/ como la "z" española (de "zapato").
+   ج (yim)   — Sonido: /dʒ/ como la "j" inglesa en "job".
+   ح (ha')   — Sonido: /ħ/ aspirada faríngea, sin equivalente en español.
+   خ (ja')   — Sonido: /x/ como la "j" española en "jamón".
+   د (dal)   — Sonido: /d/ como en "dedo".
+   ذ (zal)   — Sonido: /ð/ como la "d" suave en "dado" (interdental).
+   ر (ra')   — Sonido: /r/ como la "r" simple en "pero".
+   ز (zay)   — Sonido: /z/ como en el inglés "zero".
+   س (sin)   — Sonido: /s/ como en "sol".
+   ش (shin)  — Sonido: /ʃ/ como "sh" en inglés "she".
+   ص (sad)   — Sonido: /sˤ/ "s" enfática (más oscura y profunda).
+   ض (dad)   — Sonido: /dˤ/ "d" enfática. Letra exclusiva del árabe.
+
+
+3. VOCALES CORTAS (Harakat)
+
+   َ  fatḥa   — vocal /a/ corta. Se coloca SOBRE la consonante.
+   ِ  kasra   — vocal /i/ corta. Se coloca BAJO la consonante.
+   ُ  ḍamma   — vocal /u/ corta. Se coloca SOBRE la consonante.
+   ْ  sukūn   — indica AUSENCIA de vocal después de la consonante.
+
+   Ejemplo: بَ = "ba", بِ = "bi", بُ = "bu", بْ = "b" (sin vocal)
+
+
+4. VOCALES LARGAS
+
+   Las vocales largas se forman combinando una consonante con una letra:
+   ا — alif prolonga /a/: بَا = "bā"
+   ي — ya' prolonga /i/: بِي = "bī"
+   و — waw prolonga /u/: بُو = "bū"
+
+
+5. FORMAS DE CONEXIÓN
+
+   La mayoría de letras se conectan con la siguiente.
+   6 letras NUNCA se conectan hacia la izquierda:
+   أ (alif), د (dal), ذ (zal), ر (ra'), ز (zay), و (waw)
+
+   ⚠️ Esto cambia la forma visual de las letras que las rodean.
+
+
+6. NÚMEROS ARÁBIGOS ORIENTALES
+
+   Los números que usamos en Occidente son de origen árabe,
+   pero en el mundo árabe se usan los "números arábigos orientales":
+
+   ٠ = 0    ١ = 1    ٢ = 2    ٣ = 3    ٤ = 4
+   ٥ = 5    ٦ = 6    ٧ = 7    ٨ = 8    ٩ = 9
+
+   ⚠️ Los números se leen de izquierda a derecha (al revés que el texto).

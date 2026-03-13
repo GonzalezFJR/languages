@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "title": "我的一天 — My Day",
+    "description": "A simple daily routine described in basic Mandarin. Covers time expressions, common verbs, and everyday vocabulary.",
+    "text_language": "zh",
+    "notes_language": "en",
+    "created_at": "2026-02-10T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "我的一天",
+          "translation": "My Day",
+          "info": "我 (wǒ) = I/me. 的 (de) = possessive particle ('s). 一天 (yì tiān) = one day. 我的 = my. This is the most basic possessive structure: Pronoun + 的 + Noun.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "我每天早上七点起床。",
+          "translation": "I get up at 7 o'clock every morning.",
+          "info": "每天 (měi tiān) = every day. 早上 (zǎoshang) = morning. 七点 (qī diǎn) = 7 o'clock (七 = seven + 点 = o'clock). 起床 (qǐ chuáng) = to get up (lit. 'rise from bed').",
+          "styles": []
+        },
+        {
+          "id": "p1_s2",
+          "text": "先刷牙、洗脸，",
+          "translation": "First I brush my teeth and wash my face,",
+          "info": "先 (xiān) = first. 刷牙 (shuā yá) = brush teeth (刷 = brush + 牙 = teeth). 洗脸 (xǐ liǎn) = wash face (洗 = wash + 脸 = face). The 、(dùnhào) is the Chinese listing comma, used between items in a list.",
+          "styles": []
+        },
+        {
+          "id": "p1_s3",
+          "text": "然后吃早饭。",
+          "translation": "then eat breakfast.",
+          "info": "然后 (ránhòu) = then/after that. 吃 (chī) = to eat. 早饭 (zǎofàn) = breakfast (早 = early/morning + 饭 = meal/rice). Meals: 早饭 (breakfast), 午饭 (wǔfàn, lunch), 晚饭 (wǎnfàn, dinner).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "我喜欢喝一杯热咖啡，",
+          "translation": "I like to drink a cup of hot coffee,",
+          "info": "喜欢 (xǐhuan) = to like. 喝 (hē) = to drink. 一杯 (yì bēi) = one cup (杯 is the measure word for cups/glasses). 热 (rè) = hot. 咖啡 (kāfēi) = coffee (transliteration from English).",
+          "styles": []
+        },
+        {
+          "id": "p2_s2",
+          "text": "吃两片面包和一个鸡蛋。",
+          "translation": "eat two slices of bread and an egg.",
+          "info": "两 (liǎng) = two (used with measure words; 二 èr is used for numbers/counting). 片 (piàn) = slice (measure word). 面包 (miànbāo) = bread. 一个 (yí gè) = one (个 is the most common measure word). 鸡蛋 (jīdàn) = egg (chicken egg).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "八点半我坐公共汽车去上班。",
+          "translation": "At 8:30 I take the bus to go to work.",
+          "info": "八点半 (bā diǎn bàn) = 8:30 (半 bàn = half). 坐 (zuò) = to sit / to take (transport). 公共汽车 (gōnggòng qìchē) = bus (lit. 'public steam vehicle'). 去 (qù) = to go. 上班 (shàng bān) = to go to work.",
+          "styles": []
+        },
+        {
+          "id": "p3_s2",
+          "text": "公司离我家不太远。",
+          "translation": "The company is not too far from my home.",
+          "info": "公司 (gōngsī) = company. 离 (lí) = from (distance). 我家 (wǒ jiā) = my home (no 的 needed for close relationships). 不太远 (bú tài yuǎn) = not too far (不 = not + 太 = too + 远 = far).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p4_s1",
+          "text": "中午十二点，我和同事一起吃午饭。",
+          "translation": "At noon, 12 o'clock, I eat lunch together with my colleagues.",
+          "info": "中午 (zhōngwǔ) = noon. 和 (hé) = and/with. 同事 (tóngshì) = colleague. 一起 (yìqǐ) = together. 午饭 (wǔfàn) = lunch. The pattern A 和 B 一起 = 'A together with B'.",
+          "styles": []
+        },
+        {
+          "id": "p4_s2",
+          "text": "我们常常去公司附近的小饭馆。",
+          "translation": "We often go to a small restaurant near the company.",
+          "info": "我们 (wǒmen) = we. 常常 (chángcháng) = often. 附近 (fùjìn) = nearby. 的 links 'nearby' to 'restaurant'. 小 (xiǎo) = small. 饭馆 (fànguǎn) = restaurant (饭 = meal + 馆 = establishment).",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p5_s1",
+          "text": "下午五点下班。",
+          "translation": "At 5 PM I get off work.",
+          "info": "下午 (xiàwǔ) = afternoon/PM. 五点 (wǔ diǎn) = 5 o'clock. 下班 (xià bān) = to get off work (opposite of 上班). 上 (up/start) and 下 (down/end) form many pairs in Chinese.",
+          "styles": []
+        },
+        {
+          "id": "p5_s2",
+          "text": "回家以后，我有时候做饭，",
+          "translation": "After going home, I sometimes cook,",
+          "info": "回家 (huí jiā) = to go home (回 = return + 家 = home). 以后 (yǐhòu) = after. 有时候 (yǒu shíhou) = sometimes. 做饭 (zuò fàn) = to cook (lit. 'make meal').",
+          "styles": []
+        },
+        {
+          "id": "p5_s3",
+          "text": "有时候叫外卖。",
+          "translation": "sometimes order delivery.",
+          "info": "叫 (jiào) = to call/order. 外卖 (wàimài) = food delivery/takeout (外 = outside + 卖 = sell). Food delivery apps like 美团 (Měituán) and 饿了么 (Èle me) are hugely popular in China.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p6_s1",
+          "text": "晚上我看看书，学学中文，",
+          "translation": "In the evening I read a bit, study some Chinese,",
+          "info": "晚上 (wǎnshang) = evening/night. 看看书 (kàn kan shū) = read a bit (verb reduplication = casual/brief action). 学学中文 (xué xue Zhōngwén) = study some Chinese. 中文 = Chinese language (written).",
+          "styles": []
+        },
+        {
+          "id": "p6_s2",
+          "text": "十一点左右睡觉。",
+          "translation": "and go to sleep around 11 o'clock.",
+          "info": "十一点 (shíyī diǎn) = 11 o'clock. 左右 (zuǒyòu) = approximately/around (lit. 'left-right'). 睡觉 (shuì jiào) = to sleep/go to bed. Different from 起床 (get up) — these are the bookends of daily life!",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}

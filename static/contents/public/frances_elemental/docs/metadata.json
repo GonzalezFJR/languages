@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_fundamentos",
+      "name": "Fundamentos",
+      "subcategories": [],
+      "items": ["pronunciacion_francesa.txt", "verbos_esenciales.txt"]
+    }
+  ],
+  "available_tags": ["Pronunciación", "Gramática", "Verbos"],
+  "files": {
+    "pronunciacion_francesa.txt": {
+      "name": "pronunciacion_francesa.txt",
+      "display_name": "Guía de pronunciación",
+      "description": "Vocales nasales, letras mudas, acentos, sonidos difíciles y la liaison.",
+      "tags": ["Pronunciación"],
+      "uploaded_at": "2026-02-01T00:00:00"
+    },
+    "verbos_esenciales.txt": {
+      "name": "verbos_esenciales.txt",
+      "display_name": "Verbos esenciales",
+      "description": "Conjugación de être, avoir, aller, faire y los verbos del 1er grupo (-ER).",
+      "tags": ["Gramática", "Verbos"],
+      "uploaded_at": "2026-02-01T00:00:00"
+    }
+  }
 }

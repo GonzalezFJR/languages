@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_reference",
+      "name": "Reference",
+      "subcategories": [],
+      "items": ["verb_conjugation.txt", "essential_phrases.txt"]
+    }
+  ],
+  "available_tags": ["Grammar", "Vocabulary", "Travel"],
+  "files": {
+    "verb_conjugation.txt": {
+      "name": "verb_conjugation.txt",
+      "display_name": "Verb Conjugation Guide",
+      "description": "Quick reference for Spanish verb patterns: -AR, -ER, -IR, irregulars, and past tenses.",
+      "tags": ["Grammar"],
+      "uploaded_at": "2026-01-20T00:00:00"
+    },
+    "essential_phrases.txt": {
+      "name": "essential_phrases.txt",
+      "display_name": "Essential Phrases for Travelers",
+      "description": "Useful phrases organized by situation: greetings, food, directions, emergencies.",
+      "tags": ["Vocabulary", "Travel"],
+      "uploaded_at": "2026-01-20T00:00:00"
+    }
+  }
 }

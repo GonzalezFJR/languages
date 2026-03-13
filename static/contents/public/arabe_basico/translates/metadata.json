@@ -1,4 +1,27 @@
 {
-  "categories": [],
-  "files": {}
+  "categories": [
+    {
+      "id": "cat_relatos",
+      "name": "Relatos y diálogos",
+      "subcategories": [],
+      "items": ["yusuf_y_el_pozo.xlan", "en_el_mercado.xlan"]
+    }
+  ],
+  "available_tags": ["Relato", "Diálogo", "A1", "A2"],
+  "files": {
+    "yusuf_y_el_pozo.xlan": {
+      "name": "yusuf_y_el_pozo.xlan",
+      "display_name": "Yūsuf y el pozo",
+      "description": "Relato tradicional sobre el profeta Yūsuf. Texto simplificado para principiantes.",
+      "tags": ["Relato", "A2"],
+      "created_at": "2026-01-15T00:00:00"
+    },
+    "en_el_mercado.xlan": {
+      "name": "en_el_mercado.xlan",
+      "display_name": "En el mercado",
+      "description": "Diálogo cotidiano de compras. Vocabulario de alimentos, números y cortesía.",
+      "tags": ["Diálogo", "A1"],
+      "created_at": "2026-01-15T00:00:00"
+    }
+  }
 }
