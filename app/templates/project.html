@@ -217,6 +217,7 @@
         <div class="flex border-b border-ink-100">
           <button id="tab-btn-text" onclick="switchTranslateTab('text')" class="px-4 py-2 text-sm font-medium border-b-2 border-ink-900 text-ink-900 -mb-px">Pegar texto</button>
           <button id="tab-btn-file" onclick="switchTranslateTab('file')" class="px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px">Subir archivo</button>
+          <button id="tab-btn-ocr" onclick="switchTranslateTab('ocr')" class="px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px">📷 OCR</button>
         </div>
       </div>
       <div class="px-8 py-6">
@@ -243,12 +244,44 @@
           </div>
           <input id="trans-file-input" type="file" accept=".pdf,.docx,.txt,.md" class="hidden" onchange="onTransFileSelect(this)" />
         </div>
+        <!-- Tab: OCR / Camera -->
+        <div id="tab-pane-ocr" class="hidden">
+          <label class="block text-sm font-medium text-ink-700 mb-2">Captura o sube una imagen con texto en {{ languages.get(project.target, project.target) }}</label>
+          <!-- Camera live view -->
+          <div id="ocr-camera-container" class="relative rounded-xl overflow-hidden bg-black mb-3 hidden">
+            <video id="ocr-video" autoplay playsinline class="w-full" style="max-height:320px;object-fit:cover;"></video>
+            <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-3">
+              <button type="button" onclick="capturePhoto()" class="px-5 py-2.5 bg-white/90 text-ink-900 rounded-full text-sm font-medium shadow-lg hover:bg-white transition-colors">📸 Capturar</button>
+              <button type="button" onclick="stopCamera()" class="px-4 py-2.5 bg-red-500/90 text-white rounded-full text-sm font-medium shadow-lg hover:bg-red-500 transition-colors">✕ Cerrar</button>
+            </div>
+          </div>
+          <!-- Image preview -->
+          <div id="ocr-preview-container" class="hidden mb-3">
+            <img id="ocr-preview" class="w-full rounded-xl border border-ink-200" style="max-height:280px;object-fit:contain;" />
+            <button type="button" onclick="clearOcrImage()" class="mt-2 text-xs text-red-400 hover:text-red-600">✕ Quitar imagen</button>
+          </div>
+          <!-- Action buttons -->
+          <div id="ocr-actions" class="flex gap-3">
+            <button type="button" onclick="openCamera()" class="flex-1 border-2 border-dashed border-ink-200 rounded-xl p-5 text-center hover:border-ink-400 transition-colors">
+              <div class="text-2xl mb-1">📷</div>
+              <div class="text-sm text-ink-500">Hacer foto</div>
+              <div class="text-xs text-ink-300 mt-0.5">Cámara del dispositivo</div>
+            </button>
+            <button type="button" onclick="document.getElementById('ocr-file-input').click()" class="flex-1 border-2 border-dashed border-ink-200 rounded-xl p-5 text-center hover:border-ink-400 transition-colors">
+              <div class="text-2xl mb-1">🖼️</div>
+              <div class="text-sm text-ink-500">Subir imagen</div>
+              <div class="text-xs text-ink-300 mt-0.5">JPG, PNG, BMP, WebP</div>
+            </button>
+          </div>
+          <input id="ocr-file-input" type="file" accept="image/*" class="hidden" onchange="onOcrFileSelect(this)" />
+          <input id="ocr-camera-input" type="file" accept="image/*" capture="environment" class="hidden" onchange="onOcrFileSelect(this)" />
+        </div>
         <div id="translate-error" class="text-red-500 text-sm mt-3 hidden"></div>
         <div class="flex gap-3 mt-5">
           <button type="button" onclick="closeTranslateModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
           <button type="button" id="translate-btn" onclick="submitTranslate()" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Generar con IA
+            <span id="translate-btn-icon"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
+            <span id="translate-btn-label">Generar con IA</span>
           </button>
         </div>
       </div>
@@ -431,6 +464,8 @@ function openTranslateModal() {
 }
 function closeTranslateModal() {
   if (_agentES) { _agentES.close(); _agentES = null; }
+  stopCamera();
+  _ocrImageBlob = null;
   hideModal('translate-modal');
   document.getElementById('trans-title').value = '';
   document.getElementById('trans-desc').value = '';
@@ -444,6 +479,14 @@ function closeTranslateModal() {
   document.getElementById('trans-progress-log').innerHTML = '';
   document.getElementById('trans-spinner').classList.remove('hidden');
   document.getElementById('trans-proc-title').textContent = 'Generando texto con IA…';
+  // OCR cleanup
+  document.getElementById('ocr-preview-container').classList.add('hidden');
+  document.getElementById('ocr-preview').src = '';
+  document.getElementById('ocr-actions').classList.remove('hidden');
+  const ocrFileInput = document.getElementById('ocr-file-input');
+  if (ocrFileInput) ocrFileInput.value = '';
+  const ocrCamInput = document.getElementById('ocr-camera-input');
+  if (ocrCamInput) ocrCamInput.value = '';
 }
 function switchTranslateTab(tab) {
   translateTab = tab;
@@ -451,8 +494,21 @@ function switchTranslateTab(tab) {
   const off = 'px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px';
   document.getElementById('tab-btn-text').className = tab==='text' ? on : off;
   document.getElementById('tab-btn-file').className = tab==='file' ? on : off;
+  document.getElementById('tab-btn-ocr').className  = tab==='ocr'  ? on : off;
   document.getElementById('tab-pane-text').classList.toggle('hidden', tab!=='text');
   document.getElementById('tab-pane-file').classList.toggle('hidden', tab!=='file');
+  document.getElementById('tab-pane-ocr').classList.toggle('hidden',  tab!=='ocr');
+  // Update button text
+  const iconEl = document.getElementById('translate-btn-icon');
+  const labelEl = document.getElementById('translate-btn-label');
+  if (tab === 'ocr') {
+    iconEl.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>';
+    labelEl.textContent = 'Procesar con OCR';
+  } else {
+    iconEl.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>';
+    labelEl.textContent = 'Generar con IA';
+  }
+  if (tab !== 'ocr') stopCamera();
 }
 function onTransFileSelect(input) {
   if (input.files[0]) {
@@ -479,9 +535,13 @@ async function submitTranslate() {
     if (!document.getElementById('trans-text').value.trim()) {
       errEl.textContent = 'El texto no puede estar vacío'; errEl.classList.remove('hidden'); return;
     }
-  } else {
+  } else if (translateTab === 'file') {
     if (!document.getElementById('trans-file-input').files[0]) {
       errEl.textContent = 'Selecciona un archivo'; errEl.classList.remove('hidden'); return;
+    }
+  } else if (translateTab === 'ocr') {
+    if (!_ocrImageBlob) {
+      errEl.textContent = 'Captura o sube una imagen primero'; errEl.classList.remove('hidden'); return;
     }
   }
 
@@ -490,12 +550,64 @@ async function submitTranslate() {
   document.getElementById('trans-processing-view').classList.remove('hidden');
   document.getElementById('trans-progress-log').innerHTML = '';
 
+  // OCR flow
+  if (translateTab === 'ocr') {
+    stopCamera();
+    _appendLog('📷 Ejecutando OCR en la imagen…');
+    try {
+      const fd = new FormData();
+      fd.append('file', _ocrImageBlob, _ocrImageBlob.name || 'capture.jpg');
+      fd.append('title', title);
+      fd.append('description', desc);
+      const ocrRes = await fetch(`/api/projects/${PROJECT_ID}/pipeline/ocr`, {method:'POST', body:fd});
+      if (!ocrRes.ok) {
+        const err = await ocrRes.json().catch(()=>({detail:'Error desconocido'}));
+        _showTransProcError(err.detail || 'Error en OCR'); return;
+      }
+      const ocrData = await ocrRes.json();
+      _appendLog('✅ Texto extraído con OCR:');
+      _appendLog('─'.repeat(40));
+      ocrData.text.split('\n').forEach(line => { if(line.trim()) _appendLog(line); });
+      _appendLog('─'.repeat(40));
+
+      if (!ocrData.pipeline_available) {
+        _appendLog('⚠️ Pipeline de generación no disponible (API Key no configurada)');
+        document.getElementById('trans-spinner').classList.add('hidden');
+        document.getElementById('trans-proc-title').textContent = 'Servicio no disponible';
+        const el = document.getElementById('trans-proc-error');
+        el.innerHTML = 'El servicio de generación de textos interactivos (.xlan) no está disponible. ' +
+          'Configure la API Key del LLM en el archivo <code>.env</code> para habilitar esta función.<br><br>' +
+          '<span class="text-ink-500">El texto extraído se ha registrado en la consola del servidor.</span>';
+        el.classList.remove('hidden');
+        return;
+      }
+
+      // Pipeline available — proceed with agent
+      _appendLog('🤖 Iniciando generación con IA…');
+      const agentRes = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({title, description: desc, raw_text: ocrData.text, source_type: 'ocr'})
+      });
+      if (!agentRes.ok) {
+        const err = await agentRes.json().catch(()=>({detail:'Error desconocido'}));
+        _showTransProcError(err.detail || 'Error al iniciar el agente'); return;
+      }
+      const {job_id, chars} = await agentRes.json();
+      _appendLog(`Texto: ${chars} caracteres. Generando…`);
+      _connectAgentSSE(job_id);
+    } catch(err) {
+      _showTransProcError('Error: ' + err.message);
+    }
+    return;
+  }
+
+  // Text / File flow
   try {
     let res;
     if (translateTab === 'text') {
       res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start`, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({title, description: desc, raw_text: document.getElementById('trans-text').value.trim()})
+        body: JSON.stringify({title, description: desc, raw_text: document.getElementById('trans-text').value.trim(), source_type: 'text'})
       });
     } else {
       const fd = new FormData();
@@ -507,31 +619,33 @@ async function submitTranslate() {
       const err = await res.json().catch(()=>({detail:'Error desconocido'}));
       _showTransProcError(err.detail || 'Error al iniciar el agente'); return;
     }
-    const {job_id, blocks} = await res.json();
-    _appendLog(`Texto extraído: ${blocks} bloque(s). Iniciando agente IA…`);
+    const {job_id, chars} = await res.json();
+    _appendLog(`Texto: ${chars} caracteres. Iniciando agente IA…`);
 
-    // Open SSE stream
-    _agentES = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
-    _agentES.onmessage = function(e) {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'heartbeat') return;
-      if (msg.type === 'progress' || msg.type === 'info') {
-        _appendLog(msg.msg);
-      } else if (msg.type === 'done') {
-        _agentES.close(); _agentES = null;
-        _showTransDone(msg.filename, msg.blocks, msg.segments);
-      } else if (msg.type === 'error') {
-        _agentES.close(); _agentES = null;
-        _showTransProcError(msg.msg);
-      }
-    };
-    _agentES.onerror = function() {
-      if (_agentES) { _agentES.close(); _agentES = null; }
-      _showTransProcError('Error de conexión con el servidor');
-    };
+    _connectAgentSSE(job_id);
   } catch(err) {
     _showTransProcError('Error: ' + err.message);
   }
+}
+function _connectAgentSSE(job_id) {
+  _agentES = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
+  _agentES.onmessage = function(e) {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'heartbeat') return;
+    if (msg.type === 'progress' || msg.type === 'info') {
+      _appendLog(msg.msg);
+    } else if (msg.type === 'done') {
+      _agentES.close(); _agentES = null;
+      _showTransDone(msg.filename, msg.blocks, msg.segments);
+    } else if (msg.type === 'error') {
+      _agentES.close(); _agentES = null;
+      _showTransProcError(msg.msg);
+    }
+  };
+  _agentES.onerror = function() {
+    if (_agentES) { _agentES.close(); _agentES = null; }
+    _showTransProcError('Error de conexión con el servidor');
+  };
 }
 function _showTransDone(filename, blocks, segments) {
   document.getElementById('trans-spinner').classList.add('hidden');
@@ -908,5 +1022,77 @@ async function saveTree(section) {
   if (dAvail.length) renderTagFilterBar('docs', dAvail);
   if (xAvail.length) renderTagFilterBar('translates', xAvail);
 })();
+
+// ── OCR / Camera ─────────────────────────────────────────────────
+let _ocrImageBlob = null;
+let _cameraStream = null;
+
+async function openCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    _cameraStream = stream;
+    const video = document.getElementById('ocr-video');
+    video.srcObject = stream;
+    document.getElementById('ocr-camera-container').classList.remove('hidden');
+    document.getElementById('ocr-actions').classList.add('hidden');
+    document.getElementById('ocr-preview-container').classList.add('hidden');
+  } catch (err) {
+    // Camera not available (desktop without webcam, denied permissions, etc.)
+    // Fallback: open file input with capture attribute for mobile
+    document.getElementById('ocr-camera-input').click();
+  }
+}
+
+function stopCamera() {
+  if (_cameraStream) {
+    _cameraStream.getTracks().forEach(t => t.stop());
+    _cameraStream = null;
+  }
+  const container = document.getElementById('ocr-camera-container');
+  if (container) container.classList.add('hidden');
+  const actions = document.getElementById('ocr-actions');
+  if (actions) actions.classList.remove('hidden');
+}
+
+function capturePhoto() {
+  const video = document.getElementById('ocr-video');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  canvas.toBlob(function(blob) {
+    _ocrImageBlob = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    document.getElementById('ocr-preview').src = url;
+    document.getElementById('ocr-preview-container').classList.remove('hidden');
+    stopCamera();
+  }, 'image/jpeg', 0.92);
+}
+
+function onOcrFileSelect(input) {
+  if (input.files && input.files[0]) {
+    _ocrImageBlob = input.files[0];
+    const url = URL.createObjectURL(input.files[0]);
+    document.getElementById('ocr-preview').src = url;
+    document.getElementById('ocr-preview-container').classList.remove('hidden');
+    document.getElementById('ocr-actions').classList.add('hidden');
+    if (!document.getElementById('trans-title').value) {
+      document.getElementById('trans-title').value = input.files[0].name.replace(/\.[^.]+$/, '');
+    }
+  }
+}
+
+function clearOcrImage() {
+  _ocrImageBlob = null;
+  document.getElementById('ocr-preview-container').classList.add('hidden');
+  document.getElementById('ocr-preview').src = '';
+  document.getElementById('ocr-actions').classList.remove('hidden');
+  const ocrFileInput = document.getElementById('ocr-file-input');
+  if (ocrFileInput) ocrFileInput.value = '';
+  const ocrCamInput = document.getElementById('ocr-camera-input');
+  if (ocrCamInput) ocrCamInput.value = '';
+}
 </script>
 {% endblock %}

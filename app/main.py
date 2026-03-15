@@ -6,7 +6,7 @@ from pathlib import Path
 
 from app.config import settings
 from app.auth import get_user_content_dir, get_current_user
-from app.routers import pages, api_projects, api_documents, api_pipeline, api_pipeline_agent
+from app.routers import pages, api_projects, api_documents, api_pipeline, api_pipeline_agent, api_ocr
 
 app = FastAPI(
     title=settings.app_name,
@@ -42,3 +42,4 @@ app.include_router(api_projects.router)
 app.include_router(api_documents.router)
 app.include_router(api_pipeline.router)
 app.include_router(api_pipeline_agent.router)
+app.include_router(api_ocr.router)

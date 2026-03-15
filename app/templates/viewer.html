@@ -21,6 +21,7 @@
     padding: 0 2px;
     transition: background 0.12s, color 0.12s;
     position: relative;
+    white-space: pre-wrap;
   }
   .xlan-seg:hover, .xlan-seg.seg-hover {
     background: #fef3c7;
@@ -169,6 +170,11 @@
       <button id="view-btn-split"    onclick="setView('split')"    class="px-2 md:px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700"><span class="hidden md:inline">Original / </span>Trad.</button>
       <button id="view-btn-table"    onclick="setView('table')"    class="px-2 md:px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700">Tabla</button>
     </div>
+    {% if current_user %}
+    <button onclick="openExtendModal()" class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors flex-shrink-0 hide-mobile" title="Extender este texto con más contenido">
+      + Extender texto
+    </button>
+    {% endif %}
     <!-- Zoom -->
     <div class="flex items-center gap-1 flex-shrink-0 hide-mobile">
       <button id="zoom-out" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors">−</button>
@@ -352,7 +358,9 @@
                             data-seg-id="{{ seg.id }}__tr" data-seg-ref="{{ seg.id }}"
                             data-block-index="{{ bi }}"
                             data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
-                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.translation }}</span>
+                            data-seg-note='{{ sn | tojson | e }}'>{% if seg.text[:1] == '\n' %}
+{% endif %}{{ seg.translation }}{% if seg.text[-1:] == '\n' %}
+{% endif %}</span>
                     {% endfor %}
                   </div>
                 </div>
@@ -375,7 +383,9 @@
                             data-seg-id="{{ seg.id }}__tr" data-seg-ref="{{ seg.id }}"
                             data-block-index="{{ bi }}"
                             data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
-                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.translation }}</span>
+                            data-seg-note='{{ sn | tojson | e }}'>{% if seg.text[:1] == '\n' %}
+{% endif %}{{ seg.translation }}{% if seg.text[-1:] == '\n' %}
+{% endif %}</span>
                     {% endfor %}
                   </div>
                 </div>
@@ -609,6 +619,93 @@
   </div>
 </div>
 
+<!-- ════ EXTEND TEXT MODAL ════ -->
+<div id="extend-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onclick="closeExtendModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg z-10 overflow-hidden" id="extend-modal-inner">
+
+    <!-- ① INPUT STATE -->
+    <div id="extend-form">
+      <div class="px-8 pt-8 pb-0">
+        <h2 class="text-xl font-bold text-ink-900 mb-1">Extender texto</h2>
+        <p class="text-sm text-ink-500 mb-5">Añade más contenido a este texto interactivo. Se generará una nueva parte que continuará donde terminó el texto actual.</p>
+        <div class="flex border-b border-ink-100">
+          <button id="ext-tab-btn-text" onclick="switchExtendTab('text')" class="px-4 py-2 text-sm font-medium border-b-2 border-ink-900 text-ink-900 -mb-px">Pegar texto</button>
+          <button id="ext-tab-btn-file" onclick="switchExtendTab('file')" class="px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px">Subir archivo</button>
+          <button id="ext-tab-btn-ocr" onclick="switchExtendTab('ocr')" class="px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px">📷 OCR</button>
+        </div>
+      </div>
+      <div class="px-8 py-6">
+        <!-- Tab: paste text -->
+        <div id="ext-tab-pane-text">
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Texto a añadir</label>
+          <textarea id="extend-text" rows="7" placeholder="Pega aquí el texto a añadir…" class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-y"></textarea>
+        </div>
+        <!-- Tab: upload file -->
+        <div id="ext-tab-pane-file" class="hidden">
+          <label class="block text-sm font-medium text-ink-700 mb-1.5">Archivo de texto</label>
+          <div id="ext-drop-zone-file" class="border-2 border-dashed border-ink-200 rounded-xl p-6 text-center cursor-pointer hover:border-ink-400 transition-colors" onclick="document.getElementById('extend-file-input').click()">
+            <div class="text-3xl mb-2">📄</div>
+            <div class="text-sm text-ink-500" id="ext-file-label">Haz clic o arrastra un archivo aquí</div>
+            <div class="text-xs text-ink-300 mt-1">PDF · DOCX · TXT · MD</div>
+          </div>
+          <input id="extend-file-input" type="file" accept=".pdf,.docx,.txt,.md" class="hidden" onchange="onExtFileSelect(this)" />
+        </div>
+        <!-- Tab: OCR -->
+        <div id="ext-tab-pane-ocr" class="hidden">
+          <label class="block text-sm font-medium text-ink-700 mb-2">Captura o sube una imagen con texto</label>
+          <!-- Camera live view -->
+          <div id="ext-ocr-camera-container" class="relative rounded-xl overflow-hidden bg-black mb-3 hidden">
+            <video id="ext-ocr-video" autoplay playsinline class="w-full" style="max-height:320px;object-fit:cover;"></video>
+            <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-3">
+              <button type="button" onclick="extCapturePhoto()" class="px-5 py-2.5 bg-white/90 text-ink-900 rounded-full text-sm font-medium shadow-lg hover:bg-white transition-colors">📸 Capturar</button>
+              <button type="button" onclick="extStopCamera()" class="px-4 py-2.5 bg-red-500/90 text-white rounded-full text-sm font-medium shadow-lg hover:bg-red-500 transition-colors">✕ Cerrar</button>
+            </div>
+          </div>
+          <!-- Image preview -->
+          <div id="ext-ocr-preview-container" class="hidden mb-3">
+            <img id="ext-ocr-preview" class="w-full rounded-xl border border-ink-200" style="max-height:280px;object-fit:contain;" />
+            <button type="button" onclick="extClearOcrImage()" class="mt-2 text-xs text-red-400 hover:text-red-600">✕ Quitar imagen</button>
+          </div>
+          <!-- Action buttons -->
+          <div id="ext-ocr-actions" class="flex gap-3">
+            <button type="button" onclick="extOpenCamera()" class="flex-1 border-2 border-dashed border-ink-200 rounded-xl p-5 text-center hover:border-ink-400 transition-colors" id="ext-drop-zone-ocr-cam">
+              <div class="text-2xl mb-1">📷</div>
+              <div class="text-sm text-ink-500">Hacer foto</div>
+              <div class="text-xs text-ink-300 mt-0.5">Cámara del dispositivo</div>
+            </button>
+            <button type="button" onclick="document.getElementById('ext-ocr-file-input').click()" class="flex-1 border-2 border-dashed border-ink-200 rounded-xl p-5 text-center hover:border-ink-400 transition-colors" id="ext-drop-zone-ocr-img">
+              <div class="text-2xl mb-1">🖼️</div>
+              <div class="text-sm text-ink-500">Subir imagen</div>
+              <div class="text-xs text-ink-300 mt-0.5">JPG, PNG, BMP, WebP</div>
+            </button>
+          </div>
+          <input id="ext-ocr-file-input" type="file" accept="image/*" class="hidden" onchange="extOnOcrFileSelect(this)" />
+          <input id="ext-ocr-camera-input" type="file" accept="image/*" capture="environment" class="hidden" onchange="extOnOcrFileSelect(this)" />
+        </div>
+        <div id="extend-error" class="text-red-500 text-xs mb-3 hidden mt-3"></div>
+        <div class="flex gap-3 mt-5">
+          <button onclick="closeExtendModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button onclick="submitExtend()" id="extend-submit-btn" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+            <span id="extend-btn-icon"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
+            <span id="extend-btn-label">Generar extensión</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② PROCESSING STATE -->
+    <div id="extend-processing" class="hidden px-8 py-8">
+      <div class="flex items-center gap-3 mb-4">
+        <div id="extend-spinner" class="animate-spin w-5 h-5 border-2 border-ink-300 border-t-blue-600 rounded-full"></div>
+        <span class="text-sm text-ink-600">Generando extensión…</span>
+      </div>
+      <div id="extend-log" class="max-h-48 overflow-y-auto space-y-1 text-xs text-ink-500 bg-ink-50 rounded-xl p-3"></div>
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -618,6 +715,9 @@ const FILENAME = '{{ filename }}';
 const VIEW_TYPE = '{{ view_type }}';
 const FILE_META = {{ file_info | tojson }};
 const AVAIL_TAGS = {{ (docs_meta.get('available_tags',[]) if view_type=='doc' else translates_meta.get('available_tags',[])) | tojson }};
+const XLAN_PARTS = {{ xlan_parts | tojson }};
+let _partsLoaded = 1; // first part is rendered server-side
+let _partsLoading = false;
 
 function toggleSection(id) {
   const el = document.getElementById(id);
@@ -790,91 +890,92 @@ function positionTooltip(e) {
   tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
 }
 
-// ── Segment hover (all views) ────────────────────────────────────
-(function attachHover() {
-  if (!document.getElementById('seg-tooltip')) return;
+// ── Segment hover (event delegation — works for dynamically loaded parts) ──
+(function attachHoverDelegated() {
+  const scroller = document.getElementById('xlan-scroll');
+  if (!scroller || !document.getElementById('seg-tooltip')) return;
 
-  document.querySelectorAll('.xlan-seg').forEach(seg => {
-    seg.addEventListener('mouseenter', function(e) {
-      // Clear any previous highlights
-      document.querySelectorAll('.seg-active, .seg-cross-active').forEach(s =>
-        s.classList.remove('seg-active','seg-cross-active'));
+  function _findSeg(target) {
+    return target.closest('.xlan-seg');
+  }
 
-      this.classList.add('seg-active');
-
-      // In split view: cross-highlight counterpart
-      // Scope queries to the split view container to avoid matching hidden standard-view duplicates
-      const splitView = document.getElementById('view-split');
-      const ref = this.dataset.segRef;          // right col → left col
-      const id  = this.dataset.segId;
-      if (ref && splitView) {
-        // this is a right-col (tr) element; highlight left col by segId=ref
-        const left = splitView.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
-        if (left) left.classList.add('seg-cross-active');
-      } else if (id && splitView) {
-        // this is a left-col element; highlight right col by segRef=id
-        const right = splitView.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
-        if (right) right.classList.add('seg-cross-active');
-      }
-
-      showTooltip(this, e);
-    });
-
-    // Touch support for mobile — tap to show tooltip
-    seg.addEventListener('touchstart', function(e) {
-      if (!_isMobile()) return;
-      e.preventDefault();
-      document.querySelectorAll('.seg-active, .seg-cross-active').forEach(s =>
-        s.classList.remove('seg-active','seg-cross-active'));
-      this.classList.add('seg-active');
-      const splitView = document.getElementById('view-split');
-      const ref = this.dataset.segRef, id = this.dataset.segId;
-      if (ref && splitView) {
-        const left = splitView.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
-        if (left) left.classList.add('seg-cross-active');
-      } else if (id && splitView) {
-        const right = splitView.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
-        if (right) right.classList.add('seg-cross-active');
-      }
-      showTooltip(this, e.touches[0] || e);
-    }, { passive: false });
-
-    seg.addEventListener('mousemove', positionTooltip);
-    seg.addEventListener('mouseleave', function() {
-      this.classList.remove('seg-active','seg-cross-active');
-      const splitView = document.getElementById('view-split');
-      const ref = this.dataset.segRef, id = this.dataset.segId;
-      if (ref && splitView) {
-        const left = splitView.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
-        if (left) left.classList.remove('seg-active','seg-cross-active');
-      } else if (id && splitView) {
-        const right = splitView.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
-        if (right) right.classList.remove('seg-active','seg-cross-active');
-      }
-      hideTooltip();
-    });
-
-    // Double-click → annotation (skip right-col translation spans)
-    if (!seg.classList.contains('xlan-seg-tr') && seg.tagName !== 'TR') {
-      seg.addEventListener('dblclick', function(e) {
-        e.stopPropagation();
-        const bi    = parseInt(this.dataset.blockIndex);
-        const segId = this.dataset.segId;
-        // get the segment text from the element's text content (spans) or innerText
-        const segText = this.innerText || this.textContent || '';
-        openAnnotatePanel(bi, segId, segText.trim());
-      });
+  function _crossHighlight(seg, add) {
+    const splitView = document.getElementById('view-split');
+    if (!splitView) return;
+    const ref = seg.dataset.segRef, id = seg.dataset.segId;
+    if (ref) {
+      const left = splitView.querySelector(`.xlan-seg[data-seg-id="${ref}"]`);
+      if (left) left.classList.toggle('seg-cross-active', add);
+    } else if (id) {
+      const right = splitView.querySelector(`.xlan-seg[data-seg-ref="${id}"]`);
+      if (right) right.classList.toggle('seg-cross-active', add);
     }
-    // Table-row dblclick
+  }
+
+  let _activeSeg = null;
+
+  scroller.addEventListener('mouseenter', function(e) {
+    const seg = _findSeg(e.target);
+    if (!seg) return;
+    if (_activeSeg) { _activeSeg.classList.remove('seg-active'); _crossHighlight(_activeSeg, false); }
+    _activeSeg = seg;
+    seg.classList.add('seg-active');
+    _crossHighlight(seg, true);
+    showTooltip(seg, e);
+  }, true);
+
+  scroller.addEventListener('mouseover', function(e) {
+    const seg = _findSeg(e.target);
+    if (!seg || seg === _activeSeg) return;
+    if (_activeSeg) { _activeSeg.classList.remove('seg-active'); _crossHighlight(_activeSeg, false); }
+    _activeSeg = seg;
+    seg.classList.add('seg-active');
+    _crossHighlight(seg, true);
+    showTooltip(seg, e);
+  });
+
+  scroller.addEventListener('mouseout', function(e) {
+    const seg = _findSeg(e.target);
+    if (!seg) return;
+    const related = e.relatedTarget ? _findSeg(e.relatedTarget) : null;
+    if (related === seg) return;
+    seg.classList.remove('seg-active');
+    _crossHighlight(seg, false);
+    if (_activeSeg === seg) { _activeSeg = null; hideTooltip(); }
+  });
+
+  scroller.addEventListener('mousemove', function(e) {
+    if (_activeSeg) positionTooltip(e);
+  });
+
+  // Touch support for mobile
+  scroller.addEventListener('touchstart', function(e) {
+    if (!_isMobile()) return;
+    const seg = _findSeg(e.target);
+    if (!seg) return;
+    e.preventDefault();
+    document.querySelectorAll('.seg-active, .seg-cross-active').forEach(s =>
+      s.classList.remove('seg-active','seg-cross-active'));
+    _activeSeg = seg;
+    seg.classList.add('seg-active');
+    _crossHighlight(seg, true);
+    showTooltip(seg, e.touches[0] || e);
+  }, { passive: false });
+
+  // Double-click → annotation
+  scroller.addEventListener('dblclick', function(e) {
+    const seg = _findSeg(e.target);
+    if (!seg) return;
+    e.stopPropagation();
+    // Skip right-col translation spans
+    if (seg.classList.contains('xlan-seg-tr')) return;
+    const bi    = parseInt(seg.dataset.blockIndex);
+    const segId = seg.dataset.segId;
     if (seg.tagName === 'TR') {
-      seg.addEventListener('dblclick', function(e) {
-        e.stopPropagation();
-        const bi    = parseInt(this.dataset.blockIndex);
-        const segId = this.dataset.segId;
-        const cells = this.querySelectorAll('td');
-        const segText = cells[0] ? cells[0].textContent.trim() : '';
-        openAnnotatePanel(bi, segId, segText);
-      });
+      const cells = seg.querySelectorAll('td');
+      openAnnotatePanel(bi, segId, cells[0] ? cells[0].textContent.trim() : '');
+    } else {
+      openAnnotatePanel(bi, segId, (seg.innerText || seg.textContent || '').trim());
     }
   });
 })();
@@ -1135,6 +1236,502 @@ async function deleteAnnotation() {
   const url = `/api/projects/${PROJECT_ID}/translates/${FILENAME}/note/${annotateBlockIdx}/seg/${annotateSegId}`;
   await fetch(url, {method:'DELETE'});
   closeAnnotatePanel(); location.reload();
+}
+
+// ── Multi-part loading ──────────────────────────────────────────
+
+function _makeSegSpan(seg, bi) {
+  const span = document.createElement('span');
+  span.className = 'xlan-seg';
+  span.dataset.segId = seg.id;
+  span.dataset.blockIndex = bi;
+  span.dataset.translation = seg.translation || '';
+  span.dataset.info = seg.info || '';
+  span.dataset.segNote = JSON.stringify(seg.user_note || {});
+  span.textContent = seg.text;
+  return span;
+}
+
+function _makeSplitSegSpan(seg, bi, isTranslation) {
+  const span = document.createElement('span');
+  if (isTranslation) {
+    span.className = 'xlan-seg xlan-seg-tr';
+    span.dataset.segId = seg.id + '__tr';
+    span.dataset.segRef = seg.id;
+    const t = seg.text || '';
+    let txt = seg.translation || '';
+    if (t.startsWith('\n')) txt = '\n' + txt;
+    if (t.endsWith('\n')) txt = txt + '\n';
+    span.textContent = txt;
+  } else {
+    span.className = 'xlan-seg';
+    span.dataset.segId = seg.id;
+    span.textContent = seg.text;
+  }
+  span.dataset.blockIndex = bi;
+  span.dataset.translation = seg.translation || '';
+  span.dataset.info = seg.info || '';
+  span.dataset.segNote = JSON.stringify(seg.user_note || {});
+  return span;
+}
+
+function _renderStandardBlocks(container, blocks, startBlockIndex) {
+  blocks.forEach((block, i) => {
+    const bi = startBlockIndex + i;
+    const div = document.createElement('div');
+    div.className = 'xlan-block';
+    div.dataset.blockIndex = bi;
+
+    if (block.type === 'heading') {
+      const lv = block.level || 1;
+      const tag = document.createElement('h' + lv);
+      const hcls = lv === 1 ? 'text-3xl font-bold text-ink-950 mb-4 mt-8'
+                 : lv === 2 ? 'text-2xl font-bold text-ink-900 mb-3 mt-6'
+                 : 'text-xl font-semibold text-ink-800 mb-2 mt-4';
+      tag.className = hcls;
+      (block.segments || []).forEach(seg => {
+        tag.appendChild(_makeSegSpan(seg, bi));
+      });
+      div.appendChild(tag);
+    } else if (block.type === 'paragraph') {
+      const p = document.createElement('p');
+      p.className = 'text-base leading-normal text-ink-800 mb-5';
+      (block.segments || []).forEach(seg => {
+        p.appendChild(_makeSegSpan(seg, bi));
+      });
+      div.appendChild(p);
+    }
+    container.appendChild(div);
+  });
+}
+
+function _renderSplitBlocks(container, blocks, startBlockIndex) {
+  blocks.forEach((block, i) => {
+    const bi = startBlockIndex + i;
+    if (block.type === 'heading') {
+      const lv = block.level || 1;
+      const hcls = lv === 1 ? 'text-2xl font-bold' : lv === 2 ? 'text-xl font-bold' : 'text-lg font-semibold';
+      const row = document.createElement('div');
+      row.className = 'split-row bg-ink-50/40 border-b border-ink-100';
+      const left = document.createElement('div');
+      left.className = 'font-serif ' + hcls + ' text-ink-900';
+      const right = document.createElement('div');
+      right.className = 'font-serif ' + hcls + ' text-ink-600 border-l border-ink-100';
+      (block.segments || []).forEach(seg => {
+        left.appendChild(_makeSplitSegSpan(seg, bi, false));
+        right.appendChild(_makeSplitSegSpan(seg, bi, true));
+      });
+      row.appendChild(left);
+      row.appendChild(right);
+      container.appendChild(row);
+    } else if (block.type === 'paragraph') {
+      const row = document.createElement('div');
+      row.className = 'split-row border-b border-ink-100';
+      const left = document.createElement('div');
+      left.className = 'font-serif text-base text-ink-800 leading-loose';
+      const right = document.createElement('div');
+      right.className = 'font-serif text-base text-ink-600 leading-loose border-l border-ink-100';
+      (block.segments || []).forEach(seg => {
+        left.appendChild(_makeSplitSegSpan(seg, bi, false));
+        right.appendChild(_makeSplitSegSpan(seg, bi, true));
+      });
+      row.appendChild(left);
+      row.appendChild(right);
+      container.appendChild(row);
+    }
+  });
+}
+
+function _renderTableBlocks(container, blocks, startBlockIndex) {
+  blocks.forEach((block, i) => {
+    const bi = startBlockIndex + i;
+    if (block.type === 'heading') {
+      const tr = document.createElement('tr');
+      tr.className = 'border-b bg-amber-50/50';
+      const td = document.createElement('td');
+      td.colSpan = 4;
+      td.className = 'px-4 py-2 font-bold text-ink-800 font-serif text-base';
+      td.textContent = (block.segments || []).map(s => s.text).join('');
+      tr.appendChild(td);
+      container.appendChild(tr);
+    } else {
+      (block.segments || []).forEach(seg => {
+        const sn = seg.user_note || {};
+        const sh = sn.comment || sn.highlight_color || sn.bold || sn.italic;
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-ink-50/60 transition-colors xlan-seg' + (sh ? ' seg-has-note' : '');
+        tr.dataset.segId = seg.id;
+        tr.dataset.blockIndex = bi;
+        tr.dataset.translation = seg.translation || '';
+        tr.dataset.info = seg.info || '';
+        tr.dataset.segNote = JSON.stringify(sn);
+        tr.innerHTML = `<td class="px-4 py-2.5 font-serif text-ink-800 align-top text-base">${_escHtml(seg.text)}</td>` +
+          `<td class="px-4 py-2.5 font-serif text-ink-600 align-top text-base">${_escHtml(seg.translation || '')}</td>` +
+          `<td class="px-4 py-2.5 text-ink-500 text-xs align-top leading-relaxed">${_escHtml(seg.info || '')}</td>` +
+          `<td class="px-4 py-2.5 text-xs text-amber-700 align-top table-col-comments hidden italic">${_escHtml(sn.comment || '')}</td>`;
+        container.appendChild(tr);
+      });
+    }
+  });
+}
+
+function _escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function _makePartSeparator() {
+  const wrap = document.createElement('div');
+  wrap.className = 'my-8';
+  wrap.innerHTML = '<div class="border-t border-ink-100"></div>';
+  return wrap;
+}
+
+function _makeSplitSeparator() {
+  const row = document.createElement('div');
+  row.className = 'py-3';
+  row.innerHTML = '<div class="border-t border-ink-100"></div>';
+  return row;
+}
+
+function _makeTableSeparator() {
+  const tr = document.createElement('tr');
+  tr.className = '';
+  const td = document.createElement('td');
+  td.colSpan = 4;
+  td.className = 'py-4';
+  td.innerHTML = '<div class="border-t border-ink-100"></div>';
+  tr.appendChild(td);
+  return tr;
+}
+
+async function _loadAllParts() {
+  for (let idx = _partsLoaded; idx < XLAN_PARTS.length; idx++) {
+    const partFile = XLAN_PARTS[idx];
+    try {
+      const res = await fetch(`/api/projects/${PROJECT_ID}/translates/${partFile}/content`);
+      if (!res.ok) continue;
+      const data = await res.json();
+      const content = data.content || [];
+      if (!content.length) continue;
+
+      // Compute start block index from existing blocks in standard view
+      const existing = document.querySelectorAll('#xlan-content .xlan-block');
+      const startIdx = existing.length;
+
+      // Standard view
+      const xlanContent = document.getElementById('xlan-content');
+      if (xlanContent) {
+        xlanContent.appendChild(_makePartSeparator());
+        _renderStandardBlocks(xlanContent, content, startIdx);
+      }
+
+      // Split view — find inner container (the white card)
+      const splitView = document.getElementById('view-split');
+      if (splitView) {
+        const splitCard = splitView.querySelector('.bg-white');
+        if (splitCard) {
+          splitCard.appendChild(_makeSplitSeparator());
+          _renderSplitBlocks(splitCard, content, startIdx);
+        }
+      }
+
+      // Table view
+      const tableView = document.getElementById('view-table');
+      if (tableView) {
+        const tbody = tableView.querySelector('tbody');
+        if (tbody) {
+          tbody.appendChild(_makeTableSeparator());
+          _renderTableBlocks(tbody, content, startIdx);
+        }
+      }
+
+      _partsLoaded++;
+    } catch(e) {
+      console.error('Error loading part:', partFile, e);
+    }
+  }
+  // Re-apply display settings so new parts match
+  if (typeof applyDisplay === 'function') applyDisplay();
+}
+
+// Load remaining parts eagerly on page init
+if (VIEW_TYPE === 'xlan' && XLAN_PARTS.length > 1) {
+  _loadAllParts();
+}
+
+// ── Extend text modal ──────────────────────────────────────────
+let _extendTab = 'text';
+let _extOcrImageBlob = null;
+let _extCameraStream = null;
+
+function openExtendModal() {
+  switchExtendTab('text');
+  document.getElementById('extend-form').classList.remove('hidden');
+  document.getElementById('extend-processing').classList.add('hidden');
+  document.getElementById('extend-modal').classList.remove('hidden');
+  document.getElementById('extend-modal').classList.add('flex');
+}
+function closeExtendModal() {
+  document.getElementById('extend-modal').classList.add('hidden');
+  document.getElementById('extend-modal').classList.remove('flex');
+  document.getElementById('extend-error').classList.add('hidden');
+  document.getElementById('extend-processing').classList.add('hidden');
+  document.getElementById('extend-form').classList.remove('hidden');
+  document.getElementById('extend-text').value = '';
+  const fi = document.getElementById('extend-file-input');
+  if (fi) fi.value = '';
+  document.getElementById('ext-file-label').textContent = 'Haz clic o arrastra un archivo aquí';
+  extStopCamera();
+  extClearOcrImage();
+  _extendTab = 'text';
+}
+function switchExtendTab(tab) {
+  _extendTab = tab;
+  const on = 'px-4 py-2 text-sm font-medium border-b-2 border-ink-900 text-ink-900 -mb-px';
+  const off = 'px-4 py-2 text-sm font-medium border-b-2 border-transparent text-ink-400 hover:text-ink-700 -mb-px';
+  document.getElementById('ext-tab-btn-text').className = tab === 'text' ? on : off;
+  document.getElementById('ext-tab-btn-file').className = tab === 'file' ? on : off;
+  document.getElementById('ext-tab-btn-ocr').className  = tab === 'ocr'  ? on : off;
+  document.getElementById('ext-tab-pane-text').classList.toggle('hidden', tab !== 'text');
+  document.getElementById('ext-tab-pane-file').classList.toggle('hidden', tab !== 'file');
+  document.getElementById('ext-tab-pane-ocr').classList.toggle('hidden',  tab !== 'ocr');
+  const iconEl = document.getElementById('extend-btn-icon');
+  const labelEl = document.getElementById('extend-btn-label');
+  if (tab === 'ocr') {
+    iconEl.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>';
+    labelEl.textContent = 'Procesar con OCR';
+  } else {
+    iconEl.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>';
+    labelEl.textContent = 'Generar extensión';
+  }
+  if (tab !== 'ocr') extStopCamera();
+}
+
+// File tab helpers
+function onExtFileSelect(input) {
+  if (input.files && input.files[0]) {
+    document.getElementById('ext-file-label').textContent = input.files[0].name;
+  }
+}
+
+// OCR tab helpers
+async function extOpenCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    _extCameraStream = stream;
+    const video = document.getElementById('ext-ocr-video');
+    video.srcObject = stream;
+    document.getElementById('ext-ocr-camera-container').classList.remove('hidden');
+    document.getElementById('ext-ocr-actions').classList.add('hidden');
+    document.getElementById('ext-ocr-preview-container').classList.add('hidden');
+  } catch (err) {
+    document.getElementById('ext-ocr-camera-input').click();
+  }
+}
+function extStopCamera() {
+  if (_extCameraStream) { _extCameraStream.getTracks().forEach(t => t.stop()); _extCameraStream = null; }
+  const c = document.getElementById('ext-ocr-camera-container');
+  if (c) c.classList.add('hidden');
+  const a = document.getElementById('ext-ocr-actions');
+  if (a) a.classList.remove('hidden');
+}
+function extCapturePhoto() {
+  const video = document.getElementById('ext-ocr-video');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  canvas.toBlob(function(blob) {
+    _extOcrImageBlob = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
+    document.getElementById('ext-ocr-preview').src = URL.createObjectURL(blob);
+    document.getElementById('ext-ocr-preview-container').classList.remove('hidden');
+    extStopCamera();
+  }, 'image/jpeg', 0.92);
+}
+function extOnOcrFileSelect(input) {
+  if (input.files && input.files[0]) {
+    _extOcrImageBlob = input.files[0];
+    document.getElementById('ext-ocr-preview').src = URL.createObjectURL(input.files[0]);
+    document.getElementById('ext-ocr-preview-container').classList.remove('hidden');
+    document.getElementById('ext-ocr-actions').classList.add('hidden');
+  }
+}
+function extClearOcrImage() {
+  _extOcrImageBlob = null;
+  const pc = document.getElementById('ext-ocr-preview-container');
+  if (pc) pc.classList.add('hidden');
+  const pi = document.getElementById('ext-ocr-preview');
+  if (pi) pi.src = '';
+  const a = document.getElementById('ext-ocr-actions');
+  if (a) a.classList.remove('hidden');
+  const fi = document.getElementById('ext-ocr-file-input');
+  if (fi) fi.value = '';
+  const ci = document.getElementById('ext-ocr-camera-input');
+  if (ci) ci.value = '';
+}
+
+// Drag-and-drop on the extend modal
+(function() {
+  const modal = document.getElementById('extend-modal-inner');
+  if (!modal) return;
+  modal.addEventListener('dragover', function(e) { e.preventDefault(); e.stopPropagation(); });
+  modal.addEventListener('drop', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!file) return;
+    const isImage = file.type.startsWith('image/');
+    const isDoc = /\.(pdf|docx?|txt|md)$/i.test(file.name);
+    if (isImage) {
+      // Switch to OCR tab and set image
+      switchExtendTab('ocr');
+      _extOcrImageBlob = file;
+      document.getElementById('ext-ocr-preview').src = URL.createObjectURL(file);
+      document.getElementById('ext-ocr-preview-container').classList.remove('hidden');
+      document.getElementById('ext-ocr-actions').classList.add('hidden');
+    } else if (isDoc) {
+      // Switch to file tab and set file
+      switchExtendTab('file');
+      const inp = document.getElementById('extend-file-input');
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      inp.files = dt.files;
+      onExtFileSelect(inp);
+    }
+  });
+  // Highlight drop zone on file tab
+  const fz = document.getElementById('ext-drop-zone-file');
+  if (fz) {
+    fz.addEventListener('dragover', function(e) { e.preventDefault(); fz.classList.add('border-ink-500','bg-ink-50'); });
+    fz.addEventListener('dragleave', function() { fz.classList.remove('border-ink-500','bg-ink-50'); });
+    fz.addEventListener('drop', function() { fz.classList.remove('border-ink-500','bg-ink-50'); });
+  }
+})();
+
+async function submitExtend() {
+  const errEl = document.getElementById('extend-error');
+  errEl.classList.add('hidden');
+
+  // Validate per tab
+  if (_extendTab === 'text') {
+    if (!document.getElementById('extend-text').value.trim()) {
+      errEl.textContent = 'El texto no puede estar vacío.'; errEl.classList.remove('hidden'); return;
+    }
+  } else if (_extendTab === 'file') {
+    const fi = document.getElementById('extend-file-input');
+    if (!fi.files || !fi.files[0]) {
+      errEl.textContent = 'Selecciona un archivo.'; errEl.classList.remove('hidden'); return;
+    }
+  } else if (_extendTab === 'ocr') {
+    if (!_extOcrImageBlob) {
+      errEl.textContent = 'Captura o sube una imagen primero.'; errEl.classList.remove('hidden'); return;
+    }
+  }
+
+  document.getElementById('extend-form').classList.add('hidden');
+  document.getElementById('extend-processing').classList.remove('hidden');
+  document.getElementById('extend-log').innerHTML = '';
+
+  const title = FILE_META.display_name || FILENAME.replace('.xlan','');
+
+  try {
+    // OCR flow: run OCR first, then agent
+    if (_extendTab === 'ocr') {
+      extStopCamera();
+      _extendLog('📷 Ejecutando OCR en la imagen…');
+      const fd = new FormData();
+      fd.append('file', _extOcrImageBlob, _extOcrImageBlob.name || 'capture.jpg');
+      fd.append('title', title);
+      const ocrRes = await fetch(`/api/projects/${PROJECT_ID}/pipeline/ocr`, {method:'POST', body: fd});
+      if (!ocrRes.ok) {
+        const err = await ocrRes.json().catch(()=>({detail:'Error desconocido'}));
+        _extendError(err.detail || 'Error en OCR'); return;
+      }
+      const ocrData = await ocrRes.json();
+      _extendLog('✅ Texto extraído con OCR');
+      if (!ocrData.pipeline_available) {
+        _extendError('Pipeline no disponible (API Key no configurada)'); return;
+      }
+      _extendLog('🤖 Iniciando generación con IA…');
+      const agentRes = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({title, raw_text: ocrData.text, source_type: 'ocr', extend_base: FILENAME})
+      });
+      if (!agentRes.ok) {
+        const err = await agentRes.json().catch(()=>({detail:'Error'}));
+        _extendError(err.detail || 'Error al iniciar el agente'); return;
+      }
+      const {job_id} = await agentRes.json();
+      _connectExtendSSE(job_id);
+      return;
+    }
+
+    // Text / file flow
+    let res;
+    if (_extendTab === 'file') {
+      const fd = new FormData();
+      fd.append('file', document.getElementById('extend-file-input').files[0]);
+      fd.append('title', title);
+      fd.append('extend_base', FILENAME);
+      res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start-file`, {method:'POST', body: fd});
+    } else {
+      res = await fetch(`/api/projects/${PROJECT_ID}/pipeline/agent-start`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          title,
+          raw_text: document.getElementById('extend-text').value.trim(),
+          source_type: 'text',
+          extend_base: FILENAME,
+        })
+      });
+    }
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({detail:'Error'}));
+      _extendError(err.detail || 'Error al iniciar');
+      return;
+    }
+    const {job_id} = await res.json();
+    _extendLog('🤖 Generando extensión…');
+    _connectExtendSSE(job_id);
+  } catch(e) {
+    _extendError(e.message);
+  }
+}
+function _extendLog(msg) {
+  const log = document.getElementById('extend-log');
+  const div = document.createElement('div');
+  div.className = 'text-xs text-ink-500';
+  div.textContent = msg;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+function _extendError(msg) {
+  document.getElementById('extend-processing').classList.add('hidden');
+  document.getElementById('extend-form').classList.remove('hidden');
+  const errEl = document.getElementById('extend-error');
+  errEl.textContent = msg;
+  errEl.classList.remove('hidden');
+}
+function _connectExtendSSE(job_id) {
+  const es = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
+  es.onmessage = function(e) {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'heartbeat') return;
+    if (msg.type === 'progress' || msg.type === 'info') {
+      _extendLog(msg.msg);
+    } else if (msg.type === 'done') {
+      es.close();
+      _extendLog('✅ Extensión creada: ' + msg.filename);
+      setTimeout(() => location.reload(), 1000);
+    } else if (msg.type === 'error') {
+      es.close();
+      _extendError(msg.msg);
+    }
+  };
+  es.onerror = function() { es.close(); _extendError('Error de conexión'); };
 }
 
 // Apply display defaults on load
