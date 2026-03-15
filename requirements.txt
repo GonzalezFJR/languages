@@ -12,5 +12,9 @@ itsdangerous>=2.2.0
 pypdf>=4.1.0
 python-docx>=1.1.0
 
+# OCR (PP-OCRv5)
+paddlepaddle>=3.0.0
+paddleocr>=3.0.0
+
 # LLM agent (provider-agnostic: OpenAI, Anthropic, Google, etc.)
 litellm>=1.40.0

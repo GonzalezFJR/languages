@@ -1,7 +1,8 @@
 """
-text_extractor.py — Extract structured text blocks from PDF, DOCX, TXT, MD.
+text_extractor.py — Extract plain text from PDF, DOCX, TXT, MD.
 
-Returns a list of dicts: {type: "heading"|"paragraph", text: str, level?: int}
+Returns the full text as a single string, preserving paragraph breaks
+and verse/line formatting. The LLM agent handles the structural splitting.
 """
 
 from __future__ import annotations
@@ -11,7 +12,8 @@ import re
 from pathlib import Path
 
 
-def extract_blocks(filename: str, content: bytes) -> list[dict]:
+def extract_text(filename: str, content: bytes) -> str:
+    """Extract text from a file, preserving paragraph and line structure."""
     ext = Path(filename).suffix.lower()
     if ext == ".pdf":
         return _from_pdf(content)
@@ -20,41 +22,50 @@ def extract_blocks(filename: str, content: bytes) -> list[dict]:
     elif ext in (".txt", ".md"):
         return _from_txt(content)
     else:
-        # Fallback: try plain text
         return _from_txt(content)
+
+
+# Keep backward-compatible name for any callers
+def extract_blocks(filename: str, content: bytes) -> list[dict]:
+    """Legacy wrapper — returns a single block with all extracted text."""
+    text = extract_text(filename, content)
+    if not text.strip():
+        return []
+    return [{"type": "paragraph", "text": text}]
 
 
 # ── PDF ──────────────────────────────────────────────────────────
 
-def _from_pdf(content: bytes) -> list[dict]:
+def _from_pdf(content: bytes) -> str:
     try:
         from pypdf import PdfReader
     except ImportError:
         raise ImportError("pypdf is required for PDF extraction. Run: pip install pypdf")
 
     reader = PdfReader(io.BytesIO(content))
-    blocks: list[dict] = []
+    pages: list[str] = []
     for page in reader.pages:
         text = page.extract_text() or ""
-        for para in _split_paragraphs(text):
-            if para:
-                blocks.append({"type": "paragraph", "text": para})
-    return _merge_short_blocks(blocks)
+        if text.strip():
+            pages.append(text.strip())
+    return "\n\n".join(pages)
 
 
 # ── DOCX ─────────────────────────────────────────────────────────
 
-def _from_docx(content: bytes) -> list[dict]:
+def _from_docx(content: bytes) -> str:
     try:
         import docx
     except ImportError:
         raise ImportError("python-docx is required for DOCX extraction. Run: pip install python-docx")
 
     doc = docx.Document(io.BytesIO(content))
-    blocks: list[dict] = []
+    parts: list[str] = []
     for para in doc.paragraphs:
-        text = para.text.strip()
-        if not text:
+        text = para.text
+        if not text.strip():
+            # Preserve blank lines as paragraph separators
+            parts.append("")
             continue
         style = para.style.name.lower() if para.style else ""
         if "heading" in style:
@@ -62,57 +73,13 @@ def _from_docx(content: bytes) -> list[dict]:
                 level = int(style.split()[-1])
             except (ValueError, IndexError):
                 level = 1
-            blocks.append({"type": "heading", "text": text, "level": min(level, 3)})
+            parts.append("#" * min(level, 3) + " " + text.strip())
         else:
-            blocks.append({"type": "paragraph", "text": text})
-    return blocks
+            parts.append(text)
+    return "\n".join(parts)
 
 
 # ── TXT / MD ─────────────────────────────────────────────────────
 
-def _from_txt(content: bytes) -> list[dict]:
-    text = content.decode("utf-8", errors="replace")
-    blocks: list[dict] = []
-    for chunk in re.split(r"\n{2,}", text):
-        chunk = chunk.strip()
-        if not chunk:
-            continue
-        # Markdown heading
-        m = re.match(r"^(#{1,3})\s+(.*)", chunk)
-        if m:
-            level = len(m.group(1))
-            blocks.append({"type": "heading", "text": m.group(2).strip(), "level": level})
-        else:
-            # Collapse internal newlines to space
-            flat = re.sub(r"\s*\n\s*", " ", chunk)
-            blocks.append({"type": "paragraph", "text": flat})
-    return blocks
-
-
-# ── Helpers ──────────────────────────────────────────────────────
-
-def _split_paragraphs(text: str) -> list[str]:
-    """Split PDF page text into paragraphs."""
-    paras = re.split(r"\n{2,}", text)
-    result = []
-    for p in paras:
-        flat = re.sub(r"\s*\n\s*", " ", p).strip()
-        if flat:
-            result.append(flat)
-    return result
-
-
-def _merge_short_blocks(blocks: list[dict], min_words: int = 4) -> list[dict]:
-    """Merge very short consecutive paragraph blocks (PDF artifacts)."""
-    result: list[dict] = []
-    for b in blocks:
-        if (
-            result
-            and b["type"] == "paragraph"
-            and result[-1]["type"] == "paragraph"
-            and len(b["text"].split()) < min_words
-        ):
-            result[-1]["text"] += " " + b["text"]
-        else:
-            result.append(b)
-    return result
+def _from_txt(content: bytes) -> str:
+    return content.decode("utf-8", errors="replace").strip()

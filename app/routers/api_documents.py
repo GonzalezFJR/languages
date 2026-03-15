@@ -17,7 +17,7 @@ from app.services.document_service import (
     get_doc_path,
     get_translate_path,
 )
-from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta
+from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan
 
 router = APIRouter(prefix="/api/projects", tags=["documents"])
 
@@ -220,3 +220,25 @@ async def delete_segment_note(request: Request, project_id: str, filename: str, 
     except ValueError as e:
         raise HTTPException(400, str(e))
     return {"ok": True}
+
+
+@router.get("/{project_id}/translates/{filename}/parts")
+async def get_xlan_parts(request: Request, project_id: str, filename: str):
+    """Return the list of part files for a multi-part xlan."""
+    ud = request.state.user_dir
+    if not load_metadata(project_id, ud):
+        raise HTTPException(404, "Proyecto no encontrado")
+    meta = list_translates(project_id, ud)
+    entry = meta.get("files", {}).get(filename, {})
+    parts = entry.get("parts", [filename])
+    return {"parts": parts}
+
+
+@router.get("/{project_id}/translates/{filename}/content")
+async def get_xlan_content(request: Request, project_id: str, filename: str):
+    """Return just the content array of an xlan file (for lazy-loading parts)."""
+    ud = request.state.user_dir
+    xlan = load_xlan(project_id, filename, ud)
+    if not xlan:
+        raise HTTPException(404, "Archivo no encontrado")
+    return {"content": xlan.get("content", []), "meta": xlan.get("meta", {})}

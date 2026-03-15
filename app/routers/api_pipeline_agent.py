@@ -19,7 +19,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.services.project_service import load_metadata
-from app.services.text_extractor import extract_blocks
+from app.services.text_extractor import extract_text
 from app.services.pipeline_agent import XlanSession, run_xlan_agent
 
 router = APIRouter(prefix="/api/projects", tags=["pipeline-agent"])
@@ -35,6 +35,8 @@ class StartTextRequest(BaseModel):
     title: str
     description: str = ""
     raw_text: str
+    source_type: str = "text"        # "text" | "ocr"
+    extend_base: str | None = None   # base .xlan filename to extend
 
 
 # ── Endpoints ────────────────────────────────────────────────────
@@ -49,17 +51,15 @@ async def agent_start_text(request: Request, project_id: str, body: StartTextReq
     if not body.raw_text.strip():
         raise HTTPException(400, "El texto no puede estar vacío")
 
-    blocks = extract_blocks("input.txt", body.raw_text.encode("utf-8"))
-    if not blocks:
-        raise HTTPException(400, "No se pudo extraer texto")
-
     return await _enqueue_job(
         project_id=project_id,
         meta=meta,
-        blocks=blocks,
+        raw_text=body.raw_text.strip(),
         title=body.title or "Sin título",
         description=body.description,
         user_dir=ud,
+        source_type=body.source_type,
+        extend_base=body.extend_base,
     )
 
 
@@ -70,6 +70,7 @@ async def agent_start_file(
     file: UploadFile = File(...),
     title: str = Form(""),
     description: str = Form(""),
+    extend_base: str = Form(""),
 ):
     """Start an agent job from an uploaded file (PDF, DOCX, TXT, MD)."""
     ud = request.state.user_dir
@@ -82,13 +83,13 @@ async def agent_start_file(
         raise HTTPException(400, "El archivo está vacío")
 
     try:
-        blocks = extract_blocks(file.filename or "upload.txt", content)
+        raw_text = extract_text(file.filename or "upload.txt", content)
     except ImportError as e:
         raise HTTPException(400, str(e))
     except Exception as e:
         raise HTTPException(400, f"Error al leer el archivo: {e}")
 
-    if not blocks:
+    if not raw_text.strip():
         raise HTTPException(400, "No se pudo extraer texto del archivo")
 
     used_title = title.strip() or (file.filename or "").rsplit(".", 1)[0] or "Sin título"
@@ -96,10 +97,12 @@ async def agent_start_file(
     return await _enqueue_job(
         project_id=project_id,
         meta=meta,
-        blocks=blocks,
+        raw_text=raw_text.strip(),
         title=used_title,
         description=description,
         user_dir=ud,
+        source_type="file",
+        extend_base=extend_base.strip() or None,
     )
 
 
@@ -137,10 +140,12 @@ async def agent_progress(project_id: str, job_id: str):
 async def _enqueue_job(
     project_id: str,
     meta: dict,
-    blocks: list[dict],
+    raw_text: str,
     title: str,
     description: str,
     user_dir: str = "public",
+    source_type: str = "text",
+    extend_base: str | None = None,
 ) -> dict:
     job_id = str(uuid.uuid4())
     queue: asyncio.Queue = asyncio.Queue()
@@ -155,6 +160,8 @@ async def _enqueue_job(
         text_language=meta.get("target", "en"),
         notes_language=meta.get("base", "es"),
         user_dir=user_dir,
+        source_type=source_type,
+        extend_base=extend_base,
     )
 
     def _send(msg: dict) -> None:
@@ -162,9 +169,9 @@ async def _enqueue_job(
 
     def _run() -> None:
         try:
-            _send({"type": "info", "msg": f"Extracted {len(blocks)} block(s) from source"})
+            _send({"type": "info", "msg": f"Text: {len(raw_text)} characters"})
             session.on_progress = lambda m: _send({"type": "progress", "msg": m})
-            filename = run_xlan_agent(session, blocks)
+            filename = run_xlan_agent(session, raw_text)
             _send({
                 "type": "done",
                 "filename": filename,
@@ -177,4 +184,4 @@ async def _enqueue_job(
             JOBS[job_id]["status"] = "done"
 
     loop.run_in_executor(_executor, _run)
-    return {"job_id": job_id, "blocks": len(blocks)}
+    return {"job_id": job_id, "chars": len(raw_text)}

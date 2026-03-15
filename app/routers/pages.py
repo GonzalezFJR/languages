@@ -111,6 +111,7 @@ async def view_doc(request: Request, project_id: str, filename: str):
         "file_info": file_info,
         "doc_content": doc_content,
         "xlan_data": None,
+        "xlan_parts": [],
         "current_user": request.state.current_user,
     })
 
@@ -130,6 +131,7 @@ async def view_xlan(request: Request, project_id: str, filename: str):
         raise HTTPException(status_code=404, detail="Archivo no encontrado")
 
     file_info = translates_meta.get("files", {}).get(filename, {})
+    xlan_parts = file_info.get("parts", [filename])
 
     return templates.TemplateResponse("viewer.html", {
         "request": request,
@@ -142,5 +144,6 @@ async def view_xlan(request: Request, project_id: str, filename: str):
         "file_info": file_info,
         "doc_content": "",
         "xlan_data": xlan_data,
+        "xlan_parts": xlan_parts,
         "current_user": request.state.current_user,
     })
