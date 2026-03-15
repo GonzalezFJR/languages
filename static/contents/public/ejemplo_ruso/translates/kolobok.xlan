@@ -73,15 +73,7 @@
           "text": " скатала колобок,",
           "translation": " moldeó un panecillo redondo,",
           "info": "Скатала (skatala) = enrolló, dio forma redonda (de скатать, skatat'). El prefijo с- indica 'formar enrollando'. Muestra cómo los prefijos verbales rusos cambian el significado base.",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "#dbeafe",
-            "highlight_alpha": 0.35,
-            "bold": true,
-            "italic": false,
-            "text_color": "",
-            "comment": ""
-          }
+          "styles": []
         },
         {
           "id": "p4_s3",
@@ -141,15 +133,7 @@
           "text": " а навстречу ему заяц.",
           "translation": " y de frente le sale una liebre.",
           "info": "А (a) = y/pero (conjunción suave). Навстречу (navstrechu) = al encuentro, de frente (preposición + dativo). Ему (yemu) = le / a él (dativo de он). Заяц (zayats) = liebre.",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "#fce7f3",
-            "highlight_alpha": 0.35,
-            "bold": true,
-            "italic": false,
-            "text_color": "",
-            "comment": "zxczxc"
-          }
+          "styles": []
         }
       ]
     },

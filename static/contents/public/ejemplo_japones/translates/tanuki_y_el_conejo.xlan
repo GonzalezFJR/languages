@@ -42,17 +42,7 @@
           "text": "おじいさんとおばあさんが",
           "translation": "un anciano y una anciana",
           "info": "おじいさん (ojiisan) = anciano/abuelo. おばあさん (obaasan) = anciana/abuela. と (to) = y. が (ga) = partícula de sujeto.",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "",
-            "highlight_alpha": 0.35,
-            "bold": false,
-            "italic": false,
-            "underline": true,
-            "underline_color": "#3b82f6",
-            "text_color": "",
-            "comment": ""
-          }
+          "styles": []
         },
         {
           "id": "p1_s4",
@@ -78,34 +68,14 @@
           "text": "わるいたぬきが",
           "translation": "un tanuki malvado",
           "info": "わるい (warui) = malo, malvado. たぬき (tanuki) = perro mapache. が (ga) = partícula de sujeto. En el folclore japonés, los tanuki suelen ser traviesos o engañosos.",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "",
-            "highlight_alpha": 0.35,
-            "bold": false,
-            "italic": false,
-            "underline": true,
-            "underline_color": "#ef4444",
-            "text_color": "",
-            "comment": ""
-          }
+          "styles": []
         },
         {
           "id": "p2_s3",
           "text": "おばあさんの畑を",
           "translation": "estropeó el huerto",
           "info": "おばあさんの (obaasan no) = de la anciana (posesivo). 畑 (hatake) = huerto, campo de cultivo. を (wo) = partícula de objeto directo.",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "#fce7f3",
-            "highlight_alpha": 0.35,
-            "bold": false,
-            "italic": false,
-            "underline": false,
-            "underline_color": "#f59e0b",
-            "text_color": "",
-            "comment": ""
-          }
+          "styles": []
         },
         {
           "id": "p2_s4",
@@ -141,17 +111,7 @@
           "text": "木にしばりました。",
           "translation": "y lo ató a un árbol.",
           "info": "木 (ki) = árbol. に (ni) = a (destino de la acción). しばりました (shibarimashita) = ató (pasado de しばる, shibaru = atar).",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "#d1fae5",
-            "highlight_alpha": 0.35,
-            "bold": false,
-            "italic": false,
-            "underline": false,
-            "underline_color": "#f59e0b",
-            "text_color": "",
-            "comment": ""
-          }
+          "styles": []
         }
       ]
     },
@@ -170,17 +130,7 @@
           "text": "たぬきはおばあさんをだまして",
           "translation": "el tanuki engañó a la anciana",
           "info": "だまして (damashite) = engañando (forma -te de だます, damasu = engañar). おばあさんを = la anciana como objeto del engaño.",
-          "styles": [],
-          "user_note": {
-            "highlight_color": "",
-            "highlight_alpha": 0.35,
-            "bold": true,
-            "italic": false,
-            "underline": true,
-            "underline_color": "#f59e0b",
-            "text_color": "",
-            "comment": ""
-          }
+          "styles": []
         },
         {
           "id": "p4_s3",
