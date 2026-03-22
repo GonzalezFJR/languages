@@ -22,10 +22,11 @@ app.add_middleware(
 
 
 class UserScopeMiddleware(BaseHTTPMiddleware):
-    """Injects user_dir and current_user into request.state for every request."""
+    """Injects user_dir, current_user and base_path into request.state."""
     async def dispatch(self, request: Request, call_next):
         request.state.user_dir = get_user_content_dir(request)
         request.state.current_user = get_current_user(request)
+        request.state.base_path = request.scope.get("root_path", "")
         response = await call_next(request)
         return response
 

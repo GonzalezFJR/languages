@@ -3,8 +3,8 @@ FROM python:3.11-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
+    libgl1 \
+    libglib2.0-0t64 \
     libsm6 \
     libxext6 \
     libxrender1 \

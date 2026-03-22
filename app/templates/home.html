@@ -247,7 +247,7 @@
         btn.textContent = 'Crear proyecto';
         return;
       }
-      window.location.href = `/project/${data.id}`;
+      window.location.href = (window.__BP__ || '') + `/project/${data.id}`;
     } catch (err) {
       errEl.textContent = 'Error de conexión';
       errEl.classList.remove('hidden');
