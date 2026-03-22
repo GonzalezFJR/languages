@@ -12,3 +12,5 @@ create_xlan(tuples=[
 ])
 
 Note: "\n" at the end of the first two elements marks a line break in the original text.
+
+IMPORTANT: For each element, provide ONLY ONE translation. Do NOT include multiple alternatives or options separated by "/" (e.g. do NOT write "hello / hi / hey"). Choose the single best translation that fits the context.

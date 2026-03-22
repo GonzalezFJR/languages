@@ -135,6 +135,90 @@ class XlanSession:
         self._emit(f"✓ {len(self.content)} paragraphs, {self.seg_counter} segments")
         return f"OK: {len(self.content)} paragraphs, {self.seg_counter} segments"
 
+    # ── line-break restoration ────────────────────────────────────
+
+    def _restore_line_breaks(self, original_text: str) -> None:
+        """Post-process segments so that \n from *original_text* are preserved,
+        regardless of whether the LLM included them or not."""
+        all_segs: list[dict] = []
+        for block in self.content:
+            all_segs.extend(block.get("segments", []))
+        if not all_segs:
+            return
+
+        # 1. Strip existing \n from segment texts (we will re-add the correct ones)
+        for seg in all_segs:
+            seg["text"] = seg["text"].replace("\n", "")
+            seg["translation"] = seg["translation"].replace("\n", "")
+
+        # 2. Build map of positions in the stripped original where \n should appear
+        #    (position = index of the last non-\n char before the \n)
+        nl_after: set[int] = set()
+        char_idx = -1
+        for ch in original_text:
+            if ch == "\n":
+                if char_idx >= 0:
+                    nl_after.add(char_idx)
+            else:
+                char_idx += 1
+        if not nl_after:
+            return
+
+        # 3. Concatenate clean segment texts
+        concat = "".join(s["text"] for s in all_segs)
+        orig_stripped = original_text.replace("\n", "")
+
+        # 4. Align orig_stripped ↔ concat with two pointers and map nl positions
+        mapped: set[int] = set()   # positions in *concat* after which \n belongs
+        oi = ci = 0
+        while oi < len(orig_stripped) and ci < len(concat):
+            if orig_stripped[oi] == concat[ci]:
+                if oi in nl_after:
+                    mapped.add(ci)
+                oi += 1; ci += 1
+            elif orig_stripped[oi] in (" ", "\t", "\r"):
+                if oi in nl_after:
+                    mapped.add(max(ci - 1, 0))
+                oi += 1
+            elif concat[ci] in (" ", "\t", "\r"):
+                ci += 1
+            else:                             # true mismatch – advance both
+                if oi in nl_after:
+                    mapped.add(ci)
+                oi += 1; ci += 1
+
+        if not mapped:
+            return
+
+        # 5. Insert \n into segment texts at the mapped positions
+        offset = 0
+        for seg in all_segs:
+            txt = seg["text"]
+            parts: list[str] = []
+            for i, ch in enumerate(txt):
+                parts.append(ch)
+                if (offset + i) in mapped:
+                    parts.append("\n")
+            seg["text"] = "".join(parts)
+            offset += len(txt)
+
+            # Mirror trailing \n into translation
+            trail = len(seg["text"]) - len(seg["text"].rstrip("\n"))
+            if trail > 0:
+                seg["translation"] = seg["translation"].rstrip("\n") + "\n" * trail
+
+        # 6. Rebuild content blocks (re-split paragraphs on \n\n)
+        new_content: list[dict] = []
+        cur: list[dict] = []
+        for seg in all_segs:
+            cur.append(seg)
+            if seg["text"].rstrip(" ").endswith("\n\n"):
+                new_content.append({"type": "paragraph", "segments": list(cur)})
+                cur = []
+        if cur:
+            new_content.append({"type": "paragraph", "segments": cur})
+        self.content = new_content
+
     # ── persist ──────────────────────────────────────────────────
 
     def save(self, part_index: int = 0, total_parts: int = 1) -> str:
@@ -453,5 +537,9 @@ def _run_single_batch(
         if session.content:
             session._emit("✅ Done")
             break
+
+    # Post-process: ensure original line breaks are preserved (skip OCR — layout \n)
+    if session.source_type != "ocr":
+        session._restore_line_breaks(batch_text)
 
     return session.save(part_index=part_index, total_parts=total_parts)

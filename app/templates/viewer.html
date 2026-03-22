@@ -90,6 +90,30 @@
   .split-row { display: grid; grid-template-columns: 1fr 1fr; }
   .split-row > div { padding: 14px 20px; }
   .split-row:not(:last-child) > div { border-bottom: 1px solid #f3f4f6; }
+  /* Split-line: each logical line is a grid row so original & translation align */
+  .split-block { border-bottom: 1px solid #f3f4f6; }
+  .split-line { display: grid; grid-template-columns: 1fr 1fr; }
+  .split-line > div { padding: 2px 20px; font-family: 'Lora', Georgia, serif; font-size: 1rem; line-height: 1.85; }
+  .split-line:first-child > div { padding-top: 12px; }
+  .split-line:last-child > div { padding-bottom: 12px; }
+  .split-line > div:last-child { border-left: 1px solid #f3f4f6; }
+  .split-block:last-child { border-bottom: none; }
+  /* Fullscreen overlay */
+  #fullscreen-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: #fff;
+    display: none; flex-direction: column;
+  }
+  #fullscreen-overlay.open { display: flex; }
+  #fs-topbar { height: 48px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+  #fs-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  #fs-content { flex: 1; overflow: hidden; display: flex; justify-content: center; }
+  #fs-content.fs-scroll { overflow-y: auto; }
+  #fs-inner { max-width: 800px; width: 100%; padding: 32px 20px; font-family: 'Lora', Georgia, serif; }
+  #fs-inner .split-line > div { padding: 2px 20px; font-family: 'Lora', Georgia, serif; font-size: 1.05rem; line-height: 1.9; }
+  #fs-inner .split-line > div:last-child { border-left: 1px solid #f3f4f6; }
+  #fs-inner .split-block { border-bottom: 1px solid #f3f4f6; }
+  #fs-nav { height: 48px; border-top: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: center; gap: 16px; flex-shrink: 0; }
   /* Table view */
   #view-table table { border-collapse: collapse; }
   #view-table td, #view-table th { vertical-align: top; }
@@ -181,6 +205,10 @@
       <span id="zoom-label" class="text-xs text-ink-400 w-10 text-center">100%</span>
       <button id="zoom-in" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 text-lg font-light transition-colors">+</button>
     </div>
+    <!-- Fullscreen -->
+    <button onclick="toggleFullscreen()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-ink-200 text-ink-400 hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0" title="Pantalla completa">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4"/></svg>
+    </button>
     {% endif %}
   </div>
 
@@ -327,70 +355,15 @@
           </div>
         </div>
 
-        {# ── VIEW: SPLIT (Original / Traducción) ──────────────────── #}
+        {# ── VIEW: SPLIT (Original / Traducción) — JS-rendered for line alignment ── #}
         <div id="view-split" class="hidden max-w-5xl mx-auto">
-          <div class="bg-white rounded-2xl shadow-sm border border-ink-100 overflow-hidden">
+          <div id="split-card" class="bg-white rounded-2xl shadow-sm border border-ink-100 overflow-hidden">
             {% if xlan_data %}
             <div class="split-row border-b bg-ink-50/80">
               <div class="text-xs font-semibold text-ink-500 uppercase tracking-widest py-3 px-5">{{ tlang }}</div>
               <div class="text-xs font-semibold text-ink-500 uppercase tracking-widest py-3 px-5 border-l border-ink-100">{{ nlang }}</div>
             </div>
-            {% for block in xlan_data.content %}
-              {% set bi = loop.index0 %}
-              {% if block.type == 'heading' %}
-                {% set lv = block.get('level',1) %}
-                {% set hcls = 'text-2xl font-bold' if lv==1 else 'text-xl font-bold' if lv==2 else 'text-lg font-semibold' %}
-                <div class="split-row bg-ink-50/40 border-b border-ink-100">
-                  <div class="font-serif {{ hcls }} text-ink-900">
-                    {% for seg in block.segments %}
-                      {% set sn = seg.get('user_note') or {} %}
-                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
-                      <span class="xlan-seg {% if sh %}seg-has-note{% endif %}"
-                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
-                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
-                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.text }}</span>
-                    {% endfor %}
-                  </div>
-                  <div class="font-serif {{ hcls }} text-ink-600 border-l border-ink-100">
-                    {% for seg in block.segments %}
-                      {% set sn = seg.get('user_note') or {} %}
-                      <span class="xlan-seg xlan-seg-tr"
-                            data-seg-id="{{ seg.id }}__tr" data-seg-ref="{{ seg.id }}"
-                            data-block-index="{{ bi }}"
-                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
-                            data-seg-note='{{ sn | tojson | e }}'>{% if seg.text[:1] == '\n' %}
-{% endif %}{{ seg.translation }}{% if seg.text[-1:] == '\n' %}
-{% endif %}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% elif block.type == 'paragraph' %}
-                <div class="split-row border-b border-ink-100">
-                  <div class="font-serif text-base text-ink-800 leading-loose">
-                    {% for seg in block.segments %}
-                      {% set sn = seg.get('user_note') or {} %}
-                      {% set sh = sn.get('comment') or sn.get('highlight_color') or sn.get('bold') or sn.get('italic') %}
-                      <span class="xlan-seg {% if sh %}seg-has-note{% endif %} {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
-                            data-seg-id="{{ seg.id }}" data-block-index="{{ bi }}"
-                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
-                            data-seg-note='{{ sn | tojson | e }}'>{{ seg.text }}</span>
-                    {% endfor %}
-                  </div>
-                  <div class="font-serif text-base text-ink-600 leading-loose border-l border-ink-100">
-                    {% for seg in block.segments %}
-                      {% set sn = seg.get('user_note') or {} %}
-                      <span class="xlan-seg xlan-seg-tr {% for s in (seg.styles or []) %}xlan-style-{{ s }} {% endfor %}"
-                            data-seg-id="{{ seg.id }}__tr" data-seg-ref="{{ seg.id }}"
-                            data-block-index="{{ bi }}"
-                            data-translation="{{ seg.translation | e }}" data-info="{{ seg.info | e }}"
-                            data-seg-note='{{ sn | tojson | e }}'>{% if seg.text[:1] == '\n' %}
-{% endif %}{{ seg.translation }}{% if seg.text[-1:] == '\n' %}
-{% endif %}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
+            <div id="split-content"></div>
             {% endif %}
           </div>
         </div>
@@ -623,6 +596,19 @@
         <button onclick="setDisplayBg('#f7f7f8')" class="dp-bg-preset w-8 h-8 rounded-lg border-2 border-transparent hover:scale-110 transition-transform" style="background:#f7f7f8" title="Gris"></button>
       </div>
     </div>
+    {% if view_type == 'xlan' %}
+    <!-- Fullscreen pagination toggle -->
+    <div>
+      <label class="block text-xs font-semibold text-ink-500 uppercase tracking-widest mb-2">Pantalla completa</label>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-ink-600">Paginación</span>
+        <button id="dp-pagination-toggle" onclick="toggleFsPagination()" class="relative w-10 h-5 rounded-full bg-ink-900 transition-colors flex-shrink-0" title="Activar/desactivar paginación">
+          <span id="dp-pagination-knob" class="absolute top-0.5 left-5 w-4 h-4 bg-white rounded-full shadow transition-all"></span>
+        </button>
+      </div>
+      <p class="text-xs text-ink-400 mt-1">Si se desactiva, la pantalla completa usa scroll continuo.</p>
+    </div>
+    {% endif %}
   </div>
   <div class="px-5 py-4 border-t border-ink-100">
     <button onclick="resetDisplay()" class="w-full px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Restablecer</button>
@@ -716,6 +702,29 @@
   </div>
 </div>
 
+<!-- Fullscreen overlay -->
+<div id="fullscreen-overlay">
+  <div id="fs-topbar">
+    <span id="fs-title" class="text-sm font-medium text-ink-700 truncate">{{ file_info.display_name or filename }}</span>
+    <div class="flex items-center gap-2">
+      <span id="fs-view-label" class="text-xs text-ink-400"></span>
+      <button onclick="toggleFullscreen()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-ink-100 text-ink-500 transition-colors" title="Salir de pantalla completa">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="fs-body">
+    <div id="fs-content">
+      <div id="fs-inner"></div>
+    </div>
+    <div id="fs-nav">
+      <button onclick="fsPagePrev()" class="px-3 py-1.5 rounded-lg text-sm font-medium text-ink-500 hover:bg-ink-100 transition-colors">← Anterior</button>
+      <span id="fs-page-label" class="text-xs text-ink-400"></span>
+      <button onclick="fsPageNext()" class="px-3 py-1.5 rounded-lg text-sm font-medium text-ink-500 hover:bg-ink-100 transition-colors">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -726,6 +735,7 @@ const VIEW_TYPE = '{{ view_type }}';
 const FILE_META = {{ file_info | tojson }};
 const AVAIL_TAGS = {{ (docs_meta.get('available_tags',[]) if view_type=='doc' else translates_meta.get('available_tags',[])) | tojson }};
 const XLAN_PARTS = {{ xlan_parts | tojson }};
+const XLAN_CONTENT = {{ (xlan_data.content if xlan_data else []) | tojson }};
 let _partsLoaded = 1; // first part is rendered server-side
 let _partsLoading = false;
 
@@ -861,10 +871,141 @@ const tipCmtText = document.getElementById('tip-comment-text');
   if (m) setView(m[1]);
 })();
 
+// ── Render split view from JS (for line-by-line alignment) ──────
+(function initSplitView() {
+  const splitContent = document.getElementById('split-content');
+  if (splitContent && XLAN_CONTENT && XLAN_CONTENT.length) {
+    _renderSplitBlocks(splitContent, XLAN_CONTENT, 0);
+  }
+})();
+
 // Auto-collapse sidebar on small screens
 if (_isMobile()) {
   document.getElementById('app-root').classList.add('sidebar-collapsed');
 }
+
+// ── Fullscreen mode ─────────────────────────────────────────────
+let _fsOpen = false;
+let _fsPaginated = true;   // true = book pagination, false = scroll
+let _fsTotalPages = 1;
+let _fsPage = 0;
+let _fsPageH = 0;          // usable page height
+
+function toggleFullscreen() {
+  const overlay = document.getElementById('fullscreen-overlay');
+  if (!overlay) return;
+  _fsOpen = !_fsOpen;
+  if (_fsOpen) {
+    _buildFsContent();
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // need a frame so the overlay is laid out and we can measure
+    requestAnimationFrame(() => {
+      _applyFsMode();
+    });
+  } else {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+function _buildFsContent() {
+  const view = _currentView;
+  const label = document.getElementById('fs-view-label');
+  if (label) label.textContent = view === 'split' ? 'Original / Trad.' : view === 'table' ? 'Tabla' : 'Estándar';
+
+  const inner = document.getElementById('fs-inner');
+  if (!inner) return;
+  inner.innerHTML = '';
+
+  const allBlocks = [...(XLAN_CONTENT || [])];
+  if (view === 'table') {
+    _buildFsTableBlocks(inner, allBlocks, 0);
+  } else if (view === 'split') {
+    _renderSplitBlocks(inner, allBlocks, 0);
+  } else {
+    _renderStandardBlocks(inner, allBlocks, 0);
+  }
+}
+
+function _applyFsMode() {
+  const fsContent = document.getElementById('fs-content');
+  const nav = document.getElementById('fs-nav');
+  if (!fsContent) return;
+
+  if (_fsPaginated) {
+    fsContent.classList.remove('fs-scroll');
+    nav.style.display = '';
+    _fsPageH = fsContent.clientHeight;
+    const inner = document.getElementById('fs-inner');
+    if (inner) {
+      _fsTotalPages = Math.max(1, Math.ceil(inner.scrollHeight / _fsPageH));
+    }
+    _fsPage = 0;
+    _goToFsPage(0);
+  } else {
+    fsContent.classList.add('fs-scroll');
+    nav.style.display = 'none';
+    fsContent.scrollTop = 0;
+  }
+}
+
+function _goToFsPage(page) {
+  const fsContent = document.getElementById('fs-content');
+  const label = document.getElementById('fs-page-label');
+  if (!fsContent) return;
+  _fsPage = Math.max(0, Math.min(page, _fsTotalPages - 1));
+  fsContent.scrollTop = _fsPage * _fsPageH;
+  if (label) label.textContent = (_fsPage + 1) + ' / ' + _fsTotalPages;
+}
+
+function _buildFsTableBlocks(container, blocks, startBlockIndex) {
+  blocks.forEach((block, i) => {
+    const bi = startBlockIndex + i;
+    (block.segments || []).forEach(seg => {
+      const card = document.createElement('div');
+      card.className = 'mb-3 p-3 border border-ink-100 rounded-lg';
+      card.innerHTML =
+        '<div class="font-serif text-base text-ink-800 mb-1">' + _escHtml(seg.text) + '</div>' +
+        '<div class="font-serif text-base text-ink-600 mb-1">' + _escHtml(seg.translation || '') + '</div>' +
+        '<div class="text-xs text-ink-400 leading-relaxed">' + _escHtml(seg.info || '') + '</div>';
+      container.appendChild(card);
+    });
+  });
+}
+
+function fsPagePrev() {
+  if (_fsPaginated && _fsPage > 0) _goToFsPage(_fsPage - 1);
+}
+function fsPageNext() {
+  if (_fsPaginated && _fsPage < _fsTotalPages - 1) _goToFsPage(_fsPage + 1);
+}
+
+// Pagination toggle from display panel
+function toggleFsPagination() {
+  _fsPaginated = !_fsPaginated;
+  _updatePaginationToggleUI();
+  if (_fsOpen) _applyFsMode();
+}
+function _updatePaginationToggleUI() {
+  const btn = document.getElementById('dp-pagination-toggle');
+  const knob = document.getElementById('dp-pagination-knob');
+  if (!btn || !knob) return;
+  if (_fsPaginated) {
+    btn.classList.remove('bg-ink-300'); btn.classList.add('bg-ink-900');
+    knob.style.left = '20px';
+  } else {
+    btn.classList.remove('bg-ink-900'); btn.classList.add('bg-ink-300');
+    knob.style.left = '2px';
+  }
+}
+
+// ESC to close fullscreen, arrows to navigate pages
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && _fsOpen) { toggleFullscreen(); e.preventDefault(); }
+  if (_fsOpen && _fsPaginated && e.key === 'ArrowRight') { fsPageNext(); e.preventDefault(); }
+  if (_fsOpen && _fsPaginated && e.key === 'ArrowLeft') { fsPagePrev(); e.preventDefault(); }
+});
 
 function showTooltip(el, e) {
   if (!tooltip) return;
@@ -1060,7 +1201,7 @@ function applyDisplay() {
     xlanContent.style.letterSpacing = ls + 'px';
   }
   // Apply font size and line height to paragraphs and headings
-  document.querySelectorAll('#xlan-content p, .split-row .font-serif').forEach(el => {
+  document.querySelectorAll('#xlan-content p, .split-row .font-serif, .split-line > div').forEach(el => {
     el.style.fontSize = size + 'px';
     el.style.lineHeight = lh;
   });
@@ -1102,6 +1243,8 @@ function resetDisplay() {
   document.getElementById('dp-line-height').value = '1.2';
   document.getElementById('dp-letter-spacing').value = '0';
   document.getElementById('dp-max-width').value = '672';
+  _fsPaginated = true;
+  _updatePaginationToggleUI();
   applyDisplay();
   setDisplayBg('#ffffff');
 }
@@ -1268,15 +1411,12 @@ function _makeSplitSegSpan(seg, bi, isTranslation) {
     span.className = 'xlan-seg xlan-seg-tr';
     span.dataset.segId = seg.id + '__tr';
     span.dataset.segRef = seg.id;
-    const t = seg.text || '';
-    let txt = seg.translation || '';
-    if (t.startsWith('\n')) txt = '\n' + txt;
-    if (t.endsWith('\n')) txt = txt + '\n';
-    span.textContent = txt;
+    // Strip \n — line breaks are structural in split view (separate grid rows)
+    span.textContent = (seg.translation || '').replace(/\n/g, '');
   } else {
     span.className = 'xlan-seg';
     span.dataset.segId = seg.id;
-    span.textContent = seg.text;
+    span.textContent = (seg.text || '').replace(/\n/g, '');
   }
   span.dataset.blockIndex = bi;
   span.dataset.translation = seg.translation || '';
@@ -1318,6 +1458,8 @@ function _renderStandardBlocks(container, blocks, startBlockIndex) {
 function _renderSplitBlocks(container, blocks, startBlockIndex) {
   blocks.forEach((block, i) => {
     const bi = startBlockIndex + i;
+    const segs = block.segments || [];
+
     if (block.type === 'heading') {
       const lv = block.level || 1;
       const hcls = lv === 1 ? 'text-2xl font-bold' : lv === 2 ? 'text-xl font-bold' : 'text-lg font-semibold';
@@ -1327,7 +1469,7 @@ function _renderSplitBlocks(container, blocks, startBlockIndex) {
       left.className = 'font-serif ' + hcls + ' text-ink-900';
       const right = document.createElement('div');
       right.className = 'font-serif ' + hcls + ' text-ink-600 border-l border-ink-100';
-      (block.segments || []).forEach(seg => {
+      segs.forEach(seg => {
         left.appendChild(_makeSplitSegSpan(seg, bi, false));
         right.appendChild(_makeSplitSegSpan(seg, bi, true));
       });
@@ -1335,19 +1477,38 @@ function _renderSplitBlocks(container, blocks, startBlockIndex) {
       row.appendChild(right);
       container.appendChild(row);
     } else if (block.type === 'paragraph') {
-      const row = document.createElement('div');
-      row.className = 'split-row border-b border-ink-100';
-      const left = document.createElement('div');
-      left.className = 'font-serif text-base text-ink-800 leading-loose';
-      const right = document.createElement('div');
-      right.className = 'font-serif text-base text-ink-600 leading-loose border-l border-ink-100';
-      (block.segments || []).forEach(seg => {
-        left.appendChild(_makeSplitSegSpan(seg, bi, false));
-        right.appendChild(_makeSplitSegSpan(seg, bi, true));
+      // Group segments into lines (split on \n in text)
+      const lines = [[]];
+      segs.forEach(seg => {
+        lines[lines.length - 1].push(seg);
+        const t = (seg.text || '').replace(/ +$/, '');
+        if (t.endsWith('\n') || t.endsWith('\n\n')) {
+          lines.push([]);
+        }
       });
-      row.appendChild(left);
-      row.appendChild(right);
-      container.appendChild(row);
+      // Remove trailing empty group
+      if (lines.length > 1 && lines[lines.length - 1].length === 0) lines.pop();
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'split-block';
+
+      lines.forEach(lineSegs => {
+        const row = document.createElement('div');
+        row.className = 'split-line';
+        const left = document.createElement('div');
+        left.className = 'text-ink-800';
+        const right = document.createElement('div');
+        right.className = 'text-ink-600';
+        lineSegs.forEach(seg => {
+          left.appendChild(_makeSplitSegSpan(seg, bi, false));
+          right.appendChild(_makeSplitSegSpan(seg, bi, true));
+        });
+        row.appendChild(left);
+        row.appendChild(right);
+        wrapper.appendChild(row);
+      });
+
+      container.appendChild(wrapper);
     }
   });
 }
@@ -1437,14 +1598,11 @@ async function _loadAllParts() {
         _renderStandardBlocks(xlanContent, content, startIdx);
       }
 
-      // Split view — find inner container (the white card)
-      const splitView = document.getElementById('view-split');
-      if (splitView) {
-        const splitCard = splitView.querySelector('.bg-white');
-        if (splitCard) {
-          splitCard.appendChild(_makeSplitSeparator());
-          _renderSplitBlocks(splitCard, content, startIdx);
-        }
+      // Split view — render into #split-content
+      const splitContent = document.getElementById('split-content');
+      if (splitContent) {
+          splitContent.appendChild(_makeSplitSeparator());
+          _renderSplitBlocks(splitContent, content, startIdx);
       }
 
       // Table view
