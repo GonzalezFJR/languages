@@ -21,6 +21,8 @@ from pydantic import BaseModel
 from app.services.project_service import load_metadata
 from app.services.text_extractor import extract_text
 from app.services.pipeline_agent import XlanSession, run_xlan_agent
+from app.services.xlan_service import register_xlan_in_metadata
+from app.services.document_service import load_section_metadata, save_section_metadata
 
 router = APIRouter(prefix="/api/projects", tags=["pipeline-agent"])
 
@@ -172,6 +174,10 @@ async def _enqueue_job(
             _send({"type": "info", "msg": f"Text: {len(raw_text)} characters"})
             session.on_progress = lambda m: _send({"type": "progress", "msg": m})
             filename = run_xlan_agent(session, raw_text)
+
+            # Register metadata in the backend (not inside the agent)
+            _register_metadata(session)
+
             _send({
                 "type": "done",
                 "filename": filename,
@@ -185,3 +191,37 @@ async def _enqueue_job(
 
     loop.run_in_executor(_executor, _run)
     return {"job_id": job_id, "chars": len(raw_text)}
+
+
+def _register_metadata(session: XlanSession) -> None:
+    """Register saved .xlan file(s) in section metadata. Called after the agent finishes."""
+    import re
+
+    filenames = session.saved_filenames
+    if not filenames:
+        return
+
+    # Register the first file (new files only, not extensions)
+    if not session.extend_base:
+        register_xlan_in_metadata(
+            session.project_id, filenames[0], session.title, session.description,
+            user_dir=session.user_dir,
+        )
+
+    # Update parts list if multi-part or extending
+    if len(filenames) > 1 or session.extend_base:
+        meta = load_section_metadata(session.project_id, "translates", session.user_dir)
+        if session.extend_base:
+            base_filename = session.extend_base
+        else:
+            base_filename = filenames[0]
+
+        entry = meta["files"].get(base_filename)
+        if entry:
+            parts = entry.get("parts", [base_filename])
+            for fn in filenames:
+                if fn not in parts:
+                    parts.append(fn)
+            entry["parts"] = parts
+            meta["files"][base_filename] = entry
+            save_section_metadata(session.project_id, "translates", meta, session.user_dir)
