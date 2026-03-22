@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/css/app.css" />
+  <link rel="stylesheet" href="{{ request.state.base_path|default('') }}/static/css/app.css" />
   <script>
     tailwind.config = {
       theme: {
@@ -39,6 +39,31 @@
   {% block head %}{% endblock %}
 </head>
 <body class="bg-white text-ink-900 font-sans antialiased">
+  <script>
+    // Base path for reverse-proxy subpath deployment
+    window.__BP__ = '{{ request.state.base_path|default("") }}';
+    (function() {
+      const B = window.__BP__;
+      if (!B) return;
+      // Override fetch to prefix API paths
+      const _fetch = window.fetch;
+      window.fetch = function(url, opts) {
+        if (typeof url === 'string' && url.startsWith('/')) url = B + url;
+        return _fetch.call(this, url, opts);
+      };
+      // Rewrite links and forms on DOM ready
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('a[href^="/"]').forEach(a => {
+          const h = a.getAttribute('href');
+          if (!h.startsWith(B)) a.setAttribute('href', B + h);
+        });
+        document.querySelectorAll('form[action^="/"]').forEach(f => {
+          const a = f.getAttribute('action');
+          if (!a.startsWith(B)) f.setAttribute('action', B + a);
+        });
+      });
+    })();
+  </script>
   {% block body %}{% endblock %}
   {% block scripts %}{% endblock %}
 </body>
