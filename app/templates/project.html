@@ -655,7 +655,7 @@ async function submitTranslate() {
   }
 }
 function _connectAgentSSE(job_id) {
-  _agentES = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
+  _agentES = new EventSource(`${window.__BP__}/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
   _agentES.onmessage = function(e) {
     const msg = JSON.parse(e.data);
     if (msg.type === 'heartbeat') return;

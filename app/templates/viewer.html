@@ -1884,7 +1884,7 @@ function _extendError(msg) {
   errEl.classList.remove('hidden');
 }
 function _connectExtendSSE(job_id) {
-  const es = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
+  const es = new EventSource(`${window.__BP__}/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
   es.onmessage = function(e) {
     const msg = JSON.parse(e.data);
     if (msg.type === 'heartbeat') return;
