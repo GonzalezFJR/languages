@@ -913,6 +913,7 @@ function _mosaicCardHtml(fname, finfo, section) {
       </div>
     </a>
     <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
+      <span class="mosaic-drag-handle cursor-grab active:cursor-grabbing touch-none text-ink-200 hover:text-ink-500 transition-colors select-none" title="Mantén y arrastra para mover">⠿</span>
       ${tagsHtml}
       <button onclick="openFileTagModal('${section}','${fname}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
       <button onclick="openFileSettingsModal('${section}','${fname}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
@@ -1014,9 +1015,7 @@ function _initMosaicSortables(section) {
       group: { name: `mosaic-${section}`, pull: true, put: true },
       animation: 150,
       ghostClass: 'opacity-50',
-      delay: 400,
-      delayOnTouchOnly: true,
-      touchStartThreshold: 8,
+      handle: '.mosaic-drag-handle',
       onEnd: function() { _saveMosaicOrder(section); }
     });
   });
