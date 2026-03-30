@@ -337,6 +337,8 @@ def run_xlan_agent(
 
         filename = _run_single_batch(
             session, batch_text, batch_idx, total_parts, prev_context
+        ) if settings.llm_with_tools else _run_single_batch_direct(
+            session, batch_text, batch_idx, total_parts, prev_context
         )
 
         if batch_idx == 0:
@@ -402,6 +404,134 @@ def _load_last_block_text(project_id: str, filename: str, user_dir: str) -> str 
         return None
     return _extract_tail_text(content)
 
+
+# ── Direct prompt mode (no tools) ───────────────────────────────
+
+def _load_instructions_template() -> str:
+    """Load the instructions.txt template for direct prompt mode."""
+    candidates = [
+        Path("static/contents/instructions/instructions.txt"),
+        Path(__file__).parent.parent.parent / "static/contents/instructions/instructions.txt",
+    ]
+    for p in candidates:
+        if p.exists():
+            return p.read_text(encoding="utf-8")
+    raise FileNotFoundError("instructions.txt not found")
+
+
+def _run_single_batch_direct(
+    session: XlanSession,
+    batch_text: str,
+    part_index: int,
+    total_parts: int,
+    prev_context: str | None,
+) -> str:
+    """Run a single LLM call (no tools) using the instructions.txt template.
+    The LLM returns the full .xlan JSON directly."""
+    template = _load_instructions_template()
+    model = _build_model_string(settings.llm_provider, settings.llm_model)
+    api_key = settings.llm_api_key or None
+
+    # Fill in template placeholders (same substitutions as the frontend copyPrompt)
+    prompt = template
+    prompt = re.sub(r"\{\{\s*IDIOMA_BASE\s*\}\}", session.text_language, prompt)
+    prompt = re.sub(r"\{\{\s*IDIOMA_OBJETIVO\s*\}\}", session.notes_language, prompt)
+    prompt = re.sub(r"\{\{\s*TEXTO\s*\}\}", batch_text, prompt)
+    prompt = re.sub(r"\{\{\s*TÍTULO\s*\}\}", session.title, prompt)
+    prompt = re.sub(r"\{\{\s*DESCRIPCIÓN\s*\}\}", session.description, prompt)
+
+    if session.source_type == "ocr":
+        prompt += (
+            "\n\nIMPORTANTE: Este texto fue extraído por OCR de una imagen. "
+            "Algunos caracteres podrían ser incorrectos. Si detectas un error de OCR claro, "
+            "corrígelo en el campo 'text' y menciónalo en el campo 'info'."
+        )
+
+    if prev_context:
+        prompt += (
+            f"\n\nCONTEXTO — El texto anterior termina así (solo para contexto, NO lo proceses):\n"
+            f"---\n{prev_context}\n---"
+        )
+
+    if total_parts > 1:
+        prompt += f"\n\nEsta es la parte {part_index + 1} de {total_parts}."
+
+    messages: list[dict] = [
+        {
+            "role": "system",
+            "content": (
+                "You are an expert linguist and language teacher. "
+                "Respond ONLY with the .xlan JSON object. "
+                "Do not include markdown code fences, explanations, or any text outside the JSON."
+            ),
+        },
+        {"role": "user", "content": prompt},
+    ]
+
+    session._emit(f"🤖 Direct LLM call — model: {model}")
+
+    t0 = time.time()
+
+    if _is_debug():
+        total_msg_words = sum(len(m.get("content", "").split()) for m in messages)
+        logger.info(f"[LLM-direct] messages={len(messages)} ~words_in_context={total_msg_words}")
+
+    response = litellm.completion(
+        model=model,
+        messages=messages,
+        api_key=api_key,
+        temperature=1,
+    )
+
+    elapsed = time.time() - t0
+    msg = response.choices[0].message
+
+    usage = getattr(response, "usage", None)
+    if usage:
+        prompt_tok = getattr(usage, "prompt_tokens", 0)
+        completion_tok = getattr(usage, "completion_tokens", 0)
+        session._emit(f"⏱ {elapsed:.1f}s — {prompt_tok} in / {completion_tok} out")
+    else:
+        session._emit(f"⏱ {elapsed:.1f}s")
+
+    # Parse JSON from response (handle markdown code fences if present)
+    raw = (msg.content or "").strip()
+    json_match = re.search(r"```(?:json)?\s*\n?(.*?)\n?\s*```", raw, re.DOTALL)
+    if json_match:
+        raw = json_match.group(1).strip()
+
+    try:
+        xlan_data = json.loads(raw)
+    except json.JSONDecodeError:
+        brace_start = raw.find("{")
+        brace_end = raw.rfind("}")
+        if brace_start != -1 and brace_end != -1:
+            try:
+                xlan_data = json.loads(raw[brace_start:brace_end + 1])
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Could not parse LLM response as JSON: {e}")
+        else:
+            raise ValueError("LLM response does not contain valid JSON")
+
+    content = xlan_data.get("content", [])
+    if not content:
+        raise ValueError("LLM response JSON missing 'content' array")
+
+    session.content = content
+    seg_count = sum(len(block.get("segments", [])) for block in content)
+    session.seg_counter += seg_count
+
+    session._emit(f"✓ {len(content)} blocks, {seg_count} segments")
+    session._emit("✅ Done")
+
+    # Post-process: ensure original line breaks are preserved (skip OCR)
+    if session.source_type != "ocr":
+        session._restore_line_breaks(batch_text)
+
+    return session.save(part_index=part_index, total_parts=total_parts)
+
+
+# ── Tool-calling agent mode ─────────────────────────────────────
 
 def _run_single_batch(
     session: XlanSession,

@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     llm_provider: str = "openai"          # openai | anthropic | google | ...
     llm_model: str = "gpt-4o-mini"
     llm_api_key: str = ""
+    llm_with_tools: bool = True           # True = agent with tools, False = direct prompt
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 
