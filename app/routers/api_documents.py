@@ -2,7 +2,7 @@ import json
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 from app.services.project_service import load_metadata
 from app.services.document_service import (
@@ -17,7 +17,7 @@ from app.services.document_service import (
     get_doc_path,
     get_translate_path,
 )
-from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan
+from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan, update_linebreaks
 
 router = APIRouter(prefix="/api/projects", tags=["documents"])
 
@@ -242,3 +242,25 @@ async def get_xlan_content(request: Request, project_id: str, filename: str):
     if not xlan:
         raise HTTPException(404, "Archivo no encontrado")
     return {"content": xlan.get("content", []), "meta": xlan.get("meta", {})}
+
+
+# ── Line break editing ────────────────────────────────────────────
+
+class LineBreakChange(BaseModel):
+    block_index: int
+    seg_id: str
+    trailing_newline: bool
+
+class LineBreakBody(BaseModel):
+    changes: List[LineBreakChange]
+
+@router.put("/{project_id}/translates/{filename}/linebreaks")
+async def put_linebreaks(request: Request, project_id: str, filename: str, body: LineBreakBody):
+    ud = request.state.user_dir
+    if not load_metadata(project_id, ud):
+        raise HTTPException(404, "Proyecto no encontrado")
+    try:
+        update_linebreaks(project_id, filename, [c.model_dump() for c in body.changes], ud)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True}

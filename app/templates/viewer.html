@@ -98,6 +98,24 @@
   .split-line:last-child > div { padding-bottom: 12px; }
   .split-line > div:last-child { border-left: 1px solid #f3f4f6; }
   .split-block:last-child { border-bottom: none; }
+  /* Line break edit mode */
+  .lb-toggle {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 10px;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin: 0 1px;
+    user-select: none;
+    vertical-align: middle;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1.4;
+  }
+  .lb-toggle:hover { background: #e2e8f0; color: #475569; }
+  .lb-toggle.lb-active { color: #2563eb; background: #dbeafe; }
+  #lb-save-bar { box-shadow: 0 -4px 12px rgba(0,0,0,0.08); }
   /* Fullscreen overlay */
   #fullscreen-overlay {
     position: fixed; inset: 0; z-index: 100;
@@ -194,6 +212,11 @@
       <button id="view-btn-split"    onclick="setView('split')"    class="px-2 md:px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700"><span class="hidden md:inline">Original / </span>Trad.</button>
       <button id="view-btn-table"    onclick="setView('table')"    class="px-2 md:px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700">Tabla</button>
     </div>
+    {% if current_user %}
+    <button id="lb-edit-btn" onclick="toggleLineBreakEdit()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-ink-200 text-ink-400 hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0 hide-mobile" title="Editar saltos de línea">
+      <span class="text-base leading-none">↵</span>
+    </button>
+    {% endif %}
     {% if current_user %}
     <button onclick="openExtendModal()" class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors flex-shrink-0 hide-mobile" title="Extender este texto con más contenido">
       + Extender texto
@@ -316,8 +339,9 @@
             <div id="xlan-content" class="bg-white rounded-2xl shadow-sm border border-ink-100 px-10 py-12">
               {% if xlan_data %}
               <div class="mb-8 pb-6 border-b border-ink-100">
-                <div class="text-xs font-medium text-ink-400 uppercase tracking-widest mb-2">{{ tlang }} &mdash; {{ nlang }}</div>
-                {% if xlan_data.meta.description %}<p class="text-sm text-ink-500 leading-relaxed">{{ xlan_data.meta.description }}</p>{% endif %}
+                <h2 class="text-lg font-bold text-ink-900 mb-1">{{ file_info.display_name or xlan_data.meta.title or filename }}</h2>
+                {%- set _desc = file_info.get('description', '') or xlan_data.meta.get('description', '') -%}
+                {% if _desc %}<p class="text-sm text-ink-500 leading-relaxed">{{ _desc }}</p>{% endif %}
               </div>
               {% for block in xlan_data.content %}
                 {% set bi = loop.index0 %}
@@ -434,6 +458,17 @@
           </div>
         </div>
       </div>
+
+      {% if current_user %}
+      <div id="lb-save-bar" class="hidden absolute bottom-0 left-0 right-0 z-40 bg-white border-t border-ink-200 px-4 py-3 flex items-center justify-between">
+        <span class="text-sm text-ink-600 font-medium">Editando saltos de línea</span>
+        <div class="flex gap-2">
+          <button onclick="cancelLBEdit()" class="px-4 py-2 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button onclick="saveLBEdit()" class="px-4 py-2 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
+        </div>
+      </div>
+      {% endif %}
+
       {% endif %}
 
     </main>
@@ -827,6 +862,7 @@ document.addEventListener('keydown', e => {
 const VIEWS = ['standard', 'split', 'table'];
 let _currentView = 'standard';
 function setView(name) {
+  if (typeof _lbEditMode !== 'undefined' && _lbEditMode) cancelLBEdit();
   _currentView = name;
   VIEWS.forEach(v => {
     const el = document.getElementById('view-' + v);
@@ -1884,7 +1920,7 @@ function _extendError(msg) {
   errEl.classList.remove('hidden');
 }
 function _connectExtendSSE(job_id) {
-  const es = new EventSource(`${window.__BP__}/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
+  const es = new EventSource(`/api/projects/${PROJECT_ID}/pipeline/agent-progress/${job_id}`);
   es.onmessage = function(e) {
     const msg = JSON.parse(e.data);
     if (msg.type === 'heartbeat') return;
@@ -1900,6 +1936,124 @@ function _connectExtendSSE(job_id) {
     }
   };
   es.onerror = function() { es.close(); _extendError('Error de conexión'); };
+}
+
+// ── Line break editing mode ─────────────────────────────────────
+let _lbEditMode = false;
+let _lbChanges = {};
+let _lbOriginalTexts = {};
+
+function toggleLineBreakEdit() {
+  if (_lbEditMode) {
+    cancelLBEdit();
+  } else {
+    if (_currentView !== 'standard') setView('standard');
+    enterLBEditMode();
+  }
+}
+
+function enterLBEditMode() {
+  _lbEditMode = true;
+  _lbChanges = {};
+  _lbOriginalTexts = {};
+
+  const bar = document.getElementById('lb-save-bar');
+  if (bar) bar.classList.remove('hidden');
+  const btn = document.getElementById('lb-edit-btn');
+  if (btn) btn.classList.add('bg-blue-50', 'border-blue-300', 'text-blue-600');
+  const scroller = document.getElementById('xlan-scroll');
+  if (scroller) scroller.style.paddingBottom = '64px';
+
+  const container = document.getElementById('xlan-content');
+  if (!container) return;
+
+  const parents = container.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
+  parents.forEach(parent => {
+    const segs = Array.from(parent.querySelectorAll('.xlan-seg'));
+    segs.forEach((seg, i) => {
+      if (i >= segs.length - 1) return;
+
+      const bi = parseInt(seg.dataset.blockIndex);
+      const segId = seg.dataset.segId;
+      const key = bi + '::' + segId;
+
+      _lbOriginalTexts[key] = seg.textContent;
+
+      const toggle = document.createElement('span');
+      toggle.className = 'lb-toggle';
+      toggle.dataset.lbKey = key;
+      toggle.dataset.lbBi = bi;
+      toggle.dataset.lbSegId = segId;
+      toggle.innerHTML = '↵';
+      toggle.title = 'Insertar/quitar salto de línea';
+
+      if (seg.textContent.endsWith('\n')) {
+        toggle.classList.add('lb-active');
+      }
+
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isActive = this.classList.toggle('lb-active');
+        const tbi = parseInt(this.dataset.lbBi);
+        const tsid = this.dataset.lbSegId;
+        const tkey = this.dataset.lbKey;
+
+        _lbChanges[tkey] = { block_index: tbi, seg_id: tsid, trailing_newline: isActive };
+
+        const segEl = this.previousElementSibling;
+        if (segEl && segEl.classList.contains('xlan-seg')) {
+          let t = segEl.textContent.replace(/\n+$/, '');
+          if (isActive) t += '\n';
+          segEl.textContent = t;
+        }
+      });
+
+      seg.after(toggle);
+    });
+  });
+}
+
+function cancelLBEdit() {
+  _lbEditMode = false;
+  const bar = document.getElementById('lb-save-bar');
+  if (bar) bar.classList.add('hidden');
+  const btn = document.getElementById('lb-edit-btn');
+  if (btn) btn.classList.remove('bg-blue-50', 'border-blue-300', 'text-blue-600');
+  const scroller = document.getElementById('xlan-scroll');
+  if (scroller) scroller.style.paddingBottom = '';
+
+  document.querySelectorAll('.lb-toggle').forEach(el => el.remove());
+
+  for (const [key, origText] of Object.entries(_lbOriginalTexts)) {
+    const sepIdx = key.indexOf('::');
+    const bi = key.substring(0, sepIdx);
+    const segId = key.substring(sepIdx + 2);
+    const seg = document.querySelector('.xlan-seg[data-block-index="' + bi + '"][data-seg-id="' + segId + '"]');
+    if (seg) seg.textContent = origText;
+  }
+
+  _lbChanges = {};
+  _lbOriginalTexts = {};
+}
+
+async function saveLBEdit() {
+  const changes = Object.values(_lbChanges);
+  if (changes.length === 0) {
+    cancelLBEdit();
+    return;
+  }
+
+  const res = await fetch('/api/projects/' + PROJECT_ID + '/translates/' + FILENAME + '/linebreaks', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ changes: changes })
+  });
+
+  if (res.ok) {
+    location.reload();
+  } else {
+    alert('Error al guardar los saltos de línea');
+  }
 }
 
 // Apply display defaults on load

@@ -80,6 +80,27 @@ def update_xlan_file_meta(project_id: str, filename: str, updates: dict, user_di
     return update_file_meta(project_id, "translates", filename, updates, user_dir)
 
 
+def update_linebreaks(project_id: str, filename: str, changes: list, user_dir: str = "public"):
+    xlan = load_xlan(project_id, filename, user_dir)
+    if not xlan:
+        raise ValueError(f"Archivo no encontrado: {filename}")
+    blocks = xlan.get("content", [])
+    for change in changes:
+        bi = change["block_index"]
+        seg_id = change["seg_id"]
+        trailing = change["trailing_newline"]
+        if bi < 0 or bi >= len(blocks):
+            continue
+        for seg in blocks[bi].get("segments", []):
+            if seg.get("id") == seg_id:
+                text = seg.get("text", "").rstrip("\n")
+                if trailing:
+                    text += "\n"
+                seg["text"] = text
+                break
+    save_xlan(project_id, filename, xlan, user_dir)
+
+
 def pipeline_text_to_xlan(
     project_id: str,
     raw_text: str,
