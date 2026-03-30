@@ -55,7 +55,8 @@ Pautas:
   BIEN: "Había una vez un camino azul" → 2 segmentos: "Había una vez" / "un camino azul"
   MAL: "Había" / "una" / "vez" → segmentos demasiado pequeños. MAL: 1 segmento (es mejor dividirlo en dos).
 
-• Si ya hay signos de puntuación, saltos de línea, etcétera, usarlos como guía natural para dividir en segmentos. Esto no implica que no pueda haber varios segmentos dentro de un mismo verso o frase.
+• Si ya hay signos de puntuación, saltos de línea, etcétera, usarlos como guía natural para dividir en segmentos. Esto no implica que no pueda haber varios segmentos dentro de un mismo verso o frase. 
+  Si el texto de inputs está en versos, divide los versos en tantos segmentos como sea necesario para formar unidades mínimas de significado.
 
 • ESPACIOS: el primer segmento no lleva espacio inicial. Los siguientes SÍ llevan
   un espacio al inicio si en el original están separados del anterior por un espacio.
