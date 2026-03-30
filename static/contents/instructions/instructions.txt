@@ -117,6 +117,8 @@ Estilos:
 - ["bold"] → negrita
 - Se pueden combinar: ["bold", "italic"]
 
+IMPORTANTE: nunca incluyas contenidos "meta", como que hay un "\n" que indica un salto de línea, comentarios de referencia a "xlan", etcétera. Tampoco incluyas formatos de texto enriquecido (HTML, Markdown...). El .xlan es solo JSON con los campos descritos. Piensa que el estudiante sólo verá un texto interactivo bien formateado, no el JSON ni las instrucciones.
+
 Ejemplo completo de un .xlan:
 {
   "meta": {
