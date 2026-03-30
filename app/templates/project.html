@@ -331,7 +331,11 @@
         </div>
         <div id="translate-error" class="text-red-500 text-sm mt-3 hidden"></div>
         <div class="flex gap-3 mt-5">
-          <button type="button" onclick="closeTranslateModal()" class="flex-1 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button type="button" onclick="closeTranslateModal()" class="flex-shrink-0 px-4 py-2.5 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
+          <button type="button" id="copy-prompt-btn" onclick="copyPrompt()" class="flex-1 px-4 py-2.5 border border-blue-200 text-blue-600 rounded-xl text-sm font-medium hover:bg-blue-50 transition-colors flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Copiar prompt</span>
+          </button>
           <button type="button" id="translate-btn" onclick="submitTranslate()" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
             <span id="translate-btn-icon"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
             <span id="translate-btn-label">Generar con IA</span>
@@ -453,6 +457,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
 const PROJECT_ID = '{{ project.id }}';
+const LANG_BASE = '{{ languages.get(project.base, project.base) }}';
+const LANG_TARGET = '{{ languages.get(project.target, project.target) }}';
 const IS_LOGGED_IN = {{ 'true' if current_user else 'false' }};
 const DOCS_META    = {{ docs_meta | tojson }};
 const XLAN_META    = {{ translates_meta | tojson }};
@@ -586,6 +592,9 @@ function switchTranslateTab(tab) {
   // Show/hide shared title+desc fields (hidden for xlan tab which has its own)
   const sharedFields = document.querySelectorAll('#trans-input-view > div:last-child > .mb-4:nth-child(-n+2)');
   sharedFields.forEach(el => el.style.display = tab === 'xlan' ? 'none' : '');
+  // Show/hide copy-prompt button (only for text tab)
+  const copyBtn = document.getElementById('copy-prompt-btn');
+  if (copyBtn) copyBtn.style.display = tab === 'text' ? '' : 'none';
   // Update button text
   const iconEl = document.getElementById('translate-btn-icon');
   const labelEl = document.getElementById('translate-btn-label');
@@ -601,6 +610,51 @@ function switchTranslateTab(tab) {
   }
   if (tab !== 'ocr') stopCamera();
 }
+
+// ── Copy prompt to clipboard ─────────────────────────────────────
+let _promptTemplate = null;
+async function copyPrompt() {
+  const text = document.getElementById('trans-text').value.trim();
+  if (!text) {
+    const errEl = document.getElementById('translate-error');
+    errEl.textContent = 'El texto no puede estar vacío';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  const title = document.getElementById('trans-title').value.trim() || 'Sin título';
+  const desc = document.getElementById('trans-desc').value.trim();
+
+  if (!_promptTemplate) {
+    try {
+      const res = await fetch('/static/contents/instructions/instructions.txt');
+      _promptTemplate = await res.text();
+    } catch(e) {
+      alert('No se pudo cargar el template'); return;
+    }
+  }
+
+  const prompt = _promptTemplate
+    .replace(/\{\{\s*IDIOMA_BASE\s*\}\}/g, LANG_TARGET)
+    .replace(/\{\{\s*IDIOMA_OBJETIVO\s*\}\}/g, LANG_BASE)
+    .replace(/\{\{\s*TEXTO\s*\}\}/g, text)
+    .replace(/\{\{\s*TÍTULO\s*\}\}/g, title)
+    .replace(/\{\{\s*DESCRIPCIÓN\s*\}\}/g, desc);
+
+  try {
+    await navigator.clipboard.writeText(prompt);
+    const btn = document.getElementById('copy-prompt-btn');
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Copiado</span>';
+    btn.classList.add('bg-green-50', 'border-green-300', 'text-green-700');
+    setTimeout(() => {
+      btn.innerHTML = origHTML;
+      btn.classList.remove('bg-green-50', 'border-green-300', 'text-green-700');
+    }, 2000);
+  } catch(e) {
+    alert('No se pudo copiar al portapapeles');
+  }
+}
+
 function onTransFileSelect(input) {
   if (input.files[0]) {
     document.getElementById('trans-file-label').textContent = input.files[0].name;

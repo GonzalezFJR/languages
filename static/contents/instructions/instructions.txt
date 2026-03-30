@@ -1,0 +1,195 @@
+Un .xlan es un archivo JSON diseñado para el aprendizaje interactivo de idiomas.
+Contiene un texto en el idioma objetivo segmentado y anotado con traducciones y
+explicaciones en el idioma nativo del estudiante.
+
+Estructura general de un .xlan:
+{
+  "meta": {
+    "title": "Título del texto (puede incluir el original y traducción)",
+    "description": "Breve descripción del contenido y nivel",
+    "text_language": "código ISO 639-1 del idioma del texto (ej: ru, ar, en, fr)",
+    "notes_language": "código ISO 639-1 del idioma de las notas (ej: es, en)",
+    "created_at": "2026-01-01T00:00:00"
+  },
+  "content": [ ...bloques... ]
+}
+
+Bloques:
+"content" es un array de bloques. Cada bloque tiene "type" y "segments".
+
+Tipos de bloque:
+
+a) heading — títulos y subtítulos
+   Campos: "type": "heading", "level": 1|2|3, "segments": [...]
+   Usar level 1 para título principal, 2 para subtítulos, 3 para sub-subtítulos.
+
+b) paragraph — párrafos de texto
+   Campos: "type": "paragraph", "segments": [...]
+
+
+Segmentos:
+Cada bloque contiene un array "segments". Un segmento es la unidad mínima
+interactiva: al pasar el ratón, el lector ve su traducción y explicación.
+
+Campos de un segmento:
+{
+  "id": "p3_s2",            // Identificador único (ver convención abajo)
+  "text": "texto original",  // Fragmento en el idioma objetivo
+  "translation": "traducción", // Traducción al idioma de notas
+  "info": "explicación gramatical y léxica",
+  "styles": []               // Array de estilos: [], ["italic"], ["bold"], etc.
+}
+
+Convención de IDs:
+- Headings: "h1_s1", "h2_s1", etc. (h + nivel + _s + nº segmento)
+- Párrafos: "p1_s1", "p1_s2", "p2_s1", etc. (p + nº párrafo + _s + nº segmento)
+
+Cómo dividir el texto en segmentos:
+Regla principal: cada segmento debe ser una UNIDAD DE SIGNIFICADO comprensible
+que se pueda explicar de forma autónoma, pero lo bastante corta como para que la
+explicación sea específica y útil.
+
+Pautas:
+
+• Dividir por cláusulas o frases cortas. Evita palabras sueltas. Divide por unidades mínimas de significado/sentido:
+  BIEN: "Había una vez un camino azul" → 2 segmentos: "Había una vez" / "un camino azul"
+  MAL: "Había" / "una" / "vez" → segmentos demasiado pequeños. MAL: 1 segmento (es mejor dividirlo en dos).
+
+• Si una oración es larga, dividir en puntos naturales (conjunciones, comas...).
+
+• ESPACIOS: el primer segmento no lleva espacio inicial. Los siguientes SÍ llevan
+  un espacio al inicio si en el original están separados del anterior por un espacio.
+  Esto es crucial: al concatenar todos los "text" se debe reconstruir el texto original.
+
+• PUNTUACIÓN: la puntuación va junto al segmento al que pertenece.
+  Comas, puntos, signos de exclamación/interrogación van al final del segmento.
+
+• SALTOS DE LÍNEA: para indicar un salto de línea visual entre segmentos dentro
+  de un mismo bloque, añadir "\n" al final del texto del segmento.
+  Para una línea en blanco, usar "\n\n".
+
+• DIÁLOGOS: las comillas de apertura van con el primer segmento del diálogo.
+  Usar "styles": ["italic"] para todo el discurso directo.
+
+Traducciones:
+• La traducción debe ser natural en el idioma de notas, no literal palabra por
+  palabra, pero lo suficientemente cercana para que el lector entienda la
+  correspondencia con el original.
+
+• Si un segmento empieza con espacio, su traducción también debe empezar con
+  espacio (para mantener la correspondencia visual).
+
+• Para idiomas con escritura no latina (árabe, ruso, japonés, chino...),
+  incluir la transliteración entre paréntesis en el campo "info", no en
+  "translation".
+
+El campo "info" es el corazón didáctico del .xlan. Debe ser ÚTIL para alguien
+que está aprendiendo el idioma. Incluir según corresponda:
+
+a) VOCABULARIO:
+   - Palabra clave (transliteración) = significado
+   - Ejemplo: "Замесила (zamesila) = amasó (de замесить = amasar)"
+
+b) GRAMÁTICA relevante al segmento:
+   - Tiempo verbal, caso, conjugación, declinación
+   - Ejemplo: "El verbo concuerda en género: замесила (fem.) porque старуха es femenino."
+
+c) CONTEXTO CULTURAL cuando sea relevante:
+   - Ejemplo: "En Rusia se ponían los alimentos en la ventana para enfriar."
+
+d) PATRONES ÚTILES reutilizables:
+   - Ejemplo: "La estructura كان له = 'tenía' (lit. 'era para él')."
+
+e) DIFERENCIAS con el idioma del estudiante:
+   - Ejemplo: "En inglés se usa 'to be' para la edad; en español se usa 'tener'."
+
+f) Para escrituras no latinas, SIEMPRE incluir transliteración:
+   - Ejemplo: "كَانَ (kāna) = fue/había"
+   - Incluso para japonés/chino: "食べます (tabemasu) = comer (forma cortés)"
+
+Formato recomendado del campo info:
+"Palabra (transliteración) = significado. Otras palabras de la frase. Explicación gramatical detallada. Nota cultural o de uso si aplica."
+
+Estilos:
+"styles" es un array de strings. Valores permitidos:
+- [] → sin estilo especial (caso más común)
+- ["italic"] → cursiva (usar para diálogos, citas, pensamientos, títulos de obras)
+- ["bold"] → negrita
+- Se pueden combinar: ["bold", "italic"]
+
+Ejemplo completo de un .xlan:
+{
+  "meta": {
+    "title": "Le chat — El gato",
+    "description": "Texto elemental sobre un gato. Nivel A1.",
+    "text_language": "fr",
+    "notes_language": "es",
+    "created_at": "2026-03-30T00:00:00"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "segments": [
+        {
+          "id": "h1_s1",
+          "text": "Le chat",
+          "translation": "El gato",
+          "info": "'Le' = artículo definido masculino. 'Chat' (m.) = gato. La 't' final es muda. Femenino: 'la chatte'.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p1_s1",
+          "text": "Le chat dort sur le canapé.",
+          "translation": "El gato duerme en el sofá.",
+          "info": "'Dort' = duerme (presente de 'dormir', 3ª persona). 'Sur' = sobre, en. 'Canapé' (m.) = sofá. Ojo: en español 'canapé' es un aperitivo; en francés es un mueble.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p2_s1",
+          "text": "Il est gris et très gros.",
+          "translation": "Es gris y muy gordo.",
+          "info": "'Il' = él (pronombre sujeto, obligatorio en francés). 'Gris' = gris (igual en ambos idiomas). 'Très' = muy. 'Gros' = gordo/grande. En francés el sujeto pronominal no se puede omitir como en español.",
+          "styles": []
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "segments": [
+        {
+          "id": "p3_s1",
+          "text": "«Miaou !»,",
+          "translation": "«¡Miau!»,",
+          "info": "'Miaou' = miau (onomatopeya francesa). Nótese la puntuación francesa: espacio antes de '!' y comillas «angulares» (guillemets).",
+          "styles": ["italic"]
+        },
+        {
+          "id": "p3_s2",
+          "text": " dit le chat.",
+          "translation": " dice el gato.",
+          "info": "'Dit' = dice (presente de 'dire' = decir). Inversión sujeto-verbo después del diálogo, igual que en español ('dice el gato' vs 'el gato dice').",
+          "styles": []
+        }
+      ]
+    }
+  ]
+}
+
+------------------
+
+Crea un .xlan del siguiente texto con idioma base {{ IDIOMA_BASE }} y idioma objetivo (y de notas) {{ IDIOMA_OBJETIVO }}. El texto es el siguiente:
+
+{{ TEXTO }}
+
+Con título "{{ TÍTULO }}" y descripción "{{ DESCRIPCIÓN }}".
