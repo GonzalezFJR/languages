@@ -51,12 +51,13 @@ explicación sea específica y útil.
 
 Pautas:
 
-• Dividir por cláusulas o frases cortas. Evita palabras sueltas. Divide por unidades mínimas de significado/sentido:
+• Dividir por cláusulas o frases cortas. Evita palabras sueltas, a no ser que sean expresiones o contengan significado por si solas. Ejemplo: "Hola, " o "Perdóname". Divide por unidades mínimas de significado/sentido:
   BIEN: "Había una vez un camino azul" → 2 segmentos: "Había una vez" / "un camino azul"
   MAL: "Había" / "una" / "vez" → segmentos demasiado pequeños. MAL: 1 segmento (es mejor dividirlo en dos).
 
 • Si ya hay signos de puntuación, saltos de línea, etcétera, usarlos como guía natural para dividir en segmentos. Esto no implica que no pueda haber varios segmentos dentro de un mismo verso o frase. 
-  Si el texto de inputs está en versos, divide los versos en tantos segmentos como sea necesario para formar unidades mínimas de significado.
+  Si el texto de inputs está en versos, divide los versos en tantos segmentos como sea necesario para formar unidades mínimas de significado -- evita segmentos largos (más de ~5 o 6 palabras) y segmentos con comas dentro.
+  Si hay comas en un candidato a segmento, considera dividirlo, incluso si se queda una palabra sola.
 
 • ESPACIOS: el primer segmento no lleva espacio inicial. Los siguientes SÍ llevan
   un espacio al inicio si en el original están separados del anterior por un espacio.
