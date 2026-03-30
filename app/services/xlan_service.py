@@ -88,14 +88,14 @@ def update_linebreaks(project_id: str, filename: str, changes: list, user_dir: s
     for change in changes:
         bi = change["block_index"]
         seg_id = change["seg_id"]
-        trailing = change["trailing_newline"]
+        count = change.get("newline_count", 0)
         if bi < 0 or bi >= len(blocks):
             continue
         for seg in blocks[bi].get("segments", []):
             if seg.get("id") == seg_id:
                 text = seg.get("text", "").rstrip("\n")
-                if trailing:
-                    text += "\n"
+                if count > 0:
+                    text += "\n" * count
                 seg["text"] = text
                 break
     save_xlan(project_id, filename, xlan, user_dir)

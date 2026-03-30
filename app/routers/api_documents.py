@@ -249,7 +249,7 @@ async def get_xlan_content(request: Request, project_id: str, filename: str):
 class LineBreakChange(BaseModel):
     block_index: int
     seg_id: str
-    trailing_newline: bool
+    newline_count: int
 
 class LineBreakBody(BaseModel):
     changes: List[LineBreakChange]

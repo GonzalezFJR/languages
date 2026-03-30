@@ -114,7 +114,8 @@
     line-height: 1.4;
   }
   .lb-toggle:hover { background: #e2e8f0; color: #475569; }
-  .lb-toggle.lb-active { color: #2563eb; background: #dbeafe; }
+  .lb-toggle.lb-single { color: #2563eb; background: #dbeafe; }
+  .lb-toggle.lb-double { color: #7c3aed; background: #ede9fe; }
   #lb-save-bar { box-shadow: 0 -4px 12px rgba(0,0,0,0.08); }
   /* Fullscreen overlay */
   #fullscreen-overlay {
@@ -1984,26 +1985,35 @@ function enterLBEditMode() {
       toggle.dataset.lbKey = key;
       toggle.dataset.lbBi = bi;
       toggle.dataset.lbSegId = segId;
+      toggle.dataset.lbState = '0';
       toggle.innerHTML = '↵';
-      toggle.title = 'Insertar/quitar salto de línea';
+      toggle.title = 'Clic: salto de línea · Doble: línea en blanco';
 
-      if (seg.textContent.endsWith('\n')) {
-        toggle.classList.add('lb-active');
+      const trailing = seg.textContent.match(/\n+$/);
+      if (trailing) {
+        const n = trailing[0].length;
+        toggle.dataset.lbState = n >= 2 ? '2' : '1';
+        _applyLBToggleState(toggle);
       }
 
       toggle.addEventListener('click', function(e) {
         e.stopPropagation();
-        const isActive = this.classList.toggle('lb-active');
+        let st = parseInt(this.dataset.lbState) || 0;
+        st = (st + 1) % 3;
+        this.dataset.lbState = st;
+        _applyLBToggleState(this);
+
         const tbi = parseInt(this.dataset.lbBi);
         const tsid = this.dataset.lbSegId;
         const tkey = this.dataset.lbKey;
 
-        _lbChanges[tkey] = { block_index: tbi, seg_id: tsid, trailing_newline: isActive };
+        _lbChanges[tkey] = { block_index: tbi, seg_id: tsid, newline_count: st };
 
         const segEl = this.previousElementSibling;
         if (segEl && segEl.classList.contains('xlan-seg')) {
           let t = segEl.textContent.replace(/\n+$/, '');
-          if (isActive) t += '\n';
+          if (st === 1) t += '\n';
+          else if (st === 2) t += '\n\n';
           segEl.textContent = t;
         }
       });
@@ -2034,6 +2044,14 @@ function cancelLBEdit() {
 
   _lbChanges = {};
   _lbOriginalTexts = {};
+}
+
+function _applyLBToggleState(el) {
+  el.classList.remove('lb-single', 'lb-double');
+  const st = parseInt(el.dataset.lbState) || 0;
+  if (st === 1) { el.classList.add('lb-single'); el.innerHTML = '↵'; }
+  else if (st === 2) { el.classList.add('lb-double'); el.innerHTML = '¶'; }
+  else { el.innerHTML = '↵'; }
 }
 
 async function saveLBEdit() {
