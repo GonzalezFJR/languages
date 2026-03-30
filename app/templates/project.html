@@ -49,38 +49,7 @@
 
       {% set docs_files = docs_meta.get('files', {}) %}
       <div id="view-docs-mosaic">
-      {% if docs_files %}
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for fname, finfo in docs_files.items() %}
-        <div class="doc-card bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden" data-tags="{{ (finfo.tags or []) | join(',') }}">
-          <a href="/viewer/{{ project.id }}/doc/{{ fname }}" class="block p-5">
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-lg bg-ink-50 flex items-center justify-center flex-shrink-0 text-lg">
-                {{ '📄' if fname.endswith('.txt') or fname.endswith('.md') else '📕' if fname.endswith('.pdf') else '📝' }}
-              </div>
-              <div class="min-w-0 flex-1">
-                <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
-                {% if finfo.description %}<div class="text-xs text-ink-400 mt-0.5 truncate">{{ finfo.description }}</div>{% endif %}
-              </div>
-            </div>
-          </a>
-          <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
-            {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
-            <button onclick="openFileTagModal('docs','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
-            <button onclick="openFileSettingsModal('docs','{{ fname }}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
-            </button>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center">
-        <div class="text-4xl mb-3">📂</div>
-        <p class="text-ink-400 text-sm">Arrastra archivos aquí o usa el botón <strong>Subir</strong>.</p>
-        <p class="text-xs text-ink-300 mt-1">PDF, TXT, DOC, DOCX, MD</p>
-      </div>
-      {% endif %}
+        <div id="mosaic-docs"></div>
       </div>{# end view-docs-mosaic #}
       <!-- Tree view -->
       <div id="view-docs-tree" class="hidden">
@@ -120,35 +89,7 @@
 
       {% set xlan_files = translates_meta.get('files', {}) %}
       <div id="view-translates-mosaic">
-      {% if xlan_files %}
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {% for fname, finfo in xlan_files.items() %}
-        <div class="xlan-card bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden" data-tags="{{ (finfo.tags or []) | join(',') }}">
-          <a href="/viewer/{{ project.id }}/xlan/{{ fname }}" class="block p-5">
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 text-lg">🌐</div>
-              <div class="min-w-0 flex-1">
-                <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">{{ finfo.display_name or fname }}</div>
-                {% if finfo.description %}<div class="text-xs text-ink-400 mt-0.5 line-clamp-2">{{ finfo.description }}</div>{% endif %}
-              </div>
-            </div>
-          </a>
-          <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
-            {% for tag in (finfo.tags or []) %}<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">{{ tag }}</span>{% endfor %}
-            <button onclick="openFileTagModal('translates','{{ fname }}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
-            <button onclick="openFileSettingsModal('translates','{{ fname }}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
-            </button>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center">
-        <div class="text-4xl mb-3">🌐</div>
-        <p class="text-ink-400 text-sm">Aún no hay textos. Usa <strong>Agregar</strong> para procesar un texto.</p>
-      </div>
-      {% endif %}
+        <div id="mosaic-translates"></div>
       </div>{# end view-translates-mosaic #}
       <!-- Tree view -->
       <div id="view-translates-tree" class="hidden">
@@ -929,11 +870,177 @@ function setView(section, mode) {
   if (mode==='mosaic') {
     mosaic.classList.remove('hidden'); tree.classList.add('hidden');
     btnM.className='px-3 py-1.5 bg-ink-900 text-white'; btnT.className='px-3 py-1.5 text-ink-500 hover:bg-ink-50';
+    renderMosaic(section);
   } else {
     tree.classList.remove('hidden'); mosaic.classList.add('hidden');
     btnT.className='px-3 py-1.5 bg-ink-900 text-white'; btnM.className='px-3 py-1.5 text-ink-500 hover:bg-ink-50';
     renderTree(section);
   }
+}
+
+// ── Mosaic view with folder structure ─────────────────────────────
+const _mosaicCollapsed = { docs: {}, translates: {} };
+
+function _escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function _mosaicCardHtml(fname, finfo, section) {
+  const isDoc = section === 'docs';
+  const icon = isDoc
+    ? (fname.endsWith('.txt') || fname.endsWith('.md') ? '📄' : fname.endsWith('.pdf') ? '📕' : '📝')
+    : '🌐';
+  const iconBg = isDoc ? 'bg-ink-50' : 'bg-blue-50';
+  const viewerType = isDoc ? 'doc' : 'xlan';
+  const cardClass = isDoc ? 'doc-card' : 'xlan-card';
+  const tags = finfo.tags || [];
+  const tagsHtml = tags.map(t =>
+    `<span class="px-2 py-0.5 text-xs rounded-full bg-amber-50 border border-amber-200 text-amber-700">${t}</span>`
+  ).join('');
+  const descHtml = finfo.description
+    ? `<div class="text-xs text-ink-400 mt-0.5 ${isDoc ? 'truncate' : 'line-clamp-2'}">${_escHtml(finfo.description)}</div>` : '';
+
+  return `<div class="${cardClass} mosaic-card bg-white rounded-xl border border-ink-100 shadow-sm hover:shadow-md transition-all duration-200 group overflow-hidden" data-tags="${tags.join(',')}" data-filename="${fname}">
+    <a href="/viewer/${PROJECT_ID}/${viewerType}/${encodeURIComponent(fname)}" class="block p-5">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0 text-lg">${icon}</div>
+        <div class="min-w-0 flex-1">
+          <div class="font-medium text-ink-900 group-hover:text-blue-600 transition-colors truncate text-sm">${_escHtml(finfo.display_name || fname)}</div>
+          ${descHtml}
+        </div>
+      </div>
+    </a>
+    <div class="border-t border-ink-50 px-4 py-2 flex flex-wrap items-center gap-1.5">
+      ${tagsHtml}
+      <button onclick="openFileTagModal('${section}','${fname}')" class="ml-auto text-xs text-ink-300 hover:text-blue-500">+ etiqueta</button>
+      <button onclick="openFileSettingsModal('${section}','${fname}')" class="text-ink-300 hover:text-ink-600 transition-colors ml-1" title="Configuración">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function _mosaicFolderHtml(cat, section, depth) {
+  const collapsed = !!_mosaicCollapsed[section][cat.id];
+  const chevron = collapsed
+    ? '<svg class="w-4 h-4 text-ink-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>'
+    : '<svg class="w-4 h-4 text-ink-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+  const meta = section === 'docs' ? DOCS_META : XLAN_META;
+  const itemCount = _countFolderItems(cat);
+
+  const cardsHtml = (cat.items || []).map(fname => {
+    const finfo = (meta.files || {})[fname];
+    return finfo ? _mosaicCardHtml(fname, finfo, section) : '';
+  }).join('');
+
+  const subsHtml = (cat.subcategories || []).map(sub => _mosaicFolderHtml(sub, section, depth + 1)).join('');
+
+  const ml = depth > 0 ? ` style="margin-left:${depth * 16}px"` : '';
+  const contentDisplay = collapsed ? 'hidden' : '';
+
+  return `<div class="mosaic-folder mb-4"${ml}>
+    <button onclick="toggleMosaicFolder('${section}','${cat.id}')" class="flex items-center gap-2 w-full text-left px-1 py-2 hover:bg-ink-50 rounded-lg transition-colors group/fold">
+      ${chevron}
+      <span class="text-base">📁</span>
+      <span class="text-sm font-semibold text-ink-700">${_escHtml(cat.name)}</span>
+      <span class="text-xs text-ink-300 ml-1">(${itemCount})</span>
+    </button>
+    <div class="mosaic-folder-content ${contentDisplay} mt-2">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mosaic-sortable" data-section="${section}" data-cat-id="${cat.id}">${cardsHtml}</div>
+      ${subsHtml}
+    </div>
+  </div>`;
+}
+
+function _countFolderItems(cat) {
+  let count = (cat.items || []).length;
+  (cat.subcategories || []).forEach(sub => { count += _countFolderItems(sub); });
+  return count;
+}
+
+function toggleMosaicFolder(section, catId) {
+  _mosaicCollapsed[section][catId] = !_mosaicCollapsed[section][catId];
+  renderMosaic(section);
+}
+
+function renderMosaic(section) {
+  const meta = section === 'docs' ? DOCS_META : XLAN_META;
+  const container = document.getElementById(`mosaic-${section}`);
+  const files = meta.files || {};
+  const categories = meta.categories || [];
+
+  if (!Object.keys(files).length) {
+    const emptyIcon = section === 'docs' ? '📂' : '🌐';
+    const emptyMsg = section === 'docs'
+      ? 'Arrastra archivos aquí o usa el botón <strong>Subir</strong>.<p class="text-xs text-ink-300 mt-1">PDF, TXT, DOC, DOCX, MD</p>'
+      : 'Aún no hay textos. Usa <strong>Agregar</strong> para procesar un texto.';
+    container.innerHTML = `<div class="bg-white rounded-2xl border border-dashed border-ink-200 p-10 text-center">
+      <div class="text-4xl mb-3">${emptyIcon}</div>
+      <p class="text-ink-400 text-sm">${emptyMsg}</p>
+    </div>`;
+    return;
+  }
+
+  const uncategorized = getUncategorized(section);
+  let html = '';
+
+  // Render folders
+  if (categories.length) {
+    html += categories.map(cat => _mosaicFolderHtml(cat, section, 0)).join('');
+  }
+
+  // Render uncategorized items
+  if (uncategorized.length) {
+    if (categories.length) {
+      html += `<div class="mt-4 mb-2 px-1"><span class="text-xs text-ink-400 uppercase tracking-widest">Sin categoría</span></div>`;
+    }
+    const uncatCards = uncategorized.map(fname => {
+      const finfo = files[fname];
+      return finfo ? _mosaicCardHtml(fname, finfo, section) : '';
+    }).join('');
+    html += `<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mosaic-sortable" data-section="${section}" data-cat-id="__root__">${uncatCards}</div>`;
+  }
+
+  container.innerHTML = html;
+  _initMosaicSortables(section);
+}
+
+function _initMosaicSortables(section) {
+  document.querySelectorAll(`#mosaic-${section} .mosaic-sortable`).forEach(el => {
+    if (el._sortable) el._sortable.destroy();
+    el._sortable = Sortable.create(el, {
+      group: { name: `mosaic-${section}`, pull: true, put: true },
+      animation: 150,
+      ghostClass: 'opacity-50',
+      onEnd: function() { _saveMosaicOrder(section); }
+    });
+  });
+}
+
+function _saveMosaicOrder(section) {
+  const meta = section === 'docs' ? DOCS_META : XLAN_META;
+
+  function updateCatItems(cat) {
+    const grid = document.querySelector(`.mosaic-sortable[data-section="${section}"][data-cat-id="${cat.id}"]`);
+    if (grid) {
+      cat.items = Array.from(grid.querySelectorAll('.mosaic-card')).map(el => el.dataset.filename);
+    }
+    (cat.subcategories || []).forEach(sub => updateCatItems(sub));
+  }
+
+  (meta.categories || []).forEach(cat => updateCatItems(cat));
+
+  // Save to server silently
+  const data = JSON.parse(JSON.stringify(meta));
+  const rootGrid = document.querySelector(`.mosaic-sortable[data-section="${section}"][data-cat-id="__root__"]`);
+  if (rootGrid) {
+    data._uncategorized = Array.from(rootGrid.querySelectorAll('.mosaic-card')).map(el => el.dataset.filename);
+  }
+  fetch(`/api/projects/${PROJECT_ID}/${section}/metadata`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+  });
 }
 
 // ── Tag filter ───────────────────────────────────────────────────
@@ -950,8 +1057,9 @@ function toggleTagFilter(section, tag) {
 function clearTagFilter(section) { activeTagFilter[section]=null; applyTagFilter(section); }
 function applyTagFilter(section) {
   const filter = activeTagFilter[section];
-  const cardClass = section==='docs' ? '.doc-card' : '.xlan-card';
-  document.querySelectorAll(cardClass).forEach(card=>{
+  const container = document.getElementById(`mosaic-${section}`);
+  if (!container) return;
+  container.querySelectorAll('.mosaic-card').forEach(card=>{
     if (!filter) { card.style.display=''; return; }
     const tags = card.dataset.tags ? card.dataset.tags.split(',') : [];
     card.style.display = tags.includes(filter) ? '' : 'none';
@@ -1171,12 +1279,14 @@ async function saveTree(section) {
   else { alert('Error al guardar'); }
 }
 
-// ── Init tag filter bars from server data ────────────────────────
+// ── Init tag filter bars and mosaic views ────────────────────────
 (function initTagBars() {
   const dAvail = DOCS_META.available_tags || [];
   const xAvail = XLAN_META.available_tags || [];
   if (dAvail.length) renderTagFilterBar('docs', dAvail);
   if (xAvail.length) renderTagFilterBar('translates', xAvail);
+  renderMosaic('docs');
+  renderMosaic('translates');
 })();
 
 // ── OCR / Camera ─────────────────────────────────────────────────
