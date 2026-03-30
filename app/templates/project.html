@@ -1014,6 +1014,9 @@ function _initMosaicSortables(section) {
       group: { name: `mosaic-${section}`, pull: true, put: true },
       animation: 150,
       ghostClass: 'opacity-50',
+      delay: 400,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 8,
       onEnd: function() { _saveMosaicOrder(section); }
     });
   });
@@ -1209,11 +1212,11 @@ function initSortables(section) {
   const group = {name:`${section}-items`, pull:true, put:true};
   document.querySelectorAll(`#tree-${section} .sortable-list`).forEach(el=>{
     if (el._sortable) el._sortable.destroy();
-    el._sortable = Sortable.create(el, {group, animation:150, ghostClass:'opacity-50', handle:'.org-item'});
+    el._sortable = Sortable.create(el, {group, animation:150, ghostClass:'opacity-50', handle:'.org-item', delay:400, delayOnTouchOnly:true, touchStartThreshold:8});
   });
   const foldersEl = document.getElementById(`folders-${section}`);
   if (foldersEl && !foldersEl._sortable) {
-    foldersEl._sortable = Sortable.create(foldersEl, {group:{name:`${section}-folders`,pull:false,put:false}, animation:150, ghostClass:'opacity-50', handle:'.org-folder-header'});
+    foldersEl._sortable = Sortable.create(foldersEl, {group:{name:`${section}-folders`,pull:false,put:false}, animation:150, ghostClass:'opacity-50', handle:'.org-folder-header', delay:400, delayOnTouchOnly:true, touchStartThreshold:8});
   }
 }
 function addFolder(section) {
