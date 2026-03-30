@@ -17,7 +17,7 @@ from app.services.document_service import (
     get_doc_path,
     get_translate_path,
 )
-from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan, update_linebreaks
+from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan, update_linebreaks, save_xlan, register_xlan_in_metadata
 
 router = APIRouter(prefix="/api/projects", tags=["documents"])
 
@@ -264,3 +264,54 @@ async def put_linebreaks(request: Request, project_id: str, filename: str, body:
     except ValueError as e:
         raise HTTPException(400, str(e))
     return {"ok": True}
+
+
+# ── XLAN direct upload ──────────────────────────────────────────────
+
+@router.post("/{project_id}/translates/upload-xlan")
+async def upload_xlan_file(
+    request: Request,
+    project_id: str,
+    file: UploadFile = File(...),
+    display_name: str = Form(""),
+    description: str = Form(""),
+):
+    ud = request.state.user_dir
+    if not load_metadata(project_id, ud):
+        raise HTTPException(404, "Proyecto no encontrado")
+
+    content = await file.read()
+    try:
+        data = json.loads(content)
+    except (json.JSONDecodeError, ValueError) as e:
+        raise HTTPException(400, f"JSON inválido: {e}")
+
+    if not isinstance(data.get("meta"), dict):
+        raise HTTPException(400, 'Falta el campo "meta"')
+    if not isinstance(data.get("content"), list):
+        raise HTTPException(400, 'Falta el campo "content" (debe ser un array)')
+
+    # Use original filename, sanitized
+    import re
+    raw_name = file.filename or "upload.xlan"
+    if not raw_name.endswith(".xlan"):
+        raw_name += ".xlan"
+    safe_name = re.sub(r'[^\w.\-]', '_', raw_name)
+
+    # Check for duplicates
+    existing = list_translates(project_id, ud)
+    if safe_name in existing.get("files", {}):
+        base = safe_name.rsplit('.', 1)[0]
+        i = 2
+        while f"{base}_{i}.xlan" in existing.get("files", {}):
+            i += 1
+        safe_name = f"{base}_{i}.xlan"
+
+    save_xlan(project_id, safe_name, data, ud)
+    register_xlan_in_metadata(
+        project_id, safe_name,
+        display_name=display_name or data.get("meta", {}).get("title", safe_name),
+        description=description or data.get("meta", {}).get("description", ""),
+        user_dir=ud,
+    )
+    return {"ok": True, "filename": safe_name}
