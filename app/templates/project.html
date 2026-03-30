@@ -291,7 +291,7 @@
         </div>
         <!-- Tab: XLAN direct upload -->
         <div id="tab-pane-xlan" class="hidden">
-          <!-- Step 1: file upload -->
+          <!-- Step 1: file upload or paste -->
           <div id="xlan-upload-step">
             <label class="block text-sm font-medium text-ink-700 mb-1.5">Archivo .xlan</label>
             <div id="xlan-drop-zone" class="border-2 border-dashed border-ink-200 rounded-xl p-6 text-center cursor-pointer hover:border-ink-400 transition-colors" onclick="document.getElementById('xlan-file-input').click()">
@@ -300,6 +300,13 @@
               <div class="text-xs text-ink-300 mt-1">Formato JSON válido</div>
             </div>
             <input id="xlan-file-input" type="file" accept=".xlan" class="hidden" onchange="onXlanFileSelect(this)" />
+            <div class="flex items-center gap-3 my-3">
+              <div class="flex-1 border-t border-ink-100"></div>
+              <span class="text-xs text-ink-300 uppercase">o pega el JSON</span>
+              <div class="flex-1 border-t border-ink-100"></div>
+            </div>
+            <textarea id="xlan-paste-input" rows="5" placeholder='Pega aquí el contenido JSON del .xlan...' class="w-full border border-ink-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ink-900/20 focus:border-ink-400 resize-y"></textarea>
+            <button type="button" onclick="validateXlanPaste()" class="mt-2 px-4 py-2 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors w-full">Validar JSON</button>
           </div>
           <!-- Step 2: validation result + meta editing (hidden until validated) -->
           <div id="xlan-validated-step" class="hidden">
@@ -564,8 +571,10 @@ function closeTranslateModal() {
   // XLAN cleanup
   _xlanParsedData = null;
   _xlanSelectedFile = null;
+  _xlanSourceName = 'upload.xlan';
   document.getElementById('xlan-file-input').value = '';
   document.getElementById('xlan-file-label').textContent = 'Haz clic o arrastra un archivo .xlan';
+  document.getElementById('xlan-paste-input').value = '';
   document.getElementById('xlan-upload-step').classList.remove('hidden');
   document.getElementById('xlan-validated-step').classList.add('hidden');
   document.getElementById('xlan-validation-ok').classList.add('hidden');
@@ -1245,96 +1254,105 @@ function clearOcrImage() {
 // ── XLAN direct upload ───────────────────────────────────────────
 let _xlanParsedData = null;
 let _xlanSelectedFile = null;
+let _xlanSourceName = 'upload.xlan';
 
 function onXlanFileSelect(input) {
   if (!input.files || !input.files[0]) return;
   _xlanSelectedFile = input.files[0];
+  _xlanSourceName = _xlanSelectedFile.name;
   document.getElementById('xlan-file-label').textContent = _xlanSelectedFile.name;
   if (!document.getElementById('xlan-meta-title').value) {
     document.getElementById('xlan-meta-title').value = _xlanSelectedFile.name.replace(/\.xlan$/, '');
   }
-  _validateXlanFile(_xlanSelectedFile);
+  const reader = new FileReader();
+  reader.onload = function(e) { _validateXlanJson(e.target.result); };
+  reader.readAsText(_xlanSelectedFile, 'utf-8');
 }
 
-function _validateXlanFile(file) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const okEl = document.getElementById('xlan-validation-ok');
-    const errEl = document.getElementById('xlan-validation-err');
-    const metaFields = document.getElementById('xlan-meta-fields');
-    okEl.classList.add('hidden');
-    errEl.classList.add('hidden');
-    metaFields.classList.add('hidden');
-    _xlanParsedData = null;
+function validateXlanPaste() {
+  const text = document.getElementById('xlan-paste-input').value.trim();
+  if (!text) return;
+  _xlanSelectedFile = null;
+  _xlanSourceName = 'pegado.xlan';
+  _validateXlanJson(text);
+}
 
-    document.getElementById('xlan-upload-step').classList.add('hidden');
-    document.getElementById('xlan-validated-step').classList.remove('hidden');
+function _validateXlanJson(jsonString) {
+  const okEl = document.getElementById('xlan-validation-ok');
+  const errEl = document.getElementById('xlan-validation-err');
+  const metaFields = document.getElementById('xlan-meta-fields');
+  okEl.classList.add('hidden');
+  errEl.classList.add('hidden');
+  metaFields.classList.add('hidden');
+  _xlanParsedData = null;
 
-    try {
-      const data = JSON.parse(e.target.result);
-      const errors = [];
+  document.getElementById('xlan-upload-step').classList.add('hidden');
+  document.getElementById('xlan-validated-step').classList.remove('hidden');
 
-      if (!data.meta || typeof data.meta !== 'object') errors.push('Falta el campo "meta".');
-      if (!data.content || !Array.isArray(data.content)) errors.push('Falta el campo "content" (debe ser un array).');
+  try {
+    const data = JSON.parse(jsonString);
+    const errors = [];
 
-      if (data.meta) {
-        if (!data.meta.text_language) errors.push('"meta.text_language" no definido.');
-        if (!data.meta.notes_language) errors.push('"meta.notes_language" no definido.');
-      }
+    if (!data.meta || typeof data.meta !== 'object') errors.push('Falta el campo "meta".');
+    if (!data.content || !Array.isArray(data.content)) errors.push('Falta el campo "content" (debe ser un array).');
 
-      if (data.content && Array.isArray(data.content)) {
-        let segCount = 0;
-        for (let i = 0; i < data.content.length; i++) {
-          const block = data.content[i];
-          if (!block.type) { errors.push('Bloque ' + i + ': falta "type".'); continue; }
-          if (!block.segments || !Array.isArray(block.segments)) { errors.push('Bloque ' + i + ': falta "segments".'); continue; }
-          for (let j = 0; j < block.segments.length; j++) {
-            const seg = block.segments[j];
-            segCount++;
-            if (!seg.id) errors.push('Bloque ' + i + ', segmento ' + j + ': falta "id".');
-            if (typeof seg.text === 'undefined') errors.push('Bloque ' + i + ', segmento ' + j + ': falta "text".');
-          }
-        }
+    if (data.meta) {
+      if (!data.meta.text_language) errors.push('"meta.text_language" no definido.');
+      if (!data.meta.notes_language) errors.push('"meta.notes_language" no definido.');
+    }
 
-        if (errors.length === 0) {
-          _xlanParsedData = data;
-          okEl.classList.remove('hidden');
-          document.getElementById('xlan-valid-info').textContent =
-            data.content.length + ' bloques, ' + segCount + ' segmentos.';
-          metaFields.classList.remove('hidden');
-          document.getElementById('xlan-meta-title').value = data.meta.title || _xlanSelectedFile.name.replace(/\.xlan$/, '');
-          document.getElementById('xlan-meta-desc').value = data.meta.description || '';
+    if (data.content && Array.isArray(data.content)) {
+      let segCount = 0;
+      for (let i = 0; i < data.content.length; i++) {
+        const block = data.content[i];
+        if (!block.type) { errors.push('Bloque ' + i + ': falta "type".'); continue; }
+        if (!block.segments || !Array.isArray(block.segments)) { errors.push('Bloque ' + i + ': falta "segments".'); continue; }
+        for (let j = 0; j < block.segments.length; j++) {
+          const seg = block.segments[j];
+          segCount++;
+          if (!seg.id) errors.push('Bloque ' + i + ', segmento ' + j + ': falta "id".');
+          if (typeof seg.text === 'undefined') errors.push('Bloque ' + i + ', segmento ' + j + ': falta "text".');
         }
       }
 
-      if (errors.length > 0) {
-        errEl.classList.remove('hidden');
-        document.getElementById('xlan-error-info').innerHTML = errors.slice(0, 5).join('<br>');
-        // Show upload step again to re-upload
-        const retry = document.createElement('button');
-        retry.className = 'mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium';
-        retry.textContent = '← Seleccionar otro archivo';
-        retry.onclick = function() { _resetXlanUploadStep(); };
-        errEl.appendChild(retry);
+      if (errors.length === 0) {
+        _xlanParsedData = data;
+        okEl.classList.remove('hidden');
+        document.getElementById('xlan-valid-info').textContent =
+          data.content.length + ' bloques, ' + segCount + ' segmentos.';
+        metaFields.classList.remove('hidden');
+        document.getElementById('xlan-meta-title').value = data.meta.title || _xlanSourceName.replace(/\.xlan$/, '');
+        document.getElementById('xlan-meta-desc').value = data.meta.description || '';
       }
-    } catch (parseErr) {
+    }
+
+    if (errors.length > 0) {
       errEl.classList.remove('hidden');
-      document.getElementById('xlan-error-info').textContent = 'No es un JSON válido: ' + parseErr.message;
+      document.getElementById('xlan-error-info').innerHTML = errors.slice(0, 5).join('<br>');
       const retry = document.createElement('button');
-      retry.className = 'mt-3 block text-xs text-blue-600 hover:text-blue-800 font-medium';
-      retry.textContent = '← Seleccionar otro archivo';
+      retry.className = 'mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium';
+      retry.textContent = '\u2190 Volver e intentar de nuevo';
       retry.onclick = function() { _resetXlanUploadStep(); };
       errEl.appendChild(retry);
     }
-  };
-  reader.readAsText(file, 'utf-8');
+  } catch (parseErr) {
+    errEl.classList.remove('hidden');
+    document.getElementById('xlan-error-info').textContent = 'No es un JSON v\u00e1lido: ' + parseErr.message;
+    const retry = document.createElement('button');
+    retry.className = 'mt-3 block text-xs text-blue-600 hover:text-blue-800 font-medium';
+    retry.textContent = '\u2190 Volver e intentar de nuevo';
+    retry.onclick = function() { _resetXlanUploadStep(); };
+    errEl.appendChild(retry);
+  }
 }
 
 function _resetXlanUploadStep() {
   _xlanParsedData = null;
   _xlanSelectedFile = null;
+  _xlanSourceName = 'upload.xlan';
   document.getElementById('xlan-file-input').value = '';
   document.getElementById('xlan-file-label').textContent = 'Haz clic o arrastra un archivo .xlan';
+  document.getElementById('xlan-paste-input').value = '';
   document.getElementById('xlan-upload-step').classList.remove('hidden');
   document.getElementById('xlan-validated-step').classList.add('hidden');
 }
@@ -1344,7 +1362,7 @@ async function submitXlanUpload() {
 
   if (!_xlanParsedData) {
     if (!_xlanSelectedFile) {
-      errEl.textContent = 'Selecciona un archivo .xlan'; errEl.classList.remove('hidden');
+      errEl.textContent = 'Selecciona un archivo .xlan o pega el JSON'; errEl.classList.remove('hidden');
     } else {
       errEl.textContent = 'El archivo no pasó la validación'; errEl.classList.remove('hidden');
     }
@@ -1366,7 +1384,7 @@ async function submitXlanUpload() {
   try {
     const fd = new FormData();
     const blob = new Blob([JSON.stringify(_xlanParsedData)], { type: 'application/json' });
-    fd.append('file', blob, _xlanSelectedFile.name);
+    fd.append('file', blob, _xlanSelectedFile ? _xlanSelectedFile.name : _xlanSourceName);
     fd.append('display_name', title);
     fd.append('description', desc);
 
