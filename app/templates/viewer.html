@@ -98,7 +98,7 @@
   .split-line:last-child > div { padding-bottom: 12px; }
   .split-line > div:last-child { border-left: 1px solid #f3f4f6; }
   .split-block:last-child { border-bottom: none; }
-  /* Line break edit mode */
+  /* Edit mode */
   .lb-toggle {
     display: inline-block;
     cursor: pointer;
@@ -117,6 +117,32 @@
   .lb-toggle.lb-single { color: #2563eb; background: #dbeafe; }
   .lb-toggle.lb-double { color: #7c3aed; background: #ede9fe; }
   #lb-save-bar { box-shadow: 0 -4px 12px rgba(0,0,0,0.08); }
+  /* Segment edit toolbar (floating) */
+  #seg-edit-toolbar {
+    position: fixed;
+    z-index: 60;
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 4px;
+    display: none;
+    gap: 2px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+  #seg-edit-toolbar.open { display: flex; }
+  #seg-edit-toolbar button {
+    width: 32px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; color: #cbd5e1;
+    border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+    transition: background 0.12s, color 0.12s;
+  }
+  #seg-edit-toolbar button:hover { background: #334155; color: #fff; }
+  #seg-edit-toolbar button.tb-active { background: #3b82f6; color: #fff; }
+  #seg-edit-toolbar .tb-sep { width: 1px; background: #475569; margin: 4px 2px; flex-shrink: 0; }
+  /* Edit mode: segments become clickable */
+  .edit-mode .xlan-seg { cursor: pointer; border-radius: 3px; transition: background 0.12s; }
+  .edit-mode .xlan-seg:hover { background: #e0e7ff; }
+  .xlan-seg.seg-editing { background: #c7d2fe !important; outline: 2px solid #6366f1; outline-offset: 1px; border-radius: 3px; }
   /* Fullscreen overlay */
   #fullscreen-overlay {
     position: fixed; inset: 0; z-index: 100;
@@ -214,8 +240,8 @@
       <button id="view-btn-table"    onclick="setView('table')"    class="px-2 md:px-3 py-1 rounded-md transition-colors text-ink-500 hover:text-ink-700">Tabla</button>
     </div>
     {% if current_user %}
-    <button id="lb-edit-btn" onclick="toggleLineBreakEdit()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-ink-200 text-ink-400 hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0 hide-mobile" title="Editar saltos de línea">
-      <span class="text-base leading-none">↵</span>
+    <button id="lb-edit-btn" onclick="toggleLineBreakEdit()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-ink-200 text-ink-400 hover:border-ink-400 hover:text-ink-700 transition-colors flex-shrink-0 hide-mobile" title="Editar formato y estructura">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
     </button>
     {% endif %}
     {% if current_user %}
@@ -282,15 +308,69 @@
         </div>
         <div id="sidebar-translates" class="px-2">
           {% set xlan_files = translates_meta.get('files', {}) %}
-          {% if xlan_files %}
-            {% for fname, finfo in xlan_files.items() %}
+          {% set xlan_categories = translates_meta.get('categories', []) %}
+          {% set categorized_files = [] %}
+          {# Render categories as folders #}
+          {% for cat in xlan_categories %}
+            {% set cat_items = cat.get('items', []) %}
+            {% set cat_subcats = cat.get('subcategories', []) %}
+            {% if cat_items or cat_subcats %}
+              <div class="mt-1">
+                <button class="category-toggle flex items-center gap-1 w-full text-left text-xs font-medium text-ink-500 hover:text-ink-700 px-3 py-1.5 rounded-lg hover:bg-ink-50 transition-colors" onclick="toggleSection('sidebar-cat-{{ cat.id }}')">
+                  <svg id="arrow-{{ cat.id }}" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  <span class="flex-shrink-0">📁</span>
+                  <span class="truncate">{{ cat.name }}</span>
+                </button>
+                <div id="sidebar-cat-{{ cat.id }}" class="pl-3">
+                  {# Subcategories #}
+                  {% for subcat in cat_subcats %}
+                    {% set sub_items = subcat.get('items', []) %}
+                    {% if sub_items %}
+                    <div class="mt-0.5">
+                      <button class="category-toggle flex items-center gap-1 w-full text-left text-xs font-medium text-ink-400 hover:text-ink-600 px-3 py-1 rounded-lg hover:bg-ink-50 transition-colors" onclick="toggleSection('sidebar-cat-{{ subcat.id }}')">
+                        <svg id="arrow-{{ subcat.id }}" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <span class="flex-shrink-0">📂</span>
+                        <span class="truncate">{{ subcat.name }}</span>
+                      </button>
+                      <div id="sidebar-cat-{{ subcat.id }}" class="pl-3">
+                        {% for fname in sub_items %}
+                          {% set finfo = xlan_files.get(fname, {}) %}
+                          {% if categorized_files.append(fname) %}{% endif %}
+                          <a href="/viewer/{{ project.id }}/xlan/{{ fname }}"
+                             class="sidebar-item flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-ink-600 {% if view_type == 'xlan' and filename == fname %}active{% endif %}">
+                            <span class="flex-shrink-0 text-base">🌐</span>
+                            <span class="truncate">{{ finfo.display_name or fname }}</span>
+                          </a>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    {% endif %}
+                  {% endfor %}
+                  {# Direct items in this category #}
+                  {% for fname in cat_items %}
+                    {% set finfo = xlan_files.get(fname, {}) %}
+                    {% if categorized_files.append(fname) %}{% endif %}
+                    <a href="/viewer/{{ project.id }}/xlan/{{ fname }}"
+                       class="sidebar-item flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-ink-600 {% if view_type == 'xlan' and filename == fname %}active{% endif %}">
+                      <span class="flex-shrink-0 text-base">🌐</span>
+                      <span class="truncate">{{ finfo.display_name or fname }}</span>
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+          {# Files not in any category #}
+          {% for fname, finfo in xlan_files.items() %}
+            {% if fname not in categorized_files %}
             <a href="/viewer/{{ project.id }}/xlan/{{ fname }}"
                class="sidebar-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink-600 {% if view_type == 'xlan' and filename == fname %}active{% endif %}">
               <span class="flex-shrink-0 text-base">🌐</span>
               <span class="truncate">{{ finfo.display_name or fname }}</span>
             </a>
-            {% endfor %}
-          {% else %}
+            {% endif %}
+          {% endfor %}
+          {% if not xlan_files %}
             <div class="px-3 py-2 text-xs text-ink-300 italic">Sin textos</div>
           {% endif %}
         </div>
@@ -462,13 +542,27 @@
 
       {% if current_user %}
       <div id="lb-save-bar" class="hidden absolute bottom-0 left-0 right-0 z-40 bg-white border-t border-ink-200 px-4 py-3 flex items-center justify-between">
-        <span class="text-sm text-ink-600 font-medium">Editando saltos de línea</span>
+        <span class="text-sm text-ink-600 font-medium">Editando formato</span>
         <div class="flex gap-2">
           <button onclick="cancelLBEdit()" class="px-4 py-2 border border-ink-200 rounded-xl text-ink-600 text-sm font-medium hover:bg-ink-50 transition-colors">Cancelar</button>
           <button onclick="saveLBEdit()" class="px-4 py-2 bg-ink-900 text-white rounded-xl text-sm font-medium hover:bg-ink-700 transition-colors">Guardar</button>
         </div>
       </div>
       {% endif %}
+
+      <!-- Floating segment edit toolbar -->
+      <div id="seg-edit-toolbar">
+        <button onclick="tbToggleLB(1)" id="tb-lb1" title="Salto de línea">↵</button>
+        <button onclick="tbToggleLB(2)" id="tb-lb2" title="Línea en blanco">¶</button>
+        <div class="tb-sep"></div>
+        <button onclick="tbToggleStyle('bold')" id="tb-bold" title="Negrita"><b>B</b></button>
+        <button onclick="tbToggleStyle('italic')" id="tb-italic" title="Cursiva"><i>I</i></button>
+        <div class="tb-sep"></div>
+        <button onclick="tbSetBlockType('heading',1)" id="tb-h1" title="Título 1" style="font-size:14px">H1</button>
+        <button onclick="tbSetBlockType('heading',2)" id="tb-h2" title="Título 2" style="font-size:13px">H2</button>
+        <button onclick="tbSetBlockType('heading',3)" id="tb-h3" title="Título 3" style="font-size:12px">H3</button>
+        <button onclick="tbSetBlockType('paragraph',0)" id="tb-p" title="Párrafo">P</button>
+      </div>
 
       {% endif %}
 
@@ -1045,7 +1139,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 function showTooltip(el, e) {
-  if (!tooltip) return;
+  if (!tooltip || _lbEditMode) return;
   const translation = el.dataset.translation || '';
   const info        = el.dataset.info || '';
   let note = {};
@@ -1152,6 +1246,7 @@ function positionTooltip(e) {
 
   // Double-click → annotation
   scroller.addEventListener('dblclick', function(e) {
+    if (_lbEditMode) return;
     const seg = _findSeg(e.target);
     if (!seg) return;
     e.stopPropagation();
@@ -1238,10 +1333,16 @@ function applyDisplay() {
     xlanContent.style.letterSpacing = ls + 'px';
   }
   // Apply font size and line height to paragraphs and headings
-  document.querySelectorAll('#xlan-content p, .split-row .font-serif, .split-line > div').forEach(el => {
+  document.querySelectorAll('#xlan-content p, #xlan-content h1, #xlan-content h2, #xlan-content h3, .split-row .font-serif, .split-line > div').forEach(el => {
     el.style.fontSize = size + 'px';
     el.style.lineHeight = lh;
   });
+  // Apply to split view container too
+  const splitContent = document.getElementById('split-content');
+  if (splitContent) {
+    splitContent.style.fontFamily = font;
+    splitContent.style.letterSpacing = ls + 'px';
+  }
   // Apply max width to wrapper
   const wrapper = document.getElementById('zoom-wrapper');
   if (wrapper) wrapper.style.maxWidth = mw + 'px';
@@ -1254,6 +1355,8 @@ function applyDisplay() {
     el.style.letterSpacing = ls + 'px';
   });
 
+  // Persist in sessionStorage
+  _saveDisplaySettings();
   updateDisplayLabels();
 }
 
@@ -1266,6 +1369,7 @@ function setDisplayBg(color) {
   document.querySelectorAll('.dp-bg-preset').forEach(btn => {
     btn.style.borderColor = btn.style.backgroundColor === color || rgbToHex(btn.style.backgroundColor) === color ? '#1a1a2e' : 'transparent';
   });
+  try { sessionStorage.setItem('xlan_dp_bg', color); } catch(_) {}
 }
 function rgbToHex(rgb) {
   if (!rgb || rgb.startsWith('#')) return rgb;
@@ -1284,6 +1388,37 @@ function resetDisplay() {
   _updatePaginationToggleUI();
   applyDisplay();
   setDisplayBg('#ffffff');
+  try { sessionStorage.removeItem('xlan_display'); sessionStorage.removeItem('xlan_dp_bg'); } catch(_) {}
+}
+
+// ── Display settings persistence (sessionStorage) ────────────────
+function _saveDisplaySettings() {
+  try {
+    sessionStorage.setItem('xlan_display', JSON.stringify({
+      font: document.getElementById('dp-font')?.value,
+      size: document.getElementById('dp-font-size')?.value,
+      lh:   document.getElementById('dp-line-height')?.value,
+      ls:   document.getElementById('dp-letter-spacing')?.value,
+      mw:   document.getElementById('dp-max-width')?.value,
+      paginated: _fsPaginated,
+    }));
+  } catch(_) {}
+}
+function _restoreDisplaySettings() {
+  try {
+    const raw = sessionStorage.getItem('xlan_display');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.font) { const el = document.getElementById('dp-font'); if (el) el.value = s.font; }
+    if (s.size) { const el = document.getElementById('dp-font-size'); if (el) el.value = s.size; }
+    if (s.lh)   { const el = document.getElementById('dp-line-height'); if (el) el.value = s.lh; }
+    if (s.ls)   { const el = document.getElementById('dp-letter-spacing'); if (el) el.value = s.ls; }
+    if (s.mw)   { const el = document.getElementById('dp-max-width'); if (el) el.value = s.mw; }
+    if (typeof s.paginated === 'boolean') { _fsPaginated = s.paginated; _updatePaginationToggleUI(); }
+    applyDisplay();
+    const bg = sessionStorage.getItem('xlan_dp_bg');
+    if (bg) setDisplayBg(bg);
+  } catch(_) {}
 }
 
 // ── Metadata modal ───────────────────────────────────────────────
@@ -1939,10 +2074,11 @@ function _connectExtendSSE(job_id) {
   es.onerror = function() { es.close(); _extendError('Error de conexión'); };
 }
 
-// ── Line break editing mode ─────────────────────────────────────
+// ── Format / structure editing mode ─────────────────────────────
 let _lbEditMode = false;
 let _lbChanges = {};
 let _lbOriginalTexts = {};
+let _activeSeg = null;   // currently selected .xlan-seg element
 
 function toggleLineBreakEdit() {
   if (_lbEditMode) {
@@ -1957,6 +2093,7 @@ function enterLBEditMode() {
   _lbEditMode = true;
   _lbChanges = {};
   _lbOriginalTexts = {};
+  _activeSeg = null;
 
   const bar = document.getElementById('lb-save-bar');
   if (bar) bar.classList.remove('hidden');
@@ -1968,63 +2105,192 @@ function enterLBEditMode() {
   const container = document.getElementById('xlan-content');
   if (!container) return;
 
-  const parents = container.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
-  parents.forEach(parent => {
-    const segs = Array.from(parent.querySelectorAll('.xlan-seg'));
-    segs.forEach((seg, i) => {
-      if (i >= segs.length - 1) return;
-
-      const bi = parseInt(seg.dataset.blockIndex);
-      const segId = seg.dataset.segId;
-      const key = bi + '::' + segId;
-
-      _lbOriginalTexts[key] = seg.textContent;
-
-      const toggle = document.createElement('span');
-      toggle.className = 'lb-toggle';
-      toggle.dataset.lbKey = key;
-      toggle.dataset.lbBi = bi;
-      toggle.dataset.lbSegId = segId;
-      toggle.dataset.lbState = '0';
-      toggle.innerHTML = '↵';
-      toggle.title = 'Clic: salto de línea · Doble: línea en blanco';
-
-      const trailing = seg.textContent.match(/\n+$/);
-      if (trailing) {
-        const n = trailing[0].length;
-        toggle.dataset.lbState = n >= 2 ? '2' : '1';
-        _applyLBToggleState(toggle);
-      }
-
-      toggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        let st = parseInt(this.dataset.lbState) || 0;
-        st = (st + 1) % 3;
-        this.dataset.lbState = st;
-        _applyLBToggleState(this);
-
-        const tbi = parseInt(this.dataset.lbBi);
-        const tsid = this.dataset.lbSegId;
-        const tkey = this.dataset.lbKey;
-
-        _lbChanges[tkey] = { block_index: tbi, seg_id: tsid, newline_count: st };
-
-        const segEl = this.previousElementSibling;
-        if (segEl && segEl.classList.contains('xlan-seg')) {
-          let t = segEl.textContent.replace(/\n+$/, '');
-          if (st === 1) t += '\n';
-          else if (st === 2) t += '\n\n';
-          segEl.textContent = t;
-        }
-      });
-
-      seg.after(toggle);
-    });
+  // Store original texts for all segments (for line-break cancel)
+  container.querySelectorAll('.xlan-seg').forEach(seg => {
+    const bi = parseInt(seg.dataset.blockIndex);
+    const segId = seg.dataset.segId;
+    const key = bi + '::' + segId;
+    _lbOriginalTexts[key] = seg.textContent;
   });
+
+  // Add edit-mode visual cursor
+  container.classList.add('edit-mode');
+}
+
+// Click handler for segments in edit mode (delegated)
+document.addEventListener('click', function(e) {
+  if (!_lbEditMode) return;
+  const seg = e.target.closest('.xlan-seg');
+  if (seg) {
+    e.stopPropagation();
+    _showSegToolbar(seg);
+    return;
+  }
+  // Click outside toolbar & segments → close toolbar
+  if (!e.target.closest('#seg-edit-toolbar')) {
+    _hideSegToolbar();
+  }
+});
+
+function _showSegToolbar(segEl) {
+  _activeSeg = segEl;
+  const toolbar = document.getElementById('seg-edit-toolbar');
+  if (!toolbar) return;
+
+  // Highlight the active segment
+  document.querySelectorAll('.xlan-seg.seg-editing').forEach(s => s.classList.remove('seg-editing'));
+  segEl.classList.add('seg-editing');
+
+  // Position toolbar above the segment
+  const rect = segEl.getBoundingClientRect();
+  const tbWidth = 340;
+  let left = rect.left + (rect.width / 2) - (tbWidth / 2);
+  left = Math.max(8, Math.min(left, window.innerWidth - tbWidth - 8));
+  let top = rect.top - 44;
+  if (top < 8) top = rect.bottom + 6;
+  toolbar.style.left = left + 'px';
+  toolbar.style.top = top + 'px';
+  toolbar.classList.add('open');
+
+  // Update button active states
+  _updateToolbarState(segEl);
+}
+
+function _hideSegToolbar() {
+  _activeSeg = null;
+  const toolbar = document.getElementById('seg-edit-toolbar');
+  if (toolbar) toolbar.classList.remove('open');
+  document.querySelectorAll('.xlan-seg.seg-editing').forEach(s => s.classList.remove('seg-editing'));
+}
+
+function _updateToolbarState(segEl) {
+  const bi = parseInt(segEl.dataset.blockIndex);
+  const segId = segEl.dataset.segId;
+
+  // Line-break state
+  const key = bi + '::' + segId;
+  const text = segEl.textContent;
+  const trailing = text.match(/\n+$/);
+  const lbCount = trailing ? trailing[0].length : 0;
+  const lb1Btn = document.getElementById('tb-lb1');
+  const lb2Btn = document.getElementById('tb-lb2');
+  if (lb1Btn) lb1Btn.classList.toggle('tb-active', lbCount === 1);
+  if (lb2Btn) lb2Btn.classList.toggle('tb-active', lbCount >= 2);
+
+  // Style states
+  const boldBtn = document.getElementById('tb-bold');
+  const italicBtn = document.getElementById('tb-italic');
+  if (boldBtn) boldBtn.classList.toggle('tb-active', segEl.classList.contains('xlan-style-bold'));
+  if (italicBtn) italicBtn.classList.toggle('tb-active', segEl.classList.contains('xlan-style-italic'));
+
+  // Block type state
+  const blockEl = segEl.closest('.xlan-block');
+  const parentTag = blockEl ? blockEl.querySelector('p, h1, h2, h3') : null;
+  const tag = parentTag ? parentTag.tagName.toLowerCase() : 'p';
+  document.getElementById('tb-h1').classList.toggle('tb-active', tag === 'h1');
+  document.getElementById('tb-h2').classList.toggle('tb-active', tag === 'h2');
+  document.getElementById('tb-h3').classList.toggle('tb-active', tag === 'h3');
+  document.getElementById('tb-p').classList.toggle('tb-active', tag === 'p');
+}
+
+// ── Toolbar button handlers ──────────────────────────────────────
+
+function tbToggleLB(count) {
+  if (!_activeSeg) return;
+  const bi = parseInt(_activeSeg.dataset.blockIndex);
+  const segId = _activeSeg.dataset.segId;
+  const key = bi + '::' + segId;
+
+  // Current trailing newline count
+  const text = _activeSeg.textContent;
+  const trailing = text.match(/\n+$/);
+  const cur = trailing ? trailing[0].length : 0;
+
+  // Toggle: if already at this count, go to 0; else set to count
+  const newCount = (cur === count) ? 0 : count;
+
+  let clean = text.replace(/\n+$/, '');
+  if (newCount === 1) clean += '\n';
+  else if (newCount >= 2) clean += '\n\n';
+  _activeSeg.textContent = clean;
+
+  _lbChanges[key] = { block_index: bi, seg_id: segId, newline_count: newCount };
+  _updateToolbarState(_activeSeg);
+}
+
+async function tbToggleStyle(style) {
+  if (!_activeSeg) return;
+  const bi = parseInt(_activeSeg.dataset.blockIndex);
+  const segId = _activeSeg.dataset.segId;
+  const cls = 'xlan-style-' + style;
+  const isActive = _activeSeg.classList.contains(cls);
+  const newActive = !isActive;
+
+  // Optimistic UI update
+  _activeSeg.classList.toggle(cls, newActive);
+  _updateToolbarState(_activeSeg);
+
+  const res = await fetch('/api/projects/' + PROJECT_ID + '/translates/' + FILENAME + '/style/' + bi + '/seg/' + segId, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ style: style, active: newActive })
+  });
+  if (!res.ok) {
+    // Revert on failure
+    _activeSeg.classList.toggle(cls, isActive);
+    _updateToolbarState(_activeSeg);
+  }
+}
+
+async function tbSetBlockType(type, level) {
+  if (!_activeSeg) return;
+  const bi = parseInt(_activeSeg.dataset.blockIndex);
+  const blockDiv = _activeSeg.closest('.xlan-block');
+  if (!blockDiv) return;
+
+  const oldParent = blockDiv.querySelector('p, h1, h2, h3');
+  if (!oldParent) return;
+
+  // Determine new tag
+  const newTag = (type === 'heading') ? 'h' + level : 'p';
+  const curTag = oldParent.tagName.toLowerCase();
+  if (newTag === curTag) return; // already this type
+
+  // Build new element with appropriate classes
+  const newEl = document.createElement(newTag);
+  if (type === 'heading') {
+    const hcls = level === 1 ? 'text-3xl font-bold text-ink-950 mb-4 mt-8'
+               : level === 2 ? 'text-2xl font-bold text-ink-900 mb-3 mt-6'
+               : 'text-xl font-semibold text-ink-800 mb-2 mt-4';
+    newEl.className = hcls;
+  } else {
+    newEl.className = 'text-base leading-normal text-ink-800 mb-5';
+  }
+  // Move segments to new element
+  while (oldParent.firstChild) newEl.appendChild(oldParent.firstChild);
+  oldParent.replaceWith(newEl);
+
+  _updateToolbarState(_activeSeg);
+
+  const res = await fetch('/api/projects/' + PROJECT_ID + '/translates/' + FILENAME + '/blocktype/' + bi, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ block_type: type, level: level })
+  });
+  if (!res.ok) {
+    // Revert: swap back
+    const revert = document.createElement(curTag);
+    revert.className = oldParent.className;
+    while (newEl.firstChild) revert.appendChild(newEl.firstChild);
+    newEl.replaceWith(revert);
+    _updateToolbarState(_activeSeg);
+  }
 }
 
 function cancelLBEdit() {
   _lbEditMode = false;
+  _hideSegToolbar();
+
   const bar = document.getElementById('lb-save-bar');
   if (bar) bar.classList.add('hidden');
   const btn = document.getElementById('lb-edit-btn');
@@ -2032,8 +2298,10 @@ function cancelLBEdit() {
   const scroller = document.getElementById('xlan-scroll');
   if (scroller) scroller.style.paddingBottom = '';
 
-  document.querySelectorAll('.lb-toggle').forEach(el => el.remove());
+  const container = document.getElementById('xlan-content');
+  if (container) container.classList.remove('edit-mode');
 
+  // Restore original segment texts (reverts line-break changes)
   for (const [key, origText] of Object.entries(_lbOriginalTexts)) {
     const sepIdx = key.indexOf('::');
     const bi = key.substring(0, sepIdx);
@@ -2046,15 +2314,8 @@ function cancelLBEdit() {
   _lbOriginalTexts = {};
 }
 
-function _applyLBToggleState(el) {
-  el.classList.remove('lb-single', 'lb-double');
-  const st = parseInt(el.dataset.lbState) || 0;
-  if (st === 1) { el.classList.add('lb-single'); el.innerHTML = '↵'; }
-  else if (st === 2) { el.classList.add('lb-double'); el.innerHTML = '¶'; }
-  else { el.innerHTML = '↵'; }
-}
-
 async function saveLBEdit() {
+  _hideSegToolbar();
   const changes = Object.values(_lbChanges);
   if (changes.length === 0) {
     cancelLBEdit();
@@ -2074,7 +2335,8 @@ async function saveLBEdit() {
   }
 }
 
-// Apply display defaults on load
+// Apply display defaults on load, restoring session if available
+_restoreDisplaySettings();
 applyDisplay();
 </script>
 

@@ -17,7 +17,7 @@ from app.services.document_service import (
     get_doc_path,
     get_translate_path,
 )
-from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan, update_linebreaks, save_xlan, register_xlan_in_metadata
+from app.services.xlan_service import update_block_note, update_segment_note, update_xlan_file_meta, load_xlan, update_linebreaks, save_xlan, register_xlan_in_metadata, update_segment_style, update_block_type
 
 router = APIRouter(prefix="/api/projects", tags=["documents"])
 
@@ -261,6 +261,46 @@ async def put_linebreaks(request: Request, project_id: str, filename: str, body:
         raise HTTPException(404, "Proyecto no encontrado")
     try:
         update_linebreaks(project_id, filename, [c.model_dump() for c in body.changes], ud)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True}
+
+
+# ── Segment style editing ─────────────────────────────────────────
+
+class SegStyleBody(BaseModel):
+    style: str  # "bold", "italic", "underline"
+    active: bool
+
+@router.put("/{project_id}/translates/{filename}/style/{block_index}/seg/{seg_id}")
+async def put_segment_style(request: Request, project_id: str, filename: str, block_index: int, seg_id: str, body: SegStyleBody):
+    ud = request.state.user_dir
+    if not load_metadata(project_id, ud):
+        raise HTTPException(404, "Proyecto no encontrado")
+    if body.style not in ("bold", "italic", "underline"):
+        raise HTTPException(400, "Estilo no válido")
+    try:
+        update_segment_style(project_id, filename, block_index, seg_id, body.style, body.active, ud)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True}
+
+
+# ── Block type editing ────────────────────────────────────────────
+
+class BlockTypeBody(BaseModel):
+    block_type: str  # "paragraph", "heading"
+    level: int = 1   # 1, 2, 3 (only for heading)
+
+@router.put("/{project_id}/translates/{filename}/blocktype/{block_index}")
+async def put_block_type(request: Request, project_id: str, filename: str, block_index: int, body: BlockTypeBody):
+    ud = request.state.user_dir
+    if not load_metadata(project_id, ud):
+        raise HTTPException(404, "Proyecto no encontrado")
+    if body.block_type not in ("paragraph", "heading"):
+        raise HTTPException(400, "Tipo de bloque no válido")
+    try:
+        update_block_type(project_id, filename, block_index, body.block_type, body.level, ud)
     except ValueError as e:
         raise HTTPException(400, str(e))
     return {"ok": True}

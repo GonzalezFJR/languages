@@ -101,6 +101,43 @@ def update_linebreaks(project_id: str, filename: str, changes: list, user_dir: s
     save_xlan(project_id, filename, xlan, user_dir)
 
 
+def update_segment_style(project_id: str, filename: str, block_index: int, seg_id: str, style: str, active: bool, user_dir: str = "public"):
+    """Toggle a style (bold/italic/underline) in a segment's styles list."""
+    xlan = load_xlan(project_id, filename, user_dir)
+    if not xlan:
+        raise ValueError(f"Archivo no encontrado: {filename}")
+    blocks = xlan.get("content", [])
+    if block_index < 0 or block_index >= len(blocks):
+        raise ValueError(f"Índice de bloque fuera de rango: {block_index}")
+    for seg in blocks[block_index].get("segments", []):
+        if seg.get("id") == seg_id:
+            styles = seg.get("styles", [])
+            if active and style not in styles:
+                styles.append(style)
+            elif not active and style in styles:
+                styles.remove(style)
+            seg["styles"] = styles
+            break
+    save_xlan(project_id, filename, xlan, user_dir)
+
+
+def update_block_type(project_id: str, filename: str, block_index: int, block_type: str, level: int = 1, user_dir: str = "public"):
+    """Change a block's type (paragraph ↔ heading)."""
+    xlan = load_xlan(project_id, filename, user_dir)
+    if not xlan:
+        raise ValueError(f"Archivo no encontrado: {filename}")
+    blocks = xlan.get("content", [])
+    if block_index < 0 or block_index >= len(blocks):
+        raise ValueError(f"Índice de bloque fuera de rango: {block_index}")
+    block = blocks[block_index]
+    block["type"] = block_type
+    if block_type == "heading":
+        block["level"] = max(1, min(3, level))
+    else:
+        block.pop("level", None)
+    save_xlan(project_id, filename, xlan, user_dir)
+
+
 def pipeline_text_to_xlan(
     project_id: str,
     raw_text: str,
