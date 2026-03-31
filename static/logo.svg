@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Open book -->
+  <!-- Left page -->
+  <path d="M256 440 C256 440 256 90 256 90 C256 90 200 70 60 70 L60 420 C200 420 256 440 256 440Z"
+        fill="none" stroke="#000" stroke-width="14" stroke-linejoin="round"/>
+  <!-- Right page -->
+  <path d="M256 440 C256 440 256 90 256 90 C256 90 312 70 452 70 L452 420 C312 420 256 440 256 440Z"
+        fill="none" stroke="#000" stroke-width="14" stroke-linejoin="round"/>
+  <!-- Spine shadow line -->
+  <line x1="256" y1="90" x2="256" y2="440" stroke="#000" stroke-width="5" opacity="0.3"/>
+  <!-- Left page: Japanese characters 言 (word) and 文 (writing) -->
+  <text x="155" y="215" text-anchor="middle"
+        font-family="'Noto Serif CJK JP', serif"
+        font-size="88" font-weight="700" fill="#000">言</text>
+  <text x="155" y="345" text-anchor="middle"
+        font-family="'Noto Serif CJK JP', serif"
+        font-size="88" font-weight="700" fill="#000">文</text>
+  <!-- Right page: Cyrillic characters Ж and Ю -->
+  <text x="357" y="215" text-anchor="middle"
+        font-family="'Noto Serif', Georgia, serif"
+        font-size="88" font-weight="600" fill="#000">Ж</text>
+  <text x="357" y="345" text-anchor="middle"
+        font-family="'Noto Serif', Georgia, serif"
+        font-size="88" font-weight="600" fill="#000">Ю</text>
+</svg>

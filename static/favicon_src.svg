@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" fill="#fff"/>
+  <!-- Open book simplified -->
+  <path d="M32 55 C32 55 32 12 32 12 C32 12 26 9 8 9 L8 52 C26 52 32 55 32 55Z"
+        fill="none" stroke="#161622" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M32 55 C32 55 32 12 32 12 C32 12 38 9 56 9 L56 52 C38 52 32 55 32 55Z"
+        fill="none" stroke="#161622" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Left: Japanese 言 文 -->
+  <text x="19" y="29" text-anchor="middle"
+        font-family="'Noto Serif CJK JP', serif" font-size="13" font-weight="700" fill="#161622">言</text>
+  <text x="19" y="46" text-anchor="middle"
+        font-family="'Noto Serif CJK JP', serif" font-size="13" font-weight="700" fill="#161622">文</text>
+  <!-- Right: Cyrillic Ж Ю -->
+  <text x="45" y="29" text-anchor="middle"
+        font-family="serif" font-size="13" font-weight="700" fill="#161622">Ж</text>
+  <text x="45" y="46" text-anchor="middle"
+        font-family="serif" font-size="13" font-weight="700" fill="#161622">Ю</text>
+</svg>
