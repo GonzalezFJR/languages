@@ -43,6 +43,8 @@ def write_json(path: Path, data: Any) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=1)
+        # mkstemp creates 0600 files: keep content readable (backups, git), secrets private.
+        os.chmod(tmp, 0o600 if path.parent.name == "_system" else 0o644)
         os.replace(tmp, path)
     except BaseException:
         try:
