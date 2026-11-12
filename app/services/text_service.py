@@ -341,6 +341,11 @@ def _migrate_project(user_dir: str, project_id: str, tdir: Path) -> int:
         if doc.get("annotations"):
             rep.doc["annotations"] = doc["annotations"]
         new_name = f.stem + EXT
+        if not f.stem.strip("._") or f.stem.startswith("."):  # e.g. a file literally named ".xlan"
+            base = slugify(rep.doc["meta"].get("title", ""), "") or "texto"
+            new_name, i = f"{base}{EXT}", 2
+            while (tdir / new_name).exists() or new_name in meta["files"]:
+                new_name, i = f"{base}_{i}{EXT}", i + 1
         write_json(tdir / new_name, rep.doc)
         renames[f.name] = new_name
         new_entry = {k: v for k, v in entry.items() if k != "parts"}

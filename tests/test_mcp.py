@@ -200,3 +200,12 @@ def test_batch_requests(client):
     r = client.post("/mcp", json=[{"jsonrpc": "2.0", "id": 1, "method": "ping"},
                                   {"jsonrpc": "2.0", "method": "notifications/initialized"}])
     assert r.status_code == 200 and len(r.json()) == 1
+
+
+def test_anonymous_writes_can_be_disabled(client, example_doc, monkeypatch):
+    from app.config import settings
+    monkeypatch.setattr(settings, "mcp_allow_anonymous", False)
+    res = call(client, "lextor_create_text", {"document": example_doc})
+    assert res["isError"] and "/connect" in res["content"][0]["text"]
+    assert not call(client, "lextor_validate", {"document": example_doc})["isError"]
+    assert not call(client, "lextor_create_text", {"document": example_doc}, url=personal_url(client))["isError"]

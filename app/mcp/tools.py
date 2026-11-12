@@ -518,10 +518,19 @@ IMPLEMENTATIONS: dict[str, Callable[[CallContext, dict], dict]] = {
 }
 
 
+WRITE_TOOLS = {"lextor_create_text", "lextor_append_blocks", "lextor_update_text", "lextor_create_project"}
+
+
 def call_tool(ctx: CallContext, name: str, args: dict) -> dict:
     fn = IMPLEMENTATIONS.get(name)
     if fn is None:
         raise KeyError(name)
+    from app.config import settings
+    if ctx.anonymous and name in WRITE_TOOLS and not settings.mcp_allow_anonymous:
+        return _text_result(
+            "Este servidor Lextor solo acepta conexiones personales. El usuario debe añadir su URL "
+            f"personal del conector (la obtiene en {ctx.base_url}/connect) en lugar de {ctx.base_url}/mcp.",
+            is_error=True)
     try:
         return fn(ctx, args or {})
     except ToolError as e:

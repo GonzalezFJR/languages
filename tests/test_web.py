@@ -61,6 +61,19 @@ def test_legacy_projects_are_migrated_on_startup(legacy_project, client):
     assert meta["files"]["cuento.lextor"]["share_id"]
 
 
+def test_hidden_legacy_filename_gets_a_real_name(contents, client):
+    from app.services import text_service as ts
+    tdir = contents / "admin" / "p" / "translates"
+    tdir.mkdir(parents=True)
+    (contents / "admin" / "p" / "metadata.json").write_text(json.dumps({"id": "p", "name": "P", "base": "es", "target": "ru"}))
+    (tdir / ".xlan").write_text(json.dumps({"meta": {"title": "Pegado", "text_language": "ru", "notes_language": "es"},
+        "content": [{"type": "paragraph", "segments": [{"text": "Привет", "translation": "Hola", "info": "x"}]}]}))
+    (tdir / "metadata.json").write_text(json.dumps({"categories": [], "files": {".xlan": {"name": ".xlan"}}}))
+    ts.migrate_legacy_all()
+    assert (tdir / "pegado.lextor").exists() and not (tdir / ".xlan.lextor").exists()
+    assert list(json.loads((tdir / "metadata.json").read_text())["files"]) == ["pegado.lextor"]
+
+
 def test_bundled_examples_are_lextor(contents):
     assert not list(contents.glob("public/*/translates/*.xlan"))
     assert len(list(contents.glob("public/*/translates/*.lextor"))) >= 14

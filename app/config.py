@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     public_url: str = ""
     # Comma-separated list of allowed Origin headers for the MCP endpoint ("*" = any)
     mcp_allowed_origins: str = "*"
+    # Allow MCP connections without a personal token to create (public, unguessable-link) texts
+    mcp_allow_anonymous: bool = True
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 
