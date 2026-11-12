@@ -223,3 +223,21 @@ async def rotate_token(user_dir: str = Depends(require_user)):
     for t in token_service.list_tokens(user_dir):
         token_service.revoke(user_dir, t["token"])
     return token_service.create(user_dir)
+
+
+@router.get("/mcp/connections")
+async def list_connections(user_dir: str = Depends(require_user)):
+    from app.mcp import oauth
+    return {"connections": [
+        {"id": g["id"], "name": g.get("client_name"), "redirect_host": g.get("redirect_host"),
+         "can_write": oauth.SCOPE_WRITE in g.get("scopes", []), "created_at": oauth.iso(g["created_at"]),
+         "last_used_at": oauth.iso(g.get("last_used_at", g["created_at"]))}
+        for g in oauth.list_grants(user_dir)]}
+
+
+@router.delete("/mcp/connections/{grant_id}")
+async def delete_connection(grant_id: str, user_dir: str = Depends(require_user)):
+    from app.mcp import oauth
+    if not oauth.revoke_grant(user_dir, grant_id):
+        raise HTTPException(404, "Conexión no encontrada")
+    return {"ok": True}

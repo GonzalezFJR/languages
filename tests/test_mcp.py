@@ -3,14 +3,14 @@ import json
 MODERN = "2026-07-28"
 
 
-def rpc(client, method, params=None, url="/mcp", id=1, headers=None):
+def rpc(client, method, params=None, url="/mcp/public", id=1, headers=None):
     body = {"jsonrpc": "2.0", "method": method, "params": params or {}}
     if id is not None:
         body["id"] = id
     return client.post(url, json=body, headers={"Accept": "application/json, text/event-stream", **(headers or {})})
 
 
-def modern(client, method, params=None, url="/mcp", name=None, **kw):
+def modern(client, method, params=None, url="/mcp/public", name=None, **kw):
     params = dict(params or {})
     params["_meta"] = {"io.modelcontextprotocol/protocolVersion": MODERN,
                        "io.modelcontextprotocol/clientCapabilities": {}}
@@ -63,7 +63,7 @@ def test_modern_discover_and_headers(client):
     # unsupported version
     body = {"jsonrpc": "2.0", "id": 3, "method": "tools/list",
             "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2099-01-01"}}}
-    r = client.post("/mcp", json=body, headers={"MCP-Protocol-Version": "2099-01-01", "Mcp-Method": "tools/list"})
+    r = client.post("/mcp/public", json=body, headers={"MCP-Protocol-Version": "2099-01-01", "Mcp-Method": "tools/list"})
     assert r.status_code == 400 and r.json()["error"]["code"] == -32022
     assert "supported" in r.json()["error"]["data"]
     # unknown method
@@ -105,7 +105,7 @@ def test_invalid_token_is_401(client):
 
 # ── tools ────────────────────────────────────────────────────────────────
 
-def call(client, name, args, url="/mcp"):
+def call(client, name, args, url="/mcp/public"):
     r = rpc(client, "tools/call", {"name": name, "arguments": args}, url=url)
     assert r.status_code == 200, r.text
     return r.json()["result"]
@@ -197,7 +197,7 @@ def test_prompts(client):
 
 
 def test_batch_requests(client):
-    r = client.post("/mcp", json=[{"jsonrpc": "2.0", "id": 1, "method": "ping"},
+    r = client.post("/mcp/public", json=[{"jsonrpc": "2.0", "id": 1, "method": "ping"},
                                   {"jsonrpc": "2.0", "method": "notifications/initialized"}])
     assert r.status_code == 200 and len(r.json()) == 1
 
@@ -205,7 +205,5 @@ def test_batch_requests(client):
 def test_anonymous_writes_can_be_disabled(client, example_doc, monkeypatch):
     from app.config import settings
     monkeypatch.setattr(settings, "mcp_allow_anonymous", False)
-    res = call(client, "lextor_create_text", {"document": example_doc})
-    assert res["isError"] and "/connect" in res["content"][0]["text"]
-    assert not call(client, "lextor_validate", {"document": example_doc})["isError"]
+    assert rpc(client, "tools/list").status_code == 404
     assert not call(client, "lextor_create_text", {"document": example_doc}, url=personal_url(client))["isError"]

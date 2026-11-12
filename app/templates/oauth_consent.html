@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Autorizar conexión{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block head %}
+<style>
+  .oc-wrap { min-height: calc(100vh - var(--nav-h)); display: grid; place-items: center; padding: 32px 16px 64px; position: relative; overflow: hidden; isolation: isolate; }
+  .oc-wrap::before { content: ""; position: absolute; inset: -20% -10% auto; height: 70%; z-index: -1; filter: blur(70px); opacity: .5;
+    background: radial-gradient(40% 50% at 30% 40%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%),
+                radial-gradient(35% 45% at 75% 30%, color-mix(in srgb, var(--accent-2) 40%, transparent), transparent 70%); }
+  .oc-card { width: min(520px, 100%); padding: 32px 28px 26px; }
+  .oc-link { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 22px; }
+  .oc-app { width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line);
+    font: 700 22px/1 var(--font-display); color: var(--accent-text); }
+  .oc-dots { display: flex; gap: 5px; }
+  .oc-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); animation: ocDot 1.4s ease-in-out infinite; }
+  .oc-dots i:nth-child(2) { animation-delay: .15s } .oc-dots i:nth-child(3) { animation-delay: .3s }
+  @keyframes ocDot { 0%, 100% { opacity: .35; transform: scale(.85) } 50% { opacity: 1; transform: scale(1.15); background: var(--accent) } }
+  .oc-card h1 { text-align: center; }
+  .oc-sub { text-align: center; color: var(--muted); margin: 10px 0 22px; }
+  .oc-facts { display: grid; gap: 10px; margin: 0 0 18px; padding: 16px; border-radius: 16px; background: var(--surface-2); font-size: 14.5px; }
+  .oc-facts div { display: flex; gap: 10px; align-items: flex-start; }
+  .oc-facts svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--muted); }
+  .oc-perm { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-top: 1px solid var(--line); }
+  .oc-perm svg { width: 20px; height: 20px; flex: none; margin-top: 2px; }
+  .oc-perm p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+  .oc-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .oc-actions .btn { flex: 1; }
+  .oc-warn { color: color-mix(in srgb, var(--accent-2) 55%, var(--text)); }
+</style>
+{% endblock %}
+
+{% block body %}
+<main id="main" class="oc-wrap">
+  <div class="card oc-card pop-in">
+    {% if error %}
+      <div class="oc-link"><div class="oc-app" style="color:var(--danger)">{{ icon('alert') }}</div></div>
+      <h1 class="h2">No se puede conectar</h1>
+      <p class="oc-sub">{{ error }}</p>
+      <p class="faint small" style="text-align:center">Vuelve a tu asistente e inténtalo de nuevo.</p>
+      <div class="oc-actions"><a class="btn" href="{{ bp }}/connect">{{ icon('plug') }}Ayuda para conectar</a></div>
+    {% else %}
+      <div class="oc-link" aria-hidden="true">
+        <div class="oc-app">{{ (client.verified_as or client.name or '?')[:2] }}</div>
+        <div class="oc-dots"><i></i><i></i><i></i></div>
+        <img src="{{ bp }}/static/img/logo.svg" alt="" width="60" height="60" style="width:60px;height:60px" />
+      </div>
+      <h1 class="h2">{{ client.verified_as or client.name }} quiere conectarse a tu Lextor</h1>
+      <p class="oc-sub">Has entrado como <b>{{ current_user }}</b>.</p>
+
+      <div class="oc-facts">
+        <div>{{ icon('shield') }}<span>
+          {% if client.verified_as %}Aplicación reconocida: <b>{{ client.verified_as }}</b>{% if client.client_host %} ({{ client.client_host }}){% endif %}.
+          {% else %}Aplicación «{{ client.name }}»{% if client.client_host %} · {{ client.client_host }}{% endif %}. <span class="oc-warn">No es un asistente que Lextor reconozca: autoriza solo si la has añadido tú.</span>{% endif %}
+        </span></div>
+        <div>{{ icon('external') }}<span>Después volverás a <b>{{ client.redirect_host }}</b>{% if client.loopback %} (una aplicación en este ordenador){% endif %}.</span></div>
+      </div>
+
+      <form method="post" action="{{ bp }}/oauth/consent/{{ rid }}">
+        <div class="oc-perm">{{ icon('eye') }}<div><b>Leer tu biblioteca</b><p>Ver tus proyectos y textos.</p></div></div>
+        {% if can_write %}
+        <label class="oc-perm" style="cursor:pointer">{{ icon('edit') }}<div style="flex:1"><b>Crear y editar textos</b><p>Guardar en tu biblioteca los textos que prepare tu asistente. Sin esto, solo podrá consultarlos.</p></div>
+          <span class="switch" style="min-height:0"><input type="checkbox" name="write" value="1" checked aria-label="Permitir crear y editar textos" /></span>
+        </label>
+        {% endif %}
+        <div class="oc-actions">
+          <button class="btn" type="submit" name="action" value="deny">Cancelar</button>
+          <button class="btn btn-primary" type="submit" name="action" value="approve" autofocus>{{ icon('check') }}Autorizar</button>
+        </div>
+      </form>
+      <p class="faint small" style="text-align:center;margin:16px 0 0">Puedes desconectarlo cuando quieras en <a href="{{ bp }}/connect#conexiones">Conectar IA</a>.</p>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

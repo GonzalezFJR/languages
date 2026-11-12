@@ -72,9 +72,21 @@ tipográficas, mayúsculas, espacios, tuplas en vez de objetos…) se corrigen s
 
 | Endpoint | Uso |
 |---|---|
-| `POST /mcp/u/<token>` | URL personal del conector (se genera en `/connect` al iniciar sesión) |
-| `POST /mcp` + `Authorization: Bearer <token>` | Igual, para clientes que permiten cabeceras |
-| `POST /mcp` sin token | Modo anónimo: crea textos con enlace público, sin biblioteca |
+| `POST /mcp` | **URL del conector, la misma para todos.** Sin token responde 401 con el desafío OAuth y el asistente abre Lextor para iniciar sesión y autorizar |
+| `POST /mcp/u/<token>` | Alternativa para clientes sin OAuth: URL con token personal (en `/connect`, sección avanzada) |
+| `POST /mcp/public` | Modo anónimo (textos solo como enlaces públicos); desactivable con `MCP_ALLOW_ANONYMOUS=false` |
+
+**OAuth 2.1 integrado** (`app/mcp/oauth.py`): metadatos `/.well-known/oauth-protected-resource[/mcp]` y
+`/.well-known/oauth-authorization-server`, registro de clientes por DCR (`/oauth/register`) o por *Client ID
+Metadata Document* (Claude), PKCE S256 obligatorio, pantalla de consentimiento donde el usuario decide si el
+asistente puede escribir (`lextor:read` / `lextor:write`), tokens opacos guardados como hash (acceso 1 h,
+renovación 60 días con rotación y detección de reutilización) y revocación. El usuario ve y desconecta sus
+asistentes en `/connect`.
+
+Detrás de un proxy con prefijo (p. ej. `https://dominio/tools/lextor`), además de `/mcp`, `/oauth/token`,
+`/oauth/register`, `/oauth/revoke`, `/.well-known/…`, `/t/`, `/embed/` y `/static/` sin la autenticación del
+proxy, hay que publicar en la raíz del dominio `/.well-known/oauth-authorization-server/<prefijo>` y
+`/.well-known/oauth-protected-resource/<prefijo>/mcp` apuntando a los mismos documentos.
 
 - Streamable HTTP sin estado, respuestas JSON. Soporta **las dos eras del protocolo**: `initialize`
   (≤ 2025-11-25) y `server/discover` + `_meta` por petición (2026-07-28), con validación de cabeceras

@@ -209,6 +209,24 @@
   .cx-code pre { border: 0; border-radius: 0; background: transparent; padding: 14px 16px 16px; }
   .cx-code pre code { white-space: pre; }
 
+  .cx-auth { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+  .cx-auth li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--muted); }
+  .cx-auth li svg { width: 20px; height: 20px; flex: none; color: var(--accent-text); margin-top: 1px; }
+  .cx-auth li b { color: var(--text); }
+  .cx-conns, .cx-adv { margin-top: 16px; padding: 20px 22px; }
+  .cx-conns-list { margin-top: 10px; display: grid; gap: 8px; }
+  .cx-conn { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); flex-wrap: wrap; }
+  .cx-conn-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-text); font: 700 14px/1 var(--font-ui); flex: none; }
+  .cx-conn-main { flex: 1; min-width: 160px; }
+  .cx-conn-main b { display: block; }
+  .cx-conn-main span { font-size: 13.5px; color: var(--muted); }
+  .cx-adv summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; font-size: 15px; min-height: 32px; }
+  .cx-adv summary::-webkit-details-marker { display: none; }
+  .cx-adv summary > svg:first-child { width: 18px; height: 18px; color: var(--muted); flex: none; }
+  .cx-adv summary span { flex: 1; }
+  .cx-adv .cx-chev { width: 20px; height: 20px; color: var(--faint); flex: none; transition: transform .25s var(--ease); }
+  .cx-adv[open] .cx-chev { transform: rotate(180deg); }
+  .cx-adv-body { margin-top: 14px; }
   .cx-urlchip { display: flex; align-items: center; gap: 8px; max-width: 100%; padding: 6px 6px 6px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
   .cx-urlchip code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: none !important; padding: 0 !important; font-size: 13.5px; }
   .cx-urlchip .btn { flex: none; }
@@ -321,48 +339,61 @@
         </header>
 
         <div class="card cx-urlcard reveal">
-          {% if has_token %}
           <div class="row" style="gap:8px;margin-bottom:12px">
-            <span class="badge badge-accent">{{ icon('user') }}URL personal</span>
-            <span class="badge">Guarda en tu biblioteca</span>
+            <span class="badge badge-accent">{{ icon('shield') }}La misma para todos</span>
+            <span class="badge">Inicias sesión desde tu asistente</span>
           </div>
           <div class="copy-field">
-            <label for="cx-url" style="position:absolute;left:-9999px">URL del conector</label>
-            <input class="input" id="cx-url" type="text" readonly spellcheck="false" autocomplete="off"
-                   value="{{ mcp_url|replace(token.token, MASK) }}" />
-            <button type="button" class="btn btn-icon" id="cx-reveal" aria-pressed="false" aria-controls="cx-url"
-                    aria-label="Mostrar el token" title="Mostrar el token">{{ icon('eye') }}</button>
+            <label for="cx-url" class="sr-only">URL del conector</label>
+            <input class="input" id="cx-url" type="text" readonly spellcheck="false" autocomplete="off" value="{{ mcp_url }}" />
             <button type="button" class="btn btn-primary js-copy-tpl" data-tpl="{URL}">{{ icon('copy') }}Copiar URL</button>
           </div>
-          <div class="cx-meta">
-            <span class="cx-used" id="cx-used">
-              <span class="cx-dot{% if token.last_used_at %} is-on{% endif %}"></span>
-              {% if token.last_used_at %}
-              <span>Último uso: <time datetime="{{ token.last_used_at }}" class="js-time">{{ token.last_used_at[:16]|replace('T', ' ') }}</time>{% if token.last_client %} · {{ token.last_client }}{% endif %}</span>
-              {% else %}
-              <span>Aún no se ha usado</span>
-              {% endif %}
-            </span>
-            <span class="spacer"></span>
-            <button type="button" class="btn btn-ghost btn-sm" id="cx-rotate">{{ icon('refresh') }}Regenerar</button>
-          </div>
-          <p class="cx-hint">{{ icon('shield') }}<span>Trátala como una contraseña: quien la tenga puede crear textos en tu biblioteca. Si se filtra, pulsa <b>Regenerar</b> y la antigua dejará de funcionar.</span></p>
-          {% else %}
-          <div class="row" style="gap:8px;margin-bottom:12px">
-            <span class="badge badge-amber">{{ icon('globe') }}URL pública</span>
-            <span class="badge">Sin cuenta</span>
-          </div>
-          <div class="copy-field">
-            <label for="cx-url" style="position:absolute;left:-9999px">URL del conector</label>
-            <input class="input" id="cx-url" type="text" readonly spellcheck="false" autocomplete="off" value="{{ anon_url }}" />
-            <button type="button" class="btn btn-primary js-copy-tpl" data-tpl="{URL}">{{ icon('copy') }}Copiar URL</button>
-          </div>
+          <ol class="cx-auth">
+            <li>{{ icon('plug') }}<span>Añades esta URL en tu asistente.</span></li>
+            <li>{{ icon('log-in') }}<span>Al conectar, se abre Lextor: inicias sesión y eliges si puede <b>crear textos</b> o solo leerlos.</span></li>
+            <li>{{ icon('check') }}<span>Listo: tu asistente guarda los textos en <b>tu</b> biblioteca.</span></li>
+          </ol>
+          {% if not current_user %}
           <div class="cx-anon">
-            <p>Sin cuenta, los textos que cree tu IA se guardan solo como <b>enlaces públicos</b>, no en una biblioteca. Entra para obtener tu URL personal y tenerlos todos ordenados.</p>
-            <a class="btn btn-soft" href="{{ bp }}/login?next=/connect">{{ icon('log-in') }}Entrar y obtener mi URL</a>
+            <p>Necesitas una cuenta de Lextor para autorizar la conexión.</p>
+            <a class="btn btn-soft" href="{{ bp }}/login?next=/connect">{{ icon('log-in') }}Entrar</a>
           </div>
           {% endif %}
         </div>
+
+        {% if current_user %}
+        <div class="card cx-conns reveal" id="conexiones">
+          <div class="row" style="gap:10px">
+            <h3 class="h3">Asistentes conectados</h3>
+            <div class="spacer"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="cx-conns-refresh" aria-label="Actualizar">{{ icon('refresh') }}</button>
+          </div>
+          <div id="cx-conns-list" class="cx-conns-list"><p class="muted small">Cargando…</p></div>
+        </div>
+
+        {% if personal %}
+        <details class="card cx-adv reveal">
+          <summary>{{ icon('terminal') }}<span><b>Alternativa avanzada:</b> URL con token, para clientes sin inicio de sesión (OAuth)</span>{{ icon('chevron-down', 'cx-chev') }}</summary>
+          <div class="cx-adv-body">
+            <p class="muted small">Esta URL lleva una clave dentro y no pide iniciar sesión. Úsala solo en clientes que no admitan OAuth y trátala como una contraseña.</p>
+            <div class="copy-field">
+              <label for="cx-purl" class="sr-only">URL personal con token</label>
+              <input class="input" id="cx-purl" type="text" readonly spellcheck="false" autocomplete="off" value="{{ base_url }}/mcp/u/lx_••••••••••••" />
+              <button type="button" class="btn btn-icon" id="cx-reveal" aria-pressed="false" aria-label="Mostrar el token" title="Mostrar el token">{{ icon('eye') }}</button>
+              <button type="button" class="btn" id="cx-pcopy">{{ icon('copy') }}Copiar</button>
+            </div>
+            <div class="cx-meta">
+              <span class="cx-used">
+                <span class="cx-dot{% if personal.last_used_at %} is-on{% endif %}"></span>
+                {% if personal.last_used_at %}<span>Último uso: <time datetime="{{ personal.last_used_at }}" class="js-time">{{ personal.last_used_at[:16]|replace('T', ' ') }}</time></span>{% else %}<span>Aún no se ha usado</span>{% endif %}
+              </span>
+              <span class="spacer"></span>
+              <button type="button" class="btn btn-ghost btn-sm" id="cx-rotate">{{ icon('refresh') }}Regenerar</button>
+            </div>
+          </div>
+        </details>
+        {% endif %}
+        {% endif %}
       </section>
 
       {# ── Step 2 ─────────────────────────────────────────────────────── #}
@@ -395,7 +426,7 @@
             <li><p>Abre <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> (o Claude Desktop) y ve a <b>Customize › Connectors</b>.</p></li>
             <li><p>Pulsa <b>+ Add › Add custom connector</b>.</p></li>
             <li><p>Escribe el nombre <b>Lextor</b>, pega tu URL y pulsa <b>Continue</b>.</p>{{ urlchip() }}</li>
-            <li><p>En <b>Authentication</b> elige <b>No sign in</b> y pulsa <b>Add</b>.</p></li>
+            <li><p>Pulsa <b>Add</b> y después <b>Connect</b>: se abrirá Lextor para que inicies sesión y autorices la conexión.</p></li>
             <li><p>En el chat, pulsa <b>+</b> (abajo a la izquierda) o escribe <b>/</b>, entra en <b>Connectors</b> y activa <b>Lextor</b>.</p></li>
           </ol>
           <div class="cx-note">{{ icon('monitor') }}<div><p><b>¿Usas el móvil?</b> Las apps de Claude para iOS y Android usan los conectores que añades en la web: añádelo una vez en claude.ai y aparecerá también en el móvil, con el lector incluido.</p></div></div>
@@ -420,12 +451,12 @@
             <li><p>Abre <a href="https://chatgpt.com/plugins" target="_blank" rel="noopener"><b>chatgpt.com/plugins</b></a>.</p></li>
             <li><p>Pulsa <b>+</b> y elige <b>Add custom MCP server</b>.</p></li>
             <li><p>Nombre: <b>Lextor</b>. En <b>Server URL</b> pega tu URL.</p>{{ urlchip() }}</li>
-            <li><p>En autenticación elige <b>No authentication</b> y marca <b>I understand and want to continue</b>.</p></li>
+            <li><p>En autenticación elige <b>OAuth</b> (Lextor se configura solo: no hace falta rellenar nada más) y marca <b>I understand and want to continue</b>.</p></li>
             <li><p>Pulsa <b>Create as a plugin</b> e instálalo.</p></li>
             <li><p>En cualquier chat, escribe <span class="kbd">@</span> y elige <b>Lextor</b>.</p></li>
           </ol>
           <div class="cx-note">{{ icon('shield') }}<div><p>ChatGPT te pedirá confirmación antes de usar las herramientas que guardan datos (crear o cambiar textos). Las de solo lectura se usan sin preguntar.</p></div></div>
-          <div class="cx-note">{{ icon('settings') }}<div><p><b>¿No ves esa página?</b> En versiones anteriores la opción estaba en <b>Settings › Apps › Advanced settings › Developer mode</b>: actívalo y añade la app desde ahí con la misma URL y sin autenticación.</p></div></div>
+          <div class="cx-note">{{ icon('settings') }}<div><p><b>¿No ves esa página?</b> En versiones anteriores la opción estaba en <b>Settings › Apps › Advanced settings › Developer mode</b>: actívalo y añade la app desde ahí con la misma URL y autenticación <b>OAuth</b>.</p></div></div>
         </div>
 
         {# Gemini ───────────────────────────────────────── #}
@@ -441,7 +472,7 @@
             <li><p>Pulsa <b>Add a custom app</b>, pega tu URL y pulsa <b>Next</b>.</p>{{ urlchip() }}</li>
             <li><p>En el chat, escribe <span class="kbd">@</span> seguido del nombre de la app para usarla.</p></li>
           </ol>
-          <div class="cx-note cx-warn">{{ icon('alert') }}<div><p>Por ahora Google limita las apps personalizadas a cuentas personales de mayores de 18 años en EE. UU. y con Gemini en inglés. Tampoco hemos podido verificar que acepte servidores sin inicio de sesión como Lextor: si no te funciona, usa Claude o ChatGPT.</p></div></div>
+          <div class="cx-note cx-warn">{{ icon('alert') }}<div><p>Por ahora Google limita las apps personalizadas a cuentas personales de mayores de 18 años en EE. UU. y con Gemini en inglés. Lextor usa el inicio de sesión estándar (OAuth con registro dinámico) que Google documenta, pero no lo hemos podido probar en la app: si no te funciona, usa Claude o ChatGPT.</p></div></div>
 
           <div class="cx-sub">
             <div class="cx-sub-head"><h4 class="h3">Gemini CLI y Antigravity</h4><span class="badge badge-accent">{{ icon('terminal') }}Para usuarios avanzados</span></div>
@@ -511,7 +542,7 @@
           </div>
           <ol class="cx-steps">
             <li><p>Ejecuta en tu terminal:</p>{{ snip('claude mcp add --transport http lextor {URL}', 'Terminal') }}</li>
-            <li><p>Abre Claude Code y escribe <code>/mcp</code> para comprobar que <b>lextor</b> aparece conectado.</p></li>
+            <li><p>Abre Claude Code, escribe <code>/mcp</code>, elige <b>lextor</b> y pulsa <b>Authenticate</b>: se abrirá el navegador para iniciar sesión en Lextor.</p></li>
             <li><p>Pide un texto: como la terminal no muestra el lector, recibirás un resumen y el enlace para leerlo en Lextor.</p></li>
           </ol>
           {% if has_token %}
@@ -527,6 +558,7 @@
         <div class="card cx-panel" role="tabpanel" id="panel-cursor" aria-labelledby="tab-cursor" tabindex="0" hidden>
           <div class="cx-panel-head">{{ mono(icon('code'), 'danger') }}<div><h3 class="h3">Cursor y VS Code</h3><p class="muted small" style="margin:2px 0 0">Editores con soporte MCP</p></div></div>
 
+          <div class="cx-note">{{ icon('log-in') }}<div><p>Solo necesitas la URL: la primera vez que se conecte, el editor abrirá el navegador para que inicies sesión en Lextor.</p></div></div>
           <h4 class="h3" style="margin-top:22px">Cursor</h4>
           <div class="cx-badges">{{ widget('yes') }}</div>
           <ol class="cx-steps">
@@ -596,7 +628,7 @@
           <ol class="cx-steps">
             <li><p>Ve a <b>Connectors › + Add Connector › Custom MCP Connector</b>.</p></li>
             <li><p>Pon un nombre sin espacios (por ejemplo <code>lextor</code>) y pega tu URL en <b>Server URL</b>.</p>{{ urlchip() }}</li>
-            <li><p>Pulsa <b>Connect</b>.</p></li>
+            <li><p>Pulsa <b>Connect</b> e inicia sesión en Lextor cuando se abra.</p></li>
           </ol>
 
           <div class="cx-sub">
@@ -630,7 +662,7 @@
 
           <div class="cx-sub">
             <div class="cx-sub-head"><h4 class="h3">Clientes que solo admiten servidores locales</h4><span class="badge badge-accent">{{ icon('terminal') }}Avanzado</span></div>
-            <p class="muted" style="margin:8px 0 0">Si tu cliente solo acepta servidores MCP locales (stdio), usa el puente <code>mcp-remote</code>. Necesitas Node.js instalado.</p>
+            <p class="muted" style="margin:8px 0 0">Si tu cliente solo acepta servidores MCP locales (stdio), usa el puente <code>mcp-remote</code> (necesitas Node.js). La primera vez abrirá el navegador para que inicies sesión.</p>
             {% set t %}
 {
   "mcpServers": {
@@ -644,7 +676,7 @@
             {{ snip(t, 'Configuración MCP del cliente') }}
           </div>
 
-          <div class="cx-note">{{ icon('info') }}<div><p><b>¿Otro cliente?</b> Cualquier cliente compatible con MCP por HTTP sirve: añade un servidor remoto con tu URL y sin autenticación. Muestran el lector dentro del chat, entre otros, Microsoft 365 Copilot, Goose, Postman y MCPJam; en los demás tendrás el enlace.</p></div></div>
+          <div class="cx-note">{{ icon('info') }}<div><p><b>¿Otro cliente?</b> Cualquier cliente compatible con MCP por HTTP sirve: añade un servidor remoto con esta URL; el inicio de sesión (OAuth) se detecta solo. Muestran el lector dentro del chat, entre otros, Microsoft 365 Copilot, Goose, Postman y MCPJam; en los demás tendrás el enlace.</p></div></div>
         </div>
       </section>
 
@@ -731,9 +763,10 @@
             </div>
           </details>
           <details>
-            <summary>{{ icon('alert') }}Dice «token no válido» o no conecta{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <summary>{{ icon('alert') }}No conecta o vuelve a pedir que inicie sesión{{ icon('chevron-down', 'cx-chev') }}</summary>
             <div class="cx-faq-body">
-              <p>Seguramente la URL se regeneró o se copió incompleta. Copia de nuevo la URL del paso 1 (o pulsa <b>Regenerar</b>) y actualízala en el conector de tu asistente.</p>
+              <p>Comprueba que la URL es exactamente la del paso 1 y que has iniciado sesión en Lextor en la ventana que se abre. Si quitaste la conexión aquí (o lleva más de dos meses sin usarse), el asistente pedirá autorizar de nuevo: es normal.</p>
+              <p>Si tu asistente dijo que solo podía <b>leer</b>, desconéctalo y vuelve a conectarlo dejando activado «Crear y editar textos».</p>
             </div>
           </details>
           <details>
@@ -745,21 +778,21 @@
           <details>
             <summary>{{ icon('shield') }}¿Qué se guarda? ¿Es privado?{{ icon('chevron-down', 'cx-chev') }}</summary>
             <div class="cx-faq-body">
-              <p>Lextor guarda los textos que crea tu IA (original, traducciones y notas) y, de la conexión, solo la fecha del último uso y el nombre del cliente. No tiene acceso a tus conversaciones: únicamente recibe lo que tu IA envía al usar sus herramientas.</p>
+              <p>Lextor guarda los textos que crea tu IA (original, traducciones y notas) y, de cada conexión, solo el nombre del asistente, los permisos que le diste y la fecha del último uso. Los tokens se guardan cifrados con hash y caducan solos. No tiene acceso a tus conversaciones: únicamente recibe lo que tu IA envía al usar sus herramientas.</p>
               <p>Los enlaces públicos usan un identificador aleatorio imposible de adivinar: solo puede abrir un texto quien tenga su enlace.</p>
             </div>
           </details>
           <details>
             <summary>{{ icon('log-out') }}¿Cómo desconecto Lextor?{{ icon('chevron-down', 'cx-chev') }}</summary>
             <div class="cx-faq-body">
-              <p>Elimina el conector en los ajustes de tu asistente (en Claude, <b>Customize › Connectors</b>). Para cortar el acceso en todas partes a la vez, pulsa <b>Regenerar</b> en el paso 1: la URL antigua deja de funcionar al instante.</p>
+              <p>En el paso 1, en <b>Asistentes conectados</b>, pulsa <b>Desconectar</b>: ese asistente pierde el acceso al instante. También puedes quitar el conector en los ajustes de tu asistente (en Claude, <b>Customize › Connectors</b>).</p>
             </div>
           </details>
-          {% if not has_token %}
+          {% if not current_user %}
           <details>
             <summary>{{ icon('user') }}¿Necesito una cuenta?{{ icon('chevron-down', 'cx-chev') }}</summary>
             <div class="cx-faq-body">
-              <p>No para probar: con la URL pública tu IA puede crear textos, pero solo se guardan como enlaces públicos. Con una cuenta tienes tu URL personal y una biblioteca con tus proyectos.</p>
+              <p>Sí: al conectar, tu asistente te pedirá iniciar sesión en Lextor para guardar los textos en tu biblioteca. Mientras tanto puedes explorar la biblioteca de ejemplo.</p>
             </div>
           </details>
           {% endif %}
@@ -808,17 +841,6 @@
   const input = document.getElementById("cx-url");
   if (input) input.addEventListener("focus", () => input.select());
 
-  // ── reveal / rotate ──────────────────────────────────────────────────
-  const revealBtn = document.getElementById("cx-reveal");
-  if (revealBtn) revealBtn.addEventListener("click", () => {
-    revealed = !revealed;
-    revealBtn.setAttribute("aria-pressed", String(revealed));
-    const label = revealed ? "Ocultar el token" : "Mostrar el token";
-    revealBtn.setAttribute("aria-label", label); revealBtn.title = label;
-    revealBtn.innerHTML = Lextor.icon(revealed ? "eye-off" : "eye");
-    renderAll();
-  });
-
   function fmtDate(iso) {
     const d = new Date(iso);
     if (isNaN(d)) return iso;
@@ -838,29 +860,65 @@
     t.textContent = fmtDate(iso);
   });
 
+  // ── connected assistants (OAuth grants) ─────────────────────────────
+  const connList = document.getElementById("cx-conns-list");
+  async function loadConnections() {
+    if (!connList) return;
+    try {
+      const { connections } = await Lextor.api("/api/mcp/connections");
+      if (!connections.length) {
+        connList.innerHTML = '<p class="muted small" style="margin:0">Todavía no has conectado ningún asistente. Cuando lo hagas aparecerá aquí.</p>';
+        return;
+      }
+      connList.innerHTML = connections.map((c) => `
+        <div class="cx-conn">
+          <span class="cx-conn-ic">${Lextor.esc((c.name || "?").slice(0, 2))}</span>
+          <div class="cx-conn-main"><b>${Lextor.esc(c.name || "Asistente")}</b>
+            <span>${c.can_write ? "Puede crear textos" : "Solo lectura"} · usado ${Lextor.esc(fmtDate(c.last_used_at))}${c.redirect_host ? " · " + Lextor.esc(c.redirect_host) : ""}</span></div>
+          <button type="button" class="btn btn-danger btn-sm" data-revoke="${Lextor.esc(c.id)}">${Lextor.icon("log-out")}Desconectar</button>
+        </div>`).join("");
+    } catch (e) {
+      connList.innerHTML = '<p class="muted small" style="margin:0">No se pudieron cargar las conexiones.</p>';
+    }
+  }
+  if (connList) {
+    connList.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-revoke]");
+      if (!b) return;
+      const ok = await Lextor.confirm({ title: "¿Desconectar este asistente?", body: "Perderá el acceso a tu biblioteca al instante. Para volver a usarlo tendrás que autorizarlo de nuevo.", ok: "Desconectar", danger: true });
+      if (!ok) return;
+      try { await Lextor.api("/api/mcp/connections/" + encodeURIComponent(b.dataset.revoke), { method: "DELETE" }); Lextor.toast("Desconectado", "ok"); }
+      catch (err) { Lextor.toast(err.message, "err"); }
+      loadConnections();
+    });
+    document.getElementById("cx-conns-refresh").addEventListener("click", loadConnections);
+    loadConnections();
+  }
+
+  // ── advanced: personal token URL ────────────────────────────────────
+  let personal = {{ (personal.token if personal else None)|tojson }};
+  const purl = document.getElementById("cx-purl");
+  let shown = false;
+  const pReal = () => CX.base + "/mcp/u/" + personal;
+  const pRender = () => { if (purl) purl.value = shown ? pReal() : CX.base + "/mcp/u/lx_" + "•".repeat(12); };
+  const revealBtn = document.getElementById("cx-reveal");
+  if (revealBtn) revealBtn.addEventListener("click", () => {
+    shown = !shown;
+    revealBtn.setAttribute("aria-pressed", String(shown));
+    revealBtn.innerHTML = Lextor.icon(shown ? "eye-off" : "eye");
+    pRender();
+  });
+  const pcopy = document.getElementById("cx-pcopy");
+  if (pcopy) pcopy.addEventListener("click", () => Lextor.copy(pReal(), "URL copiada"));
   const rotateBtn = document.getElementById("cx-rotate");
   if (rotateBtn) rotateBtn.addEventListener("click", async () => {
-    const ok = await Lextor.confirm({
-      title: "¿Regenerar tu URL?",
-      body: "Se creará una URL nueva y la actual dejará de funcionar al instante: los asistentes donde la añadiste perderán la conexión hasta que pegues la nueva.",
-      ok: "Regenerar", danger: true,
-    });
+    const ok = await Lextor.confirm({ title: "¿Regenerar la URL con token?", body: "La URL anterior dejará de funcionar al instante en los clientes donde la usaras. No afecta a los asistentes conectados con inicio de sesión.", ok: "Regenerar", danger: true });
     if (!ok) return;
-    rotateBtn.disabled = true;
     try {
       const t = await Lextor.api("/api/mcp/token/rotate", { method: "POST" });
-      CX.token = t.token;
-      CX.url = CX.base + "/mcp/u/" + t.token;
-      renderAll();
-      const used = document.getElementById("cx-used");
-      if (used) used.innerHTML = '<span class="cx-dot"></span><span>Aún no se ha usado</span>';
-      if (input) { input.classList.remove("cx-flash"); void input.offsetWidth; input.classList.add("cx-flash"); }
-      Lextor.toast("URL regenerada. Actualízala en tus asistentes.", "ok");
-    } catch (err) {
-      Lextor.toast(err.message || "No se pudo regenerar", "err");
-    } finally {
-      rotateBtn.disabled = false;
-    }
+      personal = t.token; pRender();
+      Lextor.toast("URL regenerada", "ok");
+    } catch (err) { Lextor.toast(err.message || "No se pudo regenerar", "err"); }
   });
 
   // ── client tabs (ARIA tabs, choice kept in the URL hash) ─────────────

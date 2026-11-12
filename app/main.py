@@ -13,6 +13,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.auth import get_user_content_dir, get_current_user
 from app.config import settings
 from app.mcp import http as mcp_http
+from app.mcp import oauth as mcp_oauth
 from app.routers import pages, api_projects, api_library
 from app.services import text_service
 
@@ -38,7 +39,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["Mcp-Session-Id"],
+    expose_headers=["Mcp-Session-Id", "WWW-Authenticate"],
 )
 
 
@@ -94,6 +95,7 @@ async def http_error(request: Request, exc: StarletteHTTPException):
 app.mount("/static", SafeStaticFiles(directory="static"), name="static")
 
 app.include_router(mcp_http.router)
+app.include_router(mcp_oauth.router)
 app.include_router(api_projects.router)
 app.include_router(api_library.router)
 app.include_router(pages.router)

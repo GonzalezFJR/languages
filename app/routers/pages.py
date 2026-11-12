@@ -36,7 +36,8 @@ def render(request: Request, name: str, ctx: dict, status_code: int = 200):
 
 
 def _redirect(request: Request, path: str) -> RedirectResponse:
-    return RedirectResponse((request.state.base_path or "") + path, status_code=302)
+    # Absolute URL: a reverse proxy with `proxy_redirect / /prefix/;` would otherwise prefix it twice.
+    return RedirectResponse(public_base_url(request) + path, status_code=302)
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -162,12 +163,13 @@ async def legacy_viewer_doc(request: Request, project_id: str, filename: str):
 @router.get("/connect", response_class=HTMLResponse)
 async def connect(request: Request):
     base = public_base_url(request)
-    token = None
-    if request.state.current_user:
-        token = token_service.get_or_create(request.state.user_dir)
+    personal = None
+    if request.state.current_user and request.state.user_dir != "public":
+        tokens = token_service.list_tokens(request.state.user_dir)
+        personal = tokens[0] if tokens else token_service.create(request.state.user_dir)
     return render(request, "connect.html", _ctx(
-        request, base_url=base, token=token, tools=TOOLS,
-        mcp_url=f"{base}/mcp/u/{token['token']}" if token else f"{base}/mcp", anon_url=f"{base}/mcp"))
+        request, base_url=base, token=None, personal=personal, tools=TOOLS,
+        mcp_url=f"{base}/mcp", anon_url=f"{base}/mcp/public"))
 
 
 @router.get("/format", response_class=HTMLResponse)

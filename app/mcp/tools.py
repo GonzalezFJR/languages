@@ -20,6 +20,7 @@ MAX_WIDGET_DOC_CHARS = 140_000
 class CallContext:
     user_dir: Optional[str]      # None = anonymous connection (no personal token)
     base_url: str                # absolute public base URL, no trailing slash
+    scopes: tuple = ("lextor:read", "lextor:write")
 
     @property
     def anonymous(self) -> bool:
@@ -250,7 +251,7 @@ def _require_user(ctx: CallContext) -> str:
     if ctx.anonymous:
         raise ToolError(
             "This Lextor connection has no personal token, so it cannot access a library. "
-            f"The user can get a personal connector URL at {ctx.base_url}/connect . "
+            f"The user should connect {ctx.base_url}/mcp and sign in (see {ctx.base_url}/connect). "
             "You can still create texts: lextor_create_text works anonymously and returns a share link.")
     return ctx.user_dir  # type: ignore[return-value]
 
@@ -528,9 +529,13 @@ def call_tool(ctx: CallContext, name: str, args: dict) -> dict:
     from app.config import settings
     if ctx.anonymous and name in WRITE_TOOLS and not settings.mcp_allow_anonymous:
         return _text_result(
-            "Este servidor Lextor solo acepta conexiones personales. El usuario debe añadir su URL "
-            f"personal del conector (la obtiene en {ctx.base_url}/connect) en lugar de {ctx.base_url}/mcp.",
+            "Este servidor Lextor solo acepta conexiones autorizadas. El usuario debe conectar "
+            f"{ctx.base_url}/mcp en su asistente e iniciar sesión (instrucciones en {ctx.base_url}/connect).",
             is_error=True)
+    if name in WRITE_TOOLS and "lextor:write" not in ctx.scopes:
+        return _text_result(
+            "Esta conexión solo tiene permiso de lectura. Para crear o modificar textos, el usuario debe "
+            "desconectar y volver a conectar Lextor en su asistente, permitiendo la escritura.", is_error=True)
     try:
         return fn(ctx, args or {})
     except ToolError as e:

@@ -24,6 +24,7 @@ from fastapi.responses import JSONResponse, Response
 
 from app.config import settings
 from app.lextor.guide import SERVER_INSTRUCTIONS, build_guide
+from app.mcp import oauth
 from app.mcp import tools as T
 from app.mcp.widget import widget_html
 from app.services import token_service
@@ -109,53 +110,74 @@ def _decode_header_value(v: Optional[str]) -> Optional[str]:
 # ──────────────────────────────────────────────────────────── endpoints ──
 
 @router.post("/mcp")
-async def mcp_anonymous(request: Request):
+async def mcp_main(request: Request):
+    """Generic connector URL: OAuth bearer (or a personal lx_ token in the header). Without credentials
+    it answers 401 with the OAuth challenge, which is how assistants discover how to log in."""
     auth = request.headers.get("authorization", "")
-    token = auth[7:].strip() if auth.lower().startswith("bearer ") else None
-    return await _handle(request, token)
+    bearer = auth[7:].strip() if auth.lower().startswith("bearer ") else None
+    if bearer:
+        grant = oauth.verify_bearer(bearer)
+        if grant:
+            return await _handle(request, T.CallContext(user_dir=grant["user_dir"], base_url=public_base_url(request),
+                                                        scopes=grant["scopes"]))
+        if token_service.resolve(bearer):
+            return await _handle(request, None, personal_token=bearer)
+    return _challenge(request, "invalid_token" if bearer else None)
 
 
 @router.post("/mcp/u/{token}")
 async def mcp_personal(request: Request, token: str):
-    return await _handle(request, token)
+    return await _handle(request, None, personal_token=token)
+
+
+@router.post("/mcp/public")
+async def mcp_public(request: Request):
+    if not settings.mcp_allow_anonymous:
+        return JSONResponse({"error": "not_found"}, status_code=404)
+    return await _handle(request, T.CallContext(user_dir=None, base_url=public_base_url(request)))
+
+
+def _challenge(request: Request, error: Optional[str]):
+    return JSONResponse(
+        {"error": error or "unauthorized",
+         "message": "Lextor necesita autorización (OAuth). Tu asistente abrirá Lextor para que inicies sesión."},
+        status_code=401, headers={"WWW-Authenticate": oauth.challenge_header(request, error),
+                                  "Access-Control-Expose-Headers": "WWW-Authenticate"})
 
 
 @router.api_route("/mcp", methods=["GET", "DELETE"])
+@router.api_route("/mcp/public", methods=["GET", "DELETE"])
 @router.api_route("/mcp/u/{token}", methods=["GET", "DELETE"])
 async def mcp_not_allowed(request: Request, token: str = ""):
     if request.method == "GET" and "text/html" in request.headers.get("accept", ""):
         # A human opened the connector URL in a browser: explain instead of a bare 405.
         from fastapi.responses import RedirectResponse
-        return RedirectResponse((request.scope.get("root_path") or "") + "/connect?from=mcp", status_code=302)
+        return RedirectResponse(public_base_url(request) + "/connect?from=mcp", status_code=302)
     return Response(status_code=405, headers={"Allow": "POST"})
 
 
-async def _handle(request: Request, token: Optional[str]):
+async def _handle(request: Request, ctx: Optional[T.CallContext], personal_token: Optional[str] = None):
     if not _origin_allowed(request):
         return JSONResponse({"jsonrpc": "2.0", "id": None,
                              "error": {"code": -32600, "message": "Origin not allowed"}}, status_code=403)
-    user_dir = None
-    if token:
-        user_dir = token_service.resolve(token)
+    if personal_token is not None:
+        user_dir = token_service.resolve(personal_token)
         if user_dir is None:
             return JSONResponse(
                 {"jsonrpc": "2.0", "id": None, "error": {
                     "code": -32001,
                     "message": "Token de Lextor no válido o revocado. Genera una URL nueva en /connect."}},
                 status_code=401)
+        ctx = T.CallContext(user_dir=user_dir, base_url=public_base_url(request))
+        try:
+            token_service.touch(personal_token, request.headers.get("user-agent", ""))
+        except Exception:
+            pass
     try:
         body = await request.json()
     except Exception:
         return JSONResponse({"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}},
                             status_code=400)
-
-    ctx = T.CallContext(user_dir=user_dir, base_url=public_base_url(request))
-    if token and user_dir:
-        client = request.headers.get("user-agent", "")
-        try:
-            token_service.touch(token, client)
-        except Exception:
-            pass
 
     if isinstance(body, list):  # JSON-RPC batch (2025-03-26)
         out = []
