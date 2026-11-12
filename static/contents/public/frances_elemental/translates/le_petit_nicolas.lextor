@@ -1,0 +1,178 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "Le Petit Nicolas — La photo de classe",
+  "text_lang": "fr",
+  "notes_lang": "es",
+  "summary": "Extracto adaptado de Le Petit Nicolas de Sempé/Goscinny. Texto humorístico sobre la foto escolar. Nivel A2.",
+  "created_at": "2026-02-01T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "La photo de classe",
+     "translation": "La foto de clase",
+     "chunks": [
+      {
+       "text": "La photo de classe",
+       "gloss": "La foto de clase",
+       "note": "'Photo' (f.) = foto, abreviatura de 'photographie'. 'Classe' (f.) = clase. 'De' = de, preposición. En francés no se usa artículo en este tipo de complementos: 'photo de classe', no 'photo de la classe'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Ce matin, le photographe est venu à l'école pour prendre une photo de toute la classe.",
+     "translation": "Esta mañana, el fotógrafo vino a la escuela para tomar una foto de toda la clase.",
+     "chunks": [
+      {
+       "text": "Ce matin, le photographe est venu à l'école",
+       "gloss": "Esta mañana, el fotógrafo vino a la escuela",
+       "note": "'Ce matin' = esta mañana ('ce' = este/esta para masc.). 'Le photographe' = el fotógrafo. 'Est venu' = ha venido / vino (passé composé de 'venir', con auxiliar 'être'). 'À l'école' = a la escuela, con elisión de 'la' → 'l''."
+      },
+      {
+       "text": "pour prendre une photo de toute la classe.",
+       "gloss": "para tomar una foto de toda la clase.",
+       "note": "'Pour' = para (propósito). 'Prendre' = tomar/sacar (verbo irregular muy común). 'Toute la classe' = toda la clase. 'Tout/toute' = todo/toda."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "La maîtresse nous a dit de nous mettre sur trois rangs.",
+     "translation": "La maestra nos dijo que nos pusiéramos en tres filas.",
+     "chunks": [
+      {
+       "text": "La maîtresse nous a dit de nous mettre sur trois rangs.",
+       "gloss": "La maestra nos dijo que nos pusiéramos en tres filas.",
+       "note": "'La maîtresse' = la maestra. 'Nous a dit' = nos dijo (passé composé de 'dire'). 'De nous mettre' = que nos pusiéramos (infinitivo después de 'dire de'). 'Sur trois rangs' = en tres filas. 'Rang' = fila."
+      }
+     ]
+    },
+    {
+     "text": "Le premier rang assis, le deuxième debout sur le sol, et le troisième sur des bancs.",
+     "translation": "La primera fila sentada, la segunda de pie en el suelo, y la tercera sobre bancos.",
+     "chunks": [
+      {
+       "text": "Le premier rang assis,",
+       "gloss": "La primera fila sentada,",
+       "note": "'Premier' = primero. 'Rang' = fila. 'Assis' = sentado (participio de 'asseoir'). En francés, 'premier' es irregular: no es '*un-ième'."
+      },
+      {
+       "text": "le deuxième debout sur le sol,",
+       "gloss": "la segunda de pie en el suelo,",
+       "note": "'Deuxième' = segundo/a. 'Debout' = de pie (adverbio invariable, no cambia). 'Sur le sol' = en el suelo. 'Sol' = suelo."
+      },
+      {
+       "text": "et le troisième sur des bancs.",
+       "gloss": "y la tercera sobre bancos.",
+       "note": "'Troisième' = tercero/a. 'Des bancs' = unos bancos. 'Des' = artículo indefinido plural (unos/unas), no existe en español. 'Banc' = banco (para sentarse). La 'c' final es muda."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Mais nous, on n'était pas d'accord.",
+     "translation": "Pero nosotros, no estábamos de acuerdo.",
+     "chunks": [
+      {
+       "text": "Mais nous, on n'était pas d'accord.",
+       "gloss": "Pero nosotros, no estábamos de acuerdo.",
+       "note": "'Mais' = pero. 'On' = nosotros (coloquial, reemplaza a 'nous' en francés hablado). 'N'était pas' = no estaba/estábamos (imperfecto negativo de 'être'). 'D'accord' = de acuerdo."
+      }
+     ]
+    },
+    {
+     "text": "Tout le monde voulait être au premier rang.",
+     "translation": "Todo el mundo quería estar en la primera fila.",
+     "chunks": [
+      {
+       "text": "Tout le monde voulait être au premier rang.",
+       "gloss": "Todo el mundo quería estar en la primera fila.",
+       "note": "'Tout le monde' = todo el mundo (siempre singular en francés). 'Voulait' = quería (imperfecto de 'vouloir'). 'Être' = estar/ser. 'Au' = contracción de 'à + le'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Agnan a dit qu'il devait être devant parce qu'il était le premier de la classe.",
+     "translation": "Agnan dijo que él debía estar delante porque él era el primero de la clase.",
+     "chunks": [
+      {
+       "text": "Agnan a dit qu'il devait être devant",
+       "gloss": "Agnan dijo que él debía estar delante",
+       "note": "'A dit' = dijo (passé composé de 'dire'). 'Qu'il devait' = que él debía. 'Devait' = imperfecto de 'devoir' (deber). 'Devant' = delante."
+      },
+      {
+       "text": "parce qu'il était le premier de la classe.",
+       "gloss": "porque él era el primero de la clase.",
+       "note": "'Parce que' = porque. 'Il était' = él era (imperfecto de 'être'). 'Le premier de la classe' = el primero de la clase (el mejor alumno). Agnan es el empollón en las historias del Petit Nicolas."
+      }
+     ]
+    },
+    {
+     "text": "Eudes lui a donné un coup de poing sur le nez et Agnan a commencé à pleurer.",
+     "translation": "Eudes le dio un puñetazo en la nariz y Agnan empezó a llorar.",
+     "chunks": [
+      {
+       "text": "Eudes lui a donné un coup de poing sur le nez",
+       "gloss": "Eudes le dio un puñetazo en la nariz",
+       "note": "'Lui a donné' = le dio (passé composé). 'Un coup de poing' = un puñetazo (lit. 'un golpe de puño'). 'Sur le nez' = en la nariz. Eudes es el compañero fortachón que siempre pega puñetazos."
+      },
+      {
+       "text": "et Agnan a commencé à pleurer.",
+       "gloss": "y Agnan empezó a llorar.",
+       "note": "'A commencé' = empezó (passé composé de 'commencer'). 'À pleurer' = a llorar. 'Pleurer' = llorar. La estructura 'commencer à + infinitif' = empezar a."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "La maîtresse a crié: «Silence!»",
+     "translation": "La maestra gritó: «¡Silencio!»",
+     "chunks": [
+      {
+       "text": "La maîtresse a crié: «Silence!»",
+       "gloss": "La maestra gritó: «¡Silencio!»",
+       "note": "'A crié' = gritó (passé composé de 'crier'). 'Silence!' = ¡Silencio! En francés, las comillas son « » (guillemets), no \" \". Los signos de exclamación solo van al final."
+      }
+     ]
+    },
+    {
+     "text": "Le photographe avait l'air très fatigué.",
+     "translation": "El fotógrafo parecía muy cansado.",
+     "chunks": [
+      {
+       "text": "Le photographe avait l'air très fatigué.",
+       "gloss": "El fotógrafo parecía muy cansado.",
+       "note": "'Avait l'air' = parecía/tenía aspecto de (lit. 'tenía el aire'). Expresión idiomática muy usada. 'Très' = muy. 'Fatigué' = cansado. Es un participio que funciona como adjetivo."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,89 @@
+{
+  "format": "lextor/1",
+  "meta": {
+    "title": "Le café du coin",
+    "title_translation": "El café de la esquina",
+    "text_lang": "fr",
+    "notes_lang": "es",
+    "level": "A2",
+    "summary": "Una mañana en un café de barrio: pedir, charlar y una canción en la radio."
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "sentences": [
+        {
+          "text": "Le café du coin",
+          "translation": "El café de la esquina",
+          "chunks": [
+            {"text": "Le café", "gloss": "el café", "note": "«Café» designa tanto la bebida como el local. Aquí, el local."},
+            {"text": "du coin", "gloss": "de la esquina", "note": "«Du» = de + le (contracción obligatoria). «Le coin» = la esquina; «du coin» también significa «del barrio».", "grammar": "contracción de + le"}
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "sentences": [
+        {
+          "text": "Chaque matin, Julie s'assoit près de la fenêtre.",
+          "translation": "Cada mañana, Julie se sienta junto a la ventana.",
+          "chunks": [
+            {"text": "Chaque matin,", "gloss": "Cada mañana,", "note": "«Chaque» es invariable y siempre va con singular: chaque jour, chaque semaine."},
+            {"text": "Julie", "gloss": "Julie"},
+            {"text": "s'assoit", "gloss": "se sienta", "lemma": "s'asseoir", "grammar": "verbo pronominal · presente · 3ª sg", "note": "Verbo irregular. También existe la forma «s'assied», más clásica."},
+            {"text": "près de", "gloss": "junto a", "literal": "cerca de", "note": "«Près de» = cerca de. No confundir con «prêt» (listo)."},
+            {"text": "la fenêtre.", "gloss": "la ventana.", "note": "«Fenêtre» es femenino. El acento circunflejo recuerda una antigua «s» (latín fenestra)."}
+          ]
+        },
+        {
+          "text": "Elle ne prend jamais de sucre.",
+          "translation": "Nunca toma azúcar.",
+          "chunks": [
+            {"text": "Elle", "gloss": "Ella", "note": "El pronombre sujeto es obligatorio en francés."},
+            {"text": "ne", "gloss": "(negación)", "group": "neg", "note": "Primera parte de la negación «ne… jamais» (nunca). Rodea al verbo conjugado."},
+            {"text": "prend", "gloss": "toma", "lemma": "prendre", "grammar": "presente · 3ª sg", "note": "«Prendre» se usa para comidas y bebidas: prendre un café = tomar un café."},
+            {"text": "jamais", "gloss": "nunca", "group": "neg", "note": "Segunda parte de «ne… jamais». En el habla informal el «ne» a menudo se omite."},
+            {"text": "de sucre.", "gloss": "azúcar.", "note": "Tras una negación, el partitivo «du» pasa a «de»: je prends du sucre → je ne prends pas de sucre."}
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "sentences": [
+        {
+          "text": "« Comme d'habitude ? » demande le serveur.",
+          "translation": "«¿Lo de siempre?», pregunta el camarero.",
+          "chunks": [
+            {"text": "« Comme d'habitude ? »", "gloss": "«¿Lo de siempre?»", "literal": "como de costumbre", "note": "Expresión fija muy común en bares y cafés. En francés se deja un espacio antes de «?» y dentro de las comillas « »."},
+            {"text": "demande", "gloss": "pregunta", "lemma": "demander", "note": "Falso amigo: «demander» = preguntar o pedir, no «demandar» (que sería «poursuivre en justice»)."},
+            {"text": "le serveur.", "gloss": "el camarero.", "note": "«Serveur / serveuse» = camarero/a. Para llamarle se dice «Monsieur !» o «S'il vous plaît !», nunca «Garçon !» hoy en día."}
+          ]
+        }
+      ]
+    },
+    {
+      "type": "verse",
+      "sentences": [
+        {
+          "text": "À la radio, une vieille chanson :",
+          "translation": "En la radio, una vieja canción:",
+          "chunks": [
+            {"text": "À la radio,", "gloss": "En la radio,", "note": "Se usa «à» con medios: à la radio, à la télé."},
+            {"text": "une vieille chanson :", "gloss": "una vieja canción:", "note": "«Vieille» es el femenino de «vieux». Va delante del sustantivo, como en español cuando es valorativo."}
+          ]
+        },
+        {
+          "text": "« Il pleut sur la ville »",
+          "translation": "«Llueve sobre la ciudad»",
+          "chunks": [
+            {"text": "« Il pleut", "gloss": "«Llueve", "lemma": "pleuvoir", "note": "Verbo impersonal: necesita el sujeto «il», que no se traduce."},
+            {"text": "sur la ville »", "gloss": "sobre la ciudad»", "note": "Eco del poema de Verlaine «Il pleure dans mon cœur comme il pleut sur la ville»."}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "Au marché — En el mercado",
+  "text_lang": "fr",
+  "notes_lang": "es",
+  "summary": "Escena cotidiana de compras en un mercado francés. Vocabulario de alimentos, cantidades y expresiones de cortesía.",
+  "created_at": "2026-02-01T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "Au marché",
+     "translation": "En el mercado",
+     "chunks": [
+      {
+       "text": "Au marché",
+       "gloss": "En el mercado",
+       "note": "'Au' = en el, contracción de 'à + le'. 'Marché' (m.) = mercado. También significa 'andar' (participio de 'marcher'). Los mercados al aire libre son una tradición muy viva en Francia."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Chaque samedi matin, Marie va au marché.",
+     "translation": "Cada sábado por la mañana, Marie va al mercado.",
+     "chunks": [
+      {
+       "text": "Chaque samedi matin, Marie va au marché.",
+       "gloss": "Cada sábado por la mañana, Marie va al mercado.",
+       "note": "'Chaque' = cada (invariable, no cambia en plural). 'Samedi' = sábado (¡sin mayúscula en francés!). 'Matin' = mañana. 'Va' = va (presente de 'aller')."
+      }
+     ]
+    },
+    {
+     "text": "Elle aime acheter des produits frais.",
+     "translation": "Le gusta comprar productos frescos.",
+     "chunks": [
+      {
+       "text": "Elle aime acheter des produits frais.",
+       "gloss": "Le gusta comprar productos frescos.",
+       "note": "'Elle aime' = a ella le gusta (lit. 'ella ama'). En francés, 'aimer' se usa tanto para amar como para gustar. 'Acheter' = comprar. 'Des produits frais' = productos frescos. 'Des' = artículo partitivo."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "D'abord, elle s'arrête chez le boulanger.",
+     "translation": "Primero, se para en la panadería.",
+     "chunks": [
+      {
+       "text": "D'abord, elle s'arrête chez le boulanger.",
+       "gloss": "Primero, se para en la panadería.",
+       "note": "'D'abord' = primero/en primer lugar. 'S'arrête' = se detiene (reflexivo, de 's'arrêter'). 'Chez le boulanger' = en la panadería (lit. 'en casa del panadero'). 'Chez' + persona = en casa/tienda de."
+      }
+     ]
+    },
+    {
+     "text": "«Bonjour Madame! Une baguette, s'il vous plaît.»",
+     "translation": "«¡Buenos días señora! Una baguette, por favor.»",
+     "chunks": [
+      {
+       "text": "«Bonjour Madame! Une baguette, s'il vous plaît.»",
+       "gloss": "«¡Buenos días señora! Una baguette, por favor.»",
+       "note": "'Bonjour' = buenos días/hola (formal). 'Madame' = señora. 'S'il vous plaît' = por favor (lit. 'si le place a usted'). 'Baguette' = barra de pan alargada, símbolo de Francia. ¡Se compra a diario!"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Ensuite, elle va chez le fromager.",
+     "translation": "Después, va a la quesería.",
+     "chunks": [
+      {
+       "text": "Ensuite, elle va chez le fromager.",
+       "gloss": "Después, va a la quesería.",
+       "note": "'Ensuite' = después/luego. 'Le fromager' = el quesero. 'Fromage' = queso. Francia produce más de 400 variedades de queso. De Gaulle decía: '¿Cómo gobernar un país con 246 variedades de queso?'."
+      }
+     ]
+    },
+    {
+     "text": "Elle choisit un morceau de comté et un petit chèvre bien crémeux.",
+     "translation": "Elige un trozo de comté y un quesito de cabra bien cremoso.",
+     "chunks": [
+      {
+       "text": "Elle choisit un morceau de comté",
+       "gloss": "Elige un trozo de comté",
+       "note": "'Choisit' = elige (presente de 'choisir', 2° grupo, -IR). 'Un morceau' = un trozo/pedazo. 'Comté' = queso de pasta dura del Jura, uno de los más populares de Francia."
+      },
+      {
+       "text": "et un petit chèvre bien crémeux.",
+       "gloss": "y un quesito de cabra bien cremoso.",
+       "note": "'Chèvre' = cabra / queso de cabra. 'Bien' aquí intensifica = muy/bastante. 'Crémeux' = cremoso (de 'crème'). En francés, los adjetivos suelen ir DESPUÉS del sustantivo, al revés que en inglés."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Au stand de fruits, elle demande: «Je voudrais un kilo de pommes et une barquette de fraises, s'il vous plaît.»",
+     "translation": "En el puesto de frutas, pregunta: «Quisiera un kilo de manzanas y una cestita de fresas, por favor.»",
+     "chunks": [
+      {
+       "text": "Au stand de fruits, elle demande:",
+       "gloss": "En el puesto de frutas, pregunta:",
+       "note": "'Stand' (m.) = puesto (préstamo del inglés, muy usado). 'Fruits' (m. pl.) = frutas. 'Elle demande' = ella pide/pregunta. 'Demander' = pedir (¡no 'demandar' como en español!)."
+      },
+      {
+       "text": "«Je voudrais un kilo de pommes",
+       "gloss": "«Quisiera un kilo de manzanas",
+       "note": "'Je voudrais' = quisiera/me gustaría (condicional de 'vouloir', más cortés que 'je veux'). 'Un kilo de pommes' = un kilo de manzanas. 'Pomme' (f.) = manzana."
+      },
+      {
+       "text": "et une barquette de fraises, s'il vous plaît.»",
+       "gloss": "y una cestita de fresas, por favor.»",
+       "note": "'Barquette' (f.) = cestita/bandejita (diminutivo de 'barque', barca, por la forma). 'Fraises' (f. pl.) = fresas. Las fresas francesas de temporada (mayo-junio) son exquisitas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Marie rentre chez elle avec ses sacs bien remplis.",
+     "translation": "Marie vuelve a su casa con sus bolsas bien llenas.",
+     "chunks": [
+      {
+       "text": "Marie rentre chez elle avec ses sacs bien remplis.",
+       "gloss": "Marie vuelve a su casa con sus bolsas bien llenas.",
+       "note": "'Rentre' = vuelve (de 'rentrer', volver a casa). 'Chez elle' = a su casa (lit. 'a casa de ella'). 'Ses sacs' = sus bolsas. 'Bien remplis' = bien llenas (participio de 'remplir')."
+      }
+     ]
+    },
+    {
+     "text": "Elle est contente de sa matinée au marché.",
+     "translation": "Está contenta de su mañana en el mercado.",
+     "chunks": [
+      {
+       "text": "Elle est contente de sa matinée au marché.",
+       "gloss": "Está contenta de su mañana en el mercado.",
+       "note": "'Contente' = contenta (fem. de 'content'). 'De sa matinée' = de su mañana. 'Matinée' = la mañana (duración), diferente de 'matin' (momento). 'Au marché' = en el mercado."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

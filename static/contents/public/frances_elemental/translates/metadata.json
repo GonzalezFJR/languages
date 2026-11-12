@@ -1,27 +1,86 @@
 {
-  "categories": [
-    {
-      "id": "cat_lecturas",
-      "name": "Lecturas",
-      "subcategories": [],
-      "items": ["le_petit_nicolas.xlan", "au_marche.xlan"]
-    }
-  ],
-  "available_tags": ["Literatura", "Cotidiano", "A2", "B1"],
-  "files": {
-    "le_petit_nicolas.xlan": {
-      "name": "le_petit_nicolas.xlan",
-      "display_name": "Le Petit Nicolas — La photo de classe",
-      "description": "Extracto adaptado de Le Petit Nicolas. Texto humorístico sobre la foto escolar. Nivel A2.",
-      "tags": ["Literatura", "A2"],
-      "created_at": "2026-02-01T00:00:00"
-    },
-    "au_marche.xlan": {
-      "name": "au_marche.xlan",
-      "display_name": "Au marché — En el mercado",
-      "description": "Escena cotidiana de compras en un mercado francés. Vocabulario de alimentos y cortesía.",
-      "tags": ["Cotidiano", "A2"],
-      "created_at": "2026-02-01T00:00:00"
-    }
+ "categories": [
+  {
+   "id": "cat_lecturas",
+   "name": "Lecturas",
+   "subcategories": [],
+   "items": [
+    "le_petit_nicolas.lextor",
+    "au_marche.lextor"
+   ]
   }
+ ],
+ "available_tags": [
+  "Literatura",
+  "Cotidiano",
+  "A2",
+  "B1"
+ ],
+ "files": {
+  "au_marche.lextor": {
+   "name": "au_marche.lextor",
+   "display_name": "Au marché — En el mercado",
+   "description": "Escena cotidiana de compras en un mercado francés. Vocabulario de alimentos y cortesía.",
+   "tags": [
+    "Cotidiano",
+    "A2"
+   ],
+   "created_at": "2026-02-01T00:00:00",
+   "source": "migrated",
+   "stats": {
+    "blocks": 6,
+    "sentences": 10,
+    "chunks": 13,
+    "words": 83,
+    "avg_words_per_chunk": 6.38,
+    "notes_pct": 100,
+    "reading_minutes": 1
+   },
+   "share_id": "S34nu7ZRxTD1"
+  },
+  "le_petit_nicolas.lextor": {
+   "name": "le_petit_nicolas.lextor",
+   "display_name": "Le Petit Nicolas — La photo de classe",
+   "description": "Extracto adaptado de Le Petit Nicolas. Texto humorístico sobre la foto escolar. Nivel A2.",
+   "tags": [
+    "Literatura",
+    "A2"
+   ],
+   "created_at": "2026-02-01T00:00:00",
+   "source": "migrated",
+   "stats": {
+    "blocks": 6,
+    "sentences": 10,
+    "chunks": 15,
+    "words": 104,
+    "avg_words_per_chunk": 6.93,
+    "notes_pct": 100,
+    "reading_minutes": 1
+   },
+   "share_id": "OM4wf6kFuDsj"
+  },
+  "le_cafe_du_coin.lextor": {
+   "name": "le_cafe_du_coin.lextor",
+   "display_name": "Le café du coin",
+   "description": "Una mañana en un café de barrio: pedir, charlar y una canción en la radio.",
+   "tags": [
+    "Cotidiano",
+    "A2"
+   ],
+   "level": "A2",
+   "stats": {
+    "blocks": 4,
+    "sentences": 6,
+    "chunks": 19,
+    "words": 34,
+    "avg_words_per_chunk": 1.79,
+    "notes_pct": 95,
+    "reading_minutes": 1
+   },
+   "source": "example",
+   "created_at": "2026-11-12T12:03:12+00:00",
+   "updated_at": "2026-11-12T12:03:12+00:00",
+   "share_id": "ocEHycyR71cc"
+  }
+ }
 }

@@ -1,27 +1,85 @@
 {
-  "categories": [
-    {
-      "id": "cat_cuentos",
-      "name": "Cuentos y relatos",
-      "subcategories": [],
-      "items": ["momotaro.xlan", "tanuki_y_el_conejo.xlan"]
-    }
-  ],
-  "available_tags": ["Cuento", "Clásico", "N5-N4", "N4-N3"],
-  "files": {
-    "momotaro.xlan": {
-      "name": "momotaro.xlan",
-      "display_name": "Momotarō — El chico del melocotón",
-      "description": "Cuento popular japonés sobre un niño nacido de un melocotón. Nivel N5-N4.",
-      "tags": ["Cuento", "Clásico", "N5-N4"],
-      "created_at": "2026-01-01T00:00:00"
-    },
-    "tanuki_y_el_conejo.xlan": {
-      "name": "tanuki_y_el_conejo.xlan",
-      "display_name": "El Tanuki y el Conejo",
-      "description": "Fábula tradicional japonesa sobre la astucia del conejo. Nivel N4-N3.",
-      "tags": ["Cuento", "Clásico", "N4-N3"],
-      "created_at": "2026-01-01T00:00:00"
-    }
+ "categories": [
+  {
+   "id": "cat_cuentos",
+   "name": "Cuentos y relatos",
+   "subcategories": [],
+   "items": [
+    "momotaro.lextor",
+    "tanuki_y_el_conejo.lextor"
+   ]
   }
+ ],
+ "available_tags": [
+  "Cuento",
+  "Clásico",
+  "N5-N4",
+  "N4-N3"
+ ],
+ "files": {
+  "momotaro.lextor": {
+   "name": "momotaro.lextor",
+   "display_name": "Momotarō — El chico del melocotón",
+   "description": "Cuento popular japonés sobre un niño nacido de un melocotón. Nivel N5-N4.",
+   "tags": [
+    "Cuento",
+    "Clásico",
+    "N5-N4"
+   ],
+   "created_at": "2026-01-01T00:00:00",
+   "source": "migrated",
+   "stats": {
+    "blocks": 8,
+    "sentences": 8,
+    "chunks": 21,
+    "words": 189,
+    "avg_words_per_chunk": 9.0,
+    "notes_pct": 100,
+    "reading_minutes": 1
+   },
+   "share_id": "a6I6l8axjaTU"
+  },
+  "tanuki_y_el_conejo.lextor": {
+   "name": "tanuki_y_el_conejo.lextor",
+   "display_name": "El Tanuki y el Conejo",
+   "description": "Fábula tradicional japonesa sobre la astucia del conejo. Nivel N4-N3.",
+   "tags": [
+    "Cuento",
+    "Clásico",
+    "N4-N3"
+   ],
+   "created_at": "2026-01-01T00:00:00",
+   "source": "migrated",
+   "stats": {
+    "blocks": 9,
+    "sentences": 9,
+    "chunks": 22,
+    "words": 214,
+    "avg_words_per_chunk": 9.73,
+    "notes_pct": 100,
+    "reading_minutes": 1
+   },
+   "share_id": "xhc02soCvsB3"
+  },
+  "un_dia_de_lluvia.lextor": {
+   "name": "un_dia_de_lluvia.lextor",
+   "display_name": "雨の日",
+   "description": "Una tarde tranquila en casa mientras llueve.",
+   "tags": [],
+   "level": "A2",
+   "stats": {
+    "blocks": 2,
+    "sentences": 3,
+    "chunks": 8,
+    "words": 29,
+    "avg_words_per_chunk": 3.62,
+    "notes_pct": 100,
+    "reading_minutes": 1
+   },
+   "source": "example",
+   "created_at": "2026-11-12T12:03:18+00:00",
+   "updated_at": "2026-11-12T12:03:18+00:00",
+   "share_id": "Tvn1C4c5j9UF"
+  }
+ }
 }

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% set meta = doc.meta or {} %}
+{% block title %}{{ meta.title or 'Texto' }}{% endblock %}
+{% block description %}{{ meta.summary or 'Lectura bilingüe interactiva creada con Lextor.' }}{% endblock %}
+{% block body_class %}em-body{% endblock %}
+
+{% block head %}
+<script>
+  /* ?theme=dark|light overrides the stored theme (before paint) */
+  (function () {
+    var t = new URLSearchParams(location.search).get("theme");
+    if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="stylesheet" href="{{ bp }}/static/css/reader.css" />
+<style>
+  .em-body main { min-height: 0; }
+  .em-bar {
+    position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 8px 12px; min-height: 60px;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: saturate(1.5) blur(12px); -webkit-backdrop-filter: saturate(1.5) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .em-brand { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; flex: none; }
+  .em-brand img { width: 30px; height: 30px; transition: transform .3s var(--ease); }
+  .em-brand:hover img { transform: rotate(-8deg) scale(1.06); }
+  .em-title { flex: 1 1 120px; min-width: 0; font: 650 15.5px/1.25 var(--font-ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .em-title small { display: block; color: var(--muted); font-weight: 500; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; }
+  .em-controls { display: flex; align-items: center; gap: 8px; }
+  .em-bar .seg > button { min-height: 40px; padding: 0 14px; }
+  .em-size { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+  .em-size .btn { width: 40px; min-height: 40px; padding: 0; border: 0; font: 650 14px/1 var(--font-ui); }
+  .em-size .btn:hover { background: var(--surface); }
+  .em-open { flex: none; }
+  .em-reader { padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 40px) 64px; }
+  @media (pointer: coarse) { .em-bar .seg > button, .em-size .btn { min-height: 44px; } .em-size .btn { width: 44px; } }
+  @media (max-width: 620px) {
+    .em-controls { order: 3; width: 100%; justify-content: space-between; }
+    .em-seg-label { display: none; }
+    .em-bar .seg { flex: 1; }
+    .em-bar .seg > button { flex: 1; justify-content: center; padding: 0 10px; }
+    .em-open .em-open-label { display: none; }
+    .em-open { width: 44px; padding: 0; }
+  }
+</style>
+{% endblock %}
+
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+<header class="em-bar">
+  <a class="em-brand" href="{{ bp }}/" target="_blank" rel="noopener" aria-label="Lextor (se abre en otra pestaña)">
+    <img src="{{ bp }}/static/img/logo.svg" alt="" width="30" height="30" />
+  </a>
+  <div class="em-title" title="{{ meta.title }}">{{ meta.title or 'Texto' }}{% if meta.title_translation %}<small>{{ meta.title_translation }}</small>{% endif %}</div>
+  <div class="em-controls">
+    <div class="seg" role="group" aria-label="Modo de lectura" id="em-modes">
+      <button type="button" data-mode="read" aria-pressed="true" title="Lectura">{{ icon('book') }}<span class="em-seg-label">Lectura</span></button>
+      <button type="button" data-mode="parallel" aria-pressed="false" title="Paralelo">{{ icon('columns') }}<span class="em-seg-label">Paralelo</span></button>
+      <button type="button" data-mode="study" aria-pressed="false" title="Estudio">{{ icon('cards') }}<span class="em-seg-label">Estudio</span></button>
+    </div>
+    <div class="em-size" role="group" aria-label="Tamaño del texto">
+      <button type="button" class="btn btn-ghost" data-size="-1" aria-label="Reducir el texto" title="Reducir el texto">A−</button>
+      <button type="button" class="btn btn-ghost" data-size="1" aria-label="Aumentar el texto" title="Aumentar el texto">A+</button>
+    </div>
+  </div>
+  <a class="btn btn-soft btn-sm em-open" href="{{ bp }}/t/{{ share_id }}" target="_blank" rel="noopener" title="Abrir en Lextor">{{ icon('external') }}<span class="em-open-label">Abrir en Lextor</span></a>
+</header>
+<main id="main" class="em-reader">
+  <div id="reader"></div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>const DOC = {{ doc|tojson }};</script>
+<script src="{{ bp }}/static/js/reader.js"></script>
+<script>
+(function () {
+  "use strict";
+  const MODES = ["read", "parallel", "study"];
+  const q = new URLSearchParams(location.search).get("mode");
+  const buttons = Array.from(document.querySelectorAll("#em-modes [data-mode]"));
+  function sync(mode) { buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode))); }
+
+  const reader = LextorReader.mount(document.getElementById("reader"), DOC, {
+    mode: MODES.includes(q) ? q : undefined,
+    storageKey: "lextor.embed",
+    editable: false,
+    onModeChange: sync,
+  });
+  sync(reader.mode);
+
+  buttons.forEach((b) => b.addEventListener("click", () => { reader.setMode(b.dataset.mode); sync(reader.mode); }));
+  document.querySelectorAll("[data-size]").forEach((b) => b.addEventListener("click", () => {
+    const cur = Number(reader.settings.scale) || 1;
+    const next = Math.round(Math.min(1.6, Math.max(0.8, cur + Number(b.dataset.size) * 0.1)) * 100) / 100;
+    reader.setSettings({ scale: next });
+  }));
+})();
+</script>
+{% endblock %}

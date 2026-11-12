@@ -1,0 +1,380 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "Little Red Riding Hood (short version)",
+  "text_lang": "en",
+  "notes_lang": "es",
+  "summary": "Simplified version of the classic Brothers Grimm fairy tale. Everyday vocabulary, ideal for A2-B1 level.",
+  "created_at": "2026-01-01T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "Little Red Riding Hood",
+     "translation": "Caperucita Roja",
+     "chunks": [
+      {
+       "text": "Little Red Riding Hood",
+       "gloss": "Caperucita Roja",
+       "note": "'Little' = pequeña. 'Red' = roja. 'Riding Hood' = capucha de montar a caballo. El nombre español 'Caperucita' viene de 'caperuza' (tipo de gorro con punta), un diminutivo afectivo."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Once upon a time there was a little girl who lived near the forest.",
+     "translation": "Había una vez había una niña pequeña que vivía cerca del bosque.",
+     "chunks": [
+      {
+       "text": "Once upon a time",
+       "gloss": "Había una vez",
+       "note": "'Once upon a time' es la fórmula de inicio de los cuentos en inglés. No es una traducción literal de 'había una vez' (lit. 'there was once'), sino una fórmula convencional equivalente."
+      },
+      {
+       "text": "there was a little girl",
+       "gloss": "había una niña pequeña",
+       "note": "'There was' = había (existencia en pasado). 'Little girl' = niña pequeña. En inglés el adjetivo precede siempre al sustantivo: 'a little girl', nunca *'a girl little'."
+      },
+      {
+       "text": "who lived near the forest.",
+       "gloss": "que vivía cerca del bosque.",
+       "note": "'Who' introduce una oración de relativo con antecedente de persona (= 'que' en español). 'Lived' = pasado simple de 'to live'. 'Near' = cerca de (preposición de lugar)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Her grandmother had given her a red cloak with a hood, and the girl always wore it.",
+     "translation": "Su abuela le había regalado una capa roja con capucha, y la niña siempre la llevaba puesta.",
+     "chunks": [
+      {
+       "text": "Her grandmother had given her",
+       "gloss": "Su abuela le había regalado",
+       "note": "'Had given' = pluscuamperfecto (past perfect): acción anterior a otro punto del pasado. 'Give → gave → given' (verbo irregular). 'Her' antes del sujeto = pronombre posesivo ('su'); 'her' al final = pronombre objeto ('le')."
+      },
+      {
+       "text": "a red cloak with a hood,",
+       "gloss": "una capa roja con capucha,",
+       "note": "'Cloak' = capa, prenda larga sin mangas. 'Hood' = capucha (parte que cubre la cabeza). Ambas palabras dan nombre al personaje. En inglés el color 'red' va antes del sustantivo."
+      },
+      {
+       "text": "and the girl always wore it.",
+       "gloss": "y la niña siempre la llevaba puesta.",
+       "note": "'Wore' = pasado de 'to wear' (llevar puesto). Verbo irregular: wear → wore → worn. 'Always' = siempre (adverbio de frecuencia, va entre el sujeto y el verbo principal)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "One day, her mother said to her: 'Take this basket to grandmother's house.",
+     "translation": "Un día, su madre le dijo: 'Lleva esta cesta a casa de la abuela.",
+     "chunks": [
+      {
+       "text": "One day,",
+       "gloss": "Un día,",
+       "note": "'One day' = un día (expresión temporal narrativa). Introduce un evento nuevo en el pasado. Equivalente a 'once' o 'one morning/afternoon'. Muy común para marcar el inicio de la acción en un cuento."
+      },
+      {
+       "text": "her mother said to her:",
+       "gloss": "su madre le dijo:",
+       "note": "'Said' = pasado de 'to say' (verbo irregular: say → said → said). 'Said to her' = le dijo (objeto indirecto con 'to'). Alternativa sin 'to': 'told her' (también correcto con 'tell')."
+      },
+      {
+       "text": "'Take this basket to grandmother's house.",
+       "gloss": "'Lleva esta cesta a casa de la abuela.",
+       "note": "'Take' = imperativo de 'to take' (llevar, tomar). 'Grandmother's house' = genitivo sajón: apostrofe + s indica posesión. En español se usa 'casa de + sustantivo' sin apóstrofe."
+      }
+     ]
+    },
+    {
+     "text": "She is ill and needs some food.'",
+     "translation": "Está enferma y necesita algo de comida.'",
+     "chunks": [
+      {
+       "text": "She is ill",
+       "gloss": "Está enferma",
+       "note": "'Ill' = enfermo/a (BrE); 'sick' es más común en AmE. En inglés se usa 'to be ill/sick'; en español se usa 'estar' (no 'ser') porque es un estado temporal, no una característica permanente."
+      },
+      {
+       "text": "and needs some food.'",
+       "gloss": "y necesita algo de comida.'",
+       "note": "'Needs' = necesita (3ª persona singular, presente simple: verbo + s). 'Some food' = algo de comida. 'Some' + sustantivo incontable = una cantidad no especificada."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Little Red Riding Hood picked up the basket and ventured into the forest.",
+     "translation": "Caperucita cogió la cesta y se adentró en el bosque.",
+     "chunks": [
+      {
+       "text": "Little Red Riding Hood picked up the basket",
+       "gloss": "Caperucita cogió la cesta",
+       "note": "'Picked up' = recogió, cogió del suelo (phrasal verb: pick up). 'Picked' es el pasado regular de 'to pick'. 'Pick up' indica recoger algo que está abajo o preparar algo para llevarlo."
+      },
+      {
+       "text": "and ventured into the forest.",
+       "gloss": "y se adentró en el bosque.",
+       "note": "'Ventured into' = se adentró en, se aventuró hacia (con cierta valentía o riesgo). Más expresivo que 'went into'. 'Venture' proviene del latín 'ventura' (lo que está por venir)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Suddenly, a big, bad wolf crossed her path.",
+     "translation": "De repente, un lobo grande y malvado se cruzó en su camino.",
+     "chunks": [
+      {
+       "text": "Suddenly,",
+       "gloss": "De repente,",
+       "note": "'Suddenly' = de repente, súbitamente. Adverbio que indica algo inesperado. Sinónimos: 'all of a sudden', 'out of nowhere'. Muy frecuente al inicio de una frase dramática en cuentos."
+      },
+      {
+       "text": "a big, bad wolf",
+       "gloss": "un lobo grande y malvado",
+       "note": "'Big, bad wolf' es una expresión tan fija en inglés que se usa casi como nombre propio. La coma entre adjetivos indica que son coordinados. 'Bad' = malo, malvado."
+      },
+      {
+       "text": "crossed her path.",
+       "gloss": "se cruzó en su camino.",
+       "note": "'Cross someone's path' = cruzarse en el camino de alguien (expresión idiomática). Significa encontrarse con alguien de forma inesperada, a menudo con connotaciones negativas."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "'Where are you going, little one?'",
+     "translation": "'¿A dónde vas, pequeña?'",
+     "chunks": [
+      {
+       "text": "'Where are you going, little one?'",
+       "gloss": "'¿A dónde vas, pequeña?'",
+       "note": "'Where are you going?' = ¿A dónde vas/va usted? (presente continuo para movimiento en curso). 'Little one' = pequeña, chiquita (término vocativo afectivo o condescendiente)."
+      }
+     ]
+    },
+    {
+     "text": "asked the wolf in a gentle voice.",
+     "translation": "preguntó el lobo con voz suave.",
+     "chunks": [
+      {
+       "text": "asked the wolf in a gentle voice.",
+       "gloss": "preguntó el lobo con voz suave.",
+       "note": "En estilo directo inglés el sujeto puede ir después del verbo de habla: 'asked the wolf' (inversión). 'In a gentle voice' = con voz suave. 'Gentle' = suave, amable, tranquilo."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "'I am going to my grandmother's house,' replied Little Red Riding Hood, without suspecting anything.",
+     "translation": "'Voy a casa de mi abuela,' respondió Caperucita, sin sospechar nada.",
+     "chunks": [
+      {
+       "text": "'I am going to my grandmother's house,'",
+       "gloss": "'Voy a casa de mi abuela,'",
+       "note": "'I am going to' + lugar = voy a + lugar (presente continuo con valor de movimiento inmediato). 'Grandmother's house' = genitivo sajón (posesión). Compárese con el español: 'casa de mi abuela'."
+      },
+      {
+       "text": "replied Little Red Riding Hood,",
+       "gloss": "respondió Caperucita,",
+       "note": "'Replied' = respondió (pasado de 'to reply'). Más formal y literario que 'said'. 'Reply' se usa cuando se responde a algo dicho anteriormente."
+      },
+      {
+       "text": "without suspecting anything.",
+       "gloss": "sin sospechar nada.",
+       "note": "'Without' + gerundio (-ing) = 'sin' + infinitivo. Estructura muy frecuente: 'without knowing' = sin saber; 'without thinking' = sin pensar. 'Suspect' = sospechar, desconfiar."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "The wolf arrived first at grandmother's house, ate her up, and got into her bed.",
+     "translation": "El lobo llegó antes a casa de la abuela, se la comió, y se metió en su cama.",
+     "chunks": [
+      {
+       "text": "The wolf arrived first at grandmother's house,",
+       "gloss": "El lobo llegó antes a casa de la abuela,",
+       "note": "'Arrived first' = llegó primero/antes. 'First' como adverbio de orden. 'At grandmother's house' usa 'at' (preposición de lugar puntual) con genitivo sajón."
+      },
+      {
+       "text": "ate her up,",
+       "gloss": "se la comió,",
+       "note": "'Ate her up' = se la comió entera (phrasal verb: eat up = consumir por completo). 'Ate' es el pasado irregular de 'to eat'. La partícula 'up' añade el matiz de 'completamente'."
+      },
+      {
+       "text": "and got into her bed.",
+       "gloss": "y se metió en su cama.",
+       "note": "'Got into' = se metió en (phrasal verb: get into = entrar en, meterse en). 'Got' es el pasado de 'to get' (irregular: get → got → got/gotten). 'Bed' sin artículo en 'in bed / out of bed'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "When Little Red Riding Hood arrived, she noticed that something was strange.",
+     "translation": "Cuando Caperucita llegó, notó que algo era extraño.",
+     "chunks": [
+      {
+       "text": "When Little Red Riding Hood arrived,",
+       "gloss": "Cuando Caperucita llegó,",
+       "note": "'When' + pasado simple para oraciones temporales en el pasado. En este tipo de cláusula temporal, tanto el inglés como el español usan el pasado simple para acciones puntuales."
+      },
+      {
+       "text": "she noticed that something was strange.",
+       "gloss": "notó que algo era extraño.",
+       "note": "'Noticed' = notó, se percató de (pasado de 'to notice'). 'That' introduce una oración subordinada de objeto (puede omitirse: 'noticed something was strange'). 'Strange' = extraño, raro."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "'Grandmother, what big eyes you have!'",
+     "translation": "'¡Abuela, qué ojos tan grandes tienes!'",
+     "chunks": [
+      {
+       "text": "'Grandmother, what big eyes you have!'",
+       "gloss": "'¡Abuela, qué ojos tan grandes tienes!'",
+       "note": "Frase icónica del cuento. 'What + adjetivo + sustantivo + sujeto + verbo' es la estructura exclamativa inglesa. Compárese con el español: '¡Qué + sustantivo + tan + adjetivo + verbo!'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "'All the better to see you with,' growled the wolf.",
+     "translation": "'Son para verte mejor,' gruñó el lobo.",
+     "chunks": [
+      {
+       "text": "'All the better to see you with,'",
+       "gloss": "'Son para verte mejor,'",
+       "note": "'All the better to...' = aún mejor para... (construcción comparativa de intensidad). Esta respuesta es tan icónica en inglés que se usa en contextos cotidianos. La traducción literal es 'tanto mejor para verte'."
+      },
+      {
+       "text": "growled the wolf.",
+       "gloss": "gruñó el lobo.",
+       "note": "'Growled' = gruñó (pasado de 'to growl'). Verbo onomatopéyico que describe el sonido grave y amenazante de animales o personas. Otros verbos de habla con matiz animal: 'barked', 'hissed', 'roared'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Then the wolf leaped out of bed and chased Little Red Riding Hood, but a brave woodcutter heard them and came to her rescue.",
+     "translation": "Entonces el lobo saltó de la cama y persiguió a Caperucita, pero un valiente leñador los escuchó y acudió en su ayuda.",
+     "chunks": [
+      {
+       "text": "Then the wolf leaped out of bed",
+       "gloss": "Entonces el lobo saltó de la cama",
+       "note": "'Leaped' = saltó (pasado de 'to leap'). También válido: 'leapt' (BrE). 'Out of bed' = de la cama (sin artículo en esta expresión fija). 'Then' = entonces (adverbio de consecuencia o tiempo)."
+      },
+      {
+       "text": "and chased Little Red Riding Hood,",
+       "gloss": "y persiguió a Caperucita,",
+       "note": "'Chased' = persiguió (pasado regular de 'to chase'). 'Chase' = perseguir, correr detrás de alguien. Nótese que en inglés no hay preposición 'a' de objeto directo como en español."
+      },
+      {
+       "text": "but a brave woodcutter heard them",
+       "gloss": "pero un valiente leñador los escuchó",
+       "note": "'Woodcutter' = leñador (wood = madera/leña + cutter = cortador). 'Brave' = valiente (adjetivo antes del sustantivo). 'Heard' = oyó/escuchó (pasado irregular: hear → heard → heard)."
+      },
+      {
+       "text": "and came to her rescue.",
+       "gloss": "y acudió en su ayuda.",
+       "note": "'Come to someone's rescue' = acudir en ayuda de alguien (expresión fija). 'Came' = pasado irregular de 'to come'. 'Rescue' como sustantivo = rescate; como verbo = rescatar."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "The woodcutter scared the wolf away, saved the grandmother, and Little Red Riding Hood learned an important lesson:",
+     "translation": "El leñador ahuyentó al lobo, salvó a la abuela, y Caperucita aprendió una lección importante:",
+     "chunks": [
+      {
+       "text": "The woodcutter scared the wolf away,",
+       "gloss": "El leñador ahuyentó al lobo,",
+       "note": "'Scared away' = ahuyentó (phrasal verb: scare away = hacer huir asustando). 'Scared' = asustó (pasado regular de 'to scare'). La partícula 'away' añade el matiz de alejamiento."
+      },
+      {
+       "text": "saved the grandmother,",
+       "gloss": "salvó a la abuela,",
+       "note": "'Saved' = salvó (pasado regular de 'to save'). Compárese 'to save' (salvar) con 'to rescue' (rescatar): ambos válidos aquí. En inglés no hay preposición 'a' de objeto directo."
+      },
+      {
+       "text": "and Little Red Riding Hood learned an important lesson:",
+       "gloss": "y Caperucita aprendió una lección importante:",
+       "note": "'Learned' (AmE) / 'learnt' (BrE) = aprendió (pasado de 'to learn'). 'An important lesson' = una lección importante. En inglés el adjetivo precede al sustantivo: 'important lesson', no *'lesson important'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "never talk to strangers.",
+     "translation": "nunca hablar con desconocidos.",
+     "chunks": [
+      {
+       "text": "never talk to strangers.",
+       "gloss": "nunca hablar con desconocidos.",
+       "note": "'Never talk to strangers' = nunca hablar con desconocidos (regla/lección en infinitivo implícito). 'Strangers' = desconocidos, extraños. 'Never' = nunca (adverbio de frecuencia negativa, va antes del verbo)."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

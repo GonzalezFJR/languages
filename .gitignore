@@ -41,3 +41,9 @@ static/contents/admin/
 # Coverage
 .coverage
 htmlcov/
+
+# Lextor runtime data (share index, MCP tokens, anonymous texts, migration backups)
+static/contents/_system/
+static/contents/_shared/
+static/contents/*/*/translates/_legacy/
+.pytest_cache/

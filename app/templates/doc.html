@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% set ext = (filename.rsplit('.', 1)[-1] if '.' in filename else '')|lower %}
+{% set kind = 'md' if ext in ('md', 'markdown') else 'txt' if ext == 'txt' else 'pdf' if ext == 'pdf' else 'img' if ext in ('png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'avif', 'bmp') else 'other' %}
+{% set title = info.display_name or filename %}
+{% set file_url = bp ~ '/api/projects/' ~ project.id ~ '/docs/' ~ (filename|urlencode) ~ '/file' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ info.description or ('Documento de referencia de ' ~ (project.name or 'Lextor')) }}{% endblock %}
+
+{% block head %}
+<style>
+  .dc-head { padding: 36px 0 24px; }
+  .dc-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--muted); font: 600 15px/1 var(--font-ui); }
+  .dc-back svg { width: 18px; height: 18px; transition: transform .2s var(--ease); }
+  .dc-back:hover { color: var(--text); text-decoration: none; }
+  .dc-back:hover svg { transform: translateX(-3px); }
+  .dc-title-row { display: flex; gap: 16px; align-items: flex-start; margin-top: 10px; flex-wrap: wrap; }
+  .dc-ic { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; flex: none; background: var(--accent-soft); color: var(--accent-text); }
+  .dc-ic svg { width: 24px; height: 24px; }
+  .dc-title { flex: 1 1 320px; min-width: 0; }
+  .dc-title .h1 { overflow-wrap: anywhere; }
+  .dc-title .lead { margin-top: 8px; }
+  .dc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .dc-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 640px) { .dc-actions { width: 100%; } .dc-actions .btn { flex: 1; } }
+
+  .dc-read {
+    max-width: 44em; margin: 0 auto 96px; padding: clamp(24px, 5vw, 56px);
+    font: 400 19px/1.75 var(--font-read); color: var(--text); overflow-wrap: break-word;
+  }
+  .dc-read.is-plain { white-space: pre-wrap; tab-size: 4; }
+  .dc-read > :first-child { margin-top: 0; }
+  .dc-read > :last-child { margin-bottom: 0; }
+  .dc-read h1, .dc-read h2, .dc-read h3, .dc-read h4 { font-family: var(--font-display); letter-spacing: -.015em; line-height: 1.25; margin: 1.6em 0 .55em; }
+  .dc-read h1 { font-size: 1.75em; }
+  .dc-read h2 { font-size: 1.4em; }
+  .dc-read h3 { font-size: 1.15em; }
+  .dc-read p, .dc-read ul, .dc-read ol { margin: 0 0 1em; }
+  .dc-read ul, .dc-read ol { padding-left: 1.3em; }
+  .dc-read li { margin: .3em 0; }
+  .dc-read li::marker { color: var(--faint); }
+  .dc-read blockquote { margin: 0 0 1em; padding: .4em 1.1em; border-left: 3px solid var(--accent); color: var(--muted); }
+  .dc-read pre { margin: 0 0 1em; font-size: 14px; }
+  .dc-read code { font-size: .82em; }
+  .dc-read img { border-radius: var(--r); margin: 1em auto; }
+  .dc-read a { text-decoration: underline; text-underline-offset: 3px; }
+  .dc-read .dc-table { overflow-x: auto; margin: 0 0 1em; border: 1px solid var(--line); border-radius: var(--r); }
+  .dc-read table { border-collapse: collapse; width: 100%; font: 400 15.5px/1.5 var(--font-ui); }
+  .dc-read th, .dc-read td { padding: 9px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .dc-read th { background: var(--surface-2); font-weight: 650; }
+  .dc-read tr:last-child td { border-bottom: 0; }
+  @media (max-width: 640px) { .dc-read { font-size: 18px; border-radius: var(--r); } }
+
+  .dc-pdf { width: 100%; height: calc(100vh - var(--nav-h) - 40px); min-height: 520px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface-2); display: block; margin-bottom: 64px; }
+  .dc-img { margin: 0 auto 80px; padding: 16px; text-align: center; background: var(--surface-2); border-radius: var(--r-lg); }
+  .dc-img img { margin: 0 auto; max-height: calc(100vh - var(--nav-h) - 80px); width: auto; border-radius: var(--r); box-shadow: var(--sh-2); }
+  .dc-empty { margin-bottom: 96px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<main id="main">
+  <header class="container dc-head">
+    <a class="dc-back" href="{{ bp }}/project/{{ project.id }}#docs">{{ icon('arrow-left') }}{{ project.name or 'Proyecto' }}</a>
+    <div class="dc-title-row">
+      <span class="dc-ic" aria-hidden="true">{{ icon('image' if kind == 'img' else 'file-text' if kind in ('md', 'txt') else 'file') }}</span>
+      <div class="dc-title">
+        <h1 class="h1">{{ title }}</h1>
+        {% if info.description %}<p class="lead">{{ info.description }}</p>{% endif %}
+        <div class="dc-meta">
+          <span class="badge">{{ (ext or 'archivo')|upper }}</span>
+          {% for t in info.tags or [] %}<span class="badge badge-accent">{{ icon('tag') }}{{ t }}</span>{% endfor %}
+        </div>
+      </div>
+      <div class="dc-actions">
+        {% if kind == 'pdf' %}<a class="btn" href="{{ file_url }}" target="_blank" rel="noopener">{{ icon('external') }}Abrir</a>{% endif %}
+        <a class="btn btn-primary" href="{{ file_url }}" download="{{ filename }}">{{ icon('download') }}Descargar</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    {% if kind == 'md' %}
+    <article class="card dc-read is-plain reveal" id="dc-md">{{ content }}</article>
+    {% elif kind == 'txt' %}
+    <article class="card dc-read is-plain reveal">{{ content }}</article>
+    {% elif kind == 'pdf' %}
+    <iframe class="dc-pdf reveal" src="{{ file_url }}" title="{{ title }}"></iframe>
+    {% elif kind == 'img' %}
+    <figure class="dc-img reveal"><img src="{{ file_url }}" alt="{{ info.description or title }}" /></figure>
+    {% else %}
+    <div class="empty dc-empty">
+      <div class="empty-icon">{{ icon('file') }}</div>
+      <h2 class="h3">Vista previa no disponible</h2>
+      <p class="muted">No podemos mostrar archivos .{{ ext or '?' }} en el navegador, pero puedes descargarlo.</p>
+      <a class="btn btn-primary btn-lg" href="{{ file_url }}" download="{{ filename }}" style="margin-top:8px">{{ icon('download') }}Descargar</a>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+{% if kind == 'md' %}
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script>
+(function () {
+  const el = document.getElementById("dc-md");
+  if (!el || !window.marked) return; // keep plain text if the CDN is unavailable
+  const src = {{ content|tojson }};
+  // User-uploaded content: show raw HTML as text and drop unsafe link/image schemes.
+  marked.use({ renderer: { html(h) { return Lextor.esc(typeof h === "string" ? h : (h && h.text) || ""); } } });
+  el.innerHTML = marked.parse(src, { gfm: true });
+  el.querySelectorAll("a[href], img[src]").forEach((n) => {
+    const attr = n.tagName === "A" ? "href" : "src";
+    const v = (n.getAttribute(attr) || "").trim().toLowerCase();
+    if (/^[a-z][a-z0-9+.-]*:/.test(v) && !/^(https?|mailto):/.test(v)) n.removeAttribute(attr);
+  });
+  el.classList.remove("is-plain");
+  el.querySelectorAll("table").forEach((t) => { const w = document.createElement("div"); w.className = "dc-table"; t.replaceWith(w); w.appendChild(t); });
+  el.querySelectorAll("a[href^='http']").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+})();
+</script>
+{% endif %}
+{% endblock %}

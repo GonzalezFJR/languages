@@ -1,8 +1,9 @@
-"""Simple cookie-based authentication for admin user."""
+"""Simple cookie-based authentication for the admin user."""
 
-from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
-from fastapi import Request
 from typing import Optional
+
+from fastapi import HTTPException, Request
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from app.config import settings
 
@@ -14,7 +15,9 @@ MAX_AGE = 60 * 60 * 24 * 30  # 30 days
 
 
 def verify_credentials(username: str, password: str) -> bool:
-    return username == settings.admin_user and password == settings.admin_password
+    import hmac
+    return (hmac.compare_digest(username, settings.admin_user)
+            and hmac.compare_digest(password, settings.admin_password))
 
 
 def create_session_token(username: str) -> str:
@@ -22,7 +25,7 @@ def create_session_token(username: str) -> str:
 
 
 def get_current_user(request: Request) -> Optional[str]:
-    """Return the username from session cookie (lextor or naux), or None."""
+    """Return the username from the session cookie (lextor or naux), or None."""
     for cookie_name in (COOKIE_NAME, NAUX_COOKIE_NAME):
         token = request.cookies.get(cookie_name)
         if not token:
@@ -38,11 +41,15 @@ def get_current_user(request: Request) -> Optional[str]:
 
 
 def get_user_content_dir(request: Request) -> str:
-    """Return the content subdirectory for the current user.
-    Logged-in admin  → 'admin'
-    Anonymous        → 'public'
-    """
+    """Logged-in admin → 'admin'; anonymous → 'public' (read-only demo space)."""
     user = get_current_user(request)
     if user == settings.admin_user:
         return "admin"
     return "public"
+
+
+def require_user(request: Request) -> str:
+    """Dependency for write endpoints: the public demo space is read-only."""
+    if not request.state.current_user:
+        raise HTTPException(401, "Inicia sesión para modificar contenido")
+    return request.state.user_dir

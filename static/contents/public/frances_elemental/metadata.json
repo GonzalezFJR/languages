@@ -1,7 +1,8 @@
 {
-  "id": "frances_elemental",
-  "name": "Francés paso a paso",
-  "base": "es",
-  "target": "fr",
-  "created_at": "2026-02-01T00:00:00"
+ "id": "frances_elemental",
+ "name": "Francés paso a paso",
+ "base": "es",
+ "target": "fr",
+ "created_at": "2026-02-01T00:00:00",
+ "updated_at": "2026-11-12T12:03:12+00:00"
 }

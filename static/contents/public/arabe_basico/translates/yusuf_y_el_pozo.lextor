@@ -1,0 +1,161 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "يوسف والبئر — Yūsuf y el pozo",
+  "text_lang": "ar",
+  "notes_lang": "es",
+  "summary": "Relato tradicional sobre el profeta Yūsuf (José) basado en la tradición islámica. Texto simplificado para principiantes.",
+  "created_at": "2026-01-15T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "يُوسُفُ وَالبِئْرُ",
+     "translation": "Yūsuf y el pozo",
+     "chunks": [
+      {
+       "text": "يُوسُفُ وَالبِئْرُ",
+       "gloss": "Yūsuf y el pozo",
+       "note": "يُوسُف (Yūsuf) = José, nombre propio de origen hebreo. وَ (wa) = 'y', la conjunción más común en árabe. الْبِئْر (al-biʾr) = el pozo. الـ (al-) es el artículo definido 'el/la'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "كَانَ يَعْقُوبُ رَجُلًا صَالِحًا وَكَانَ لَهُ اثْنَا عَشَرَ وَلَدًا.",
+     "translation": "Había (una vez) Yaʿqūb un hombre piadoso y tenía doce hijos.",
+     "chunks": [
+      {
+       "text": "كَانَ يَعْقُوبُ",
+       "gloss": "Había (una vez) Yaʿqūb",
+       "note": "كَانَ (kāna) = fue/había, verbo fundamental en árabe para narrar en pasado (equivale a 'érase'). يَعْقُوب (Yaʿqūb) = Jacob, padre de Yūsuf."
+      },
+      {
+       "text": "رَجُلًا صَالِحًا",
+       "gloss": "un hombre piadoso",
+       "note": "رَجُل (rajul) = hombre. صَالِح (ṣāliḥ) = bueno, piadoso, recto. Ambos llevan tanwīn fatḥa (-an) porque son predicado de كان en acusativo."
+      },
+      {
+       "text": "وَكَانَ لَهُ اثْنَا عَشَرَ وَلَدًا.",
+       "gloss": "y tenía doce hijos.",
+       "note": "وَ (wa) = y. لَهُ (lahu) = para él / tenía. اثْنَا عَشَرَ (iznā ʿashara) = doce. وَلَد (walad) = hijo/niño. La estructura كان له = 'tenía' (lit. 'era para él')."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "وَكَانَ يُوسُفُ أَحَبَّ أَوْلَادِهِ إِلَيْهِ.",
+     "translation": "Y Yūsuf era el más querido de sus hijos para él.",
+     "chunks": [
+      {
+       "text": "وَكَانَ يُوسُفُ أَحَبَّ أَوْلَادِهِ إِلَيْهِ.",
+       "gloss": "Y Yūsuf era el más querido de sus hijos para él.",
+       "note": "أَحَبّ (aḥabb) = el más querido, superlativo de حَبّ (amor). أَوْلَاد (awlād) = hijos (plural de وَلَد). إِلَيْهِ (ilayhi) = para él/a él. ـهِ (-hi) = sufijo posesivo de 3ª persona masculina."
+      }
+     ]
+    },
+    {
+     "text": "فَغَارَ إِخْوَتُهُ مِنْهُ وَأَرَادُوا أَنْ يُبْعِدُوهُ.",
+     "translation": "Entonces sus hermanos sintieron celos de él y quisieron alejarlo.",
+     "chunks": [
+      {
+       "text": "فَغَارَ إِخْوَتُهُ مِنْهُ",
+       "gloss": "Entonces sus hermanos sintieron celos de él",
+       "note": "فَـ (fa-) = entonces/así que, conjunción de consecuencia. غَارَ (ghāra) = sintió celos, del verbo غار يغار. إِخْوَة (ijwa) = hermanos. مِنْهُ (minhu) = de él."
+      },
+      {
+       "text": "وَأَرَادُوا أَنْ يُبْعِدُوهُ.",
+       "gloss": "y quisieron alejarlo.",
+       "note": "أَرَادُوا (arādū) = quisieron, pasado plural de أَرَادَ (querer). أَنْ (an) = que (partícula de subjuntivo). يُبْعِدُوهُ (yubʿidūhu) = alejarlo. La raíz ب-ع-د (b-ʿ-d) significa 'lejanía'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "قَالَ أَحَدُهُمْ: «أَلْقُوهُ فِي البِئْرِ».",
+     "translation": "Dijo uno de ellos: «Arrojadlo al pozo».",
+     "chunks": [
+      {
+       "text": "قَالَ أَحَدُهُمْ:",
+       "gloss": "Dijo uno de ellos:",
+       "note": "قَالَ (qāla) = dijo, pasado de قال يقول (decir). أَحَد (aḥad) = uno. ـهُمْ (-hum) = sufijo posesivo 'de ellos'. En árabe se introduce el discurso directo con dos puntos o sin marca."
+      },
+      {
+       "text": "«أَلْقُوهُ فِي البِئْرِ».",
+       "gloss": "«Arrojadlo al pozo».",
+       "note": "أَلْقُوا (alqū) = arrojad, imperativo plural de أَلْقَى (arrojar/lanzar). ـهُ (-hu) = lo (pronombre acusativo). فِي (fī) = en/dentro de, preposición de lugar. البِئْر (al-biʾr) = el pozo."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "فَأَخَذُوا يُوسُفَ وَأَلْقَوْهُ فِي بِئْرٍ عَمِيقَةٍ.",
+     "translation": "Entonces tomaron a Yūsuf y lo arrojaron a un pozo profundo.",
+     "chunks": [
+      {
+       "text": "فَأَخَذُوا يُوسُفَ",
+       "gloss": "Entonces tomaron a Yūsuf",
+       "note": "فَـ (fa-) = entonces. أَخَذُوا (ajazū) = tomaron, pasado plural de أَخَذَ (tomar). يُوسُفَ lleva fatḥa final porque es objeto directo (acusativo) y es un nombre diptote."
+      },
+      {
+       "text": "وَأَلْقَوْهُ فِي بِئْرٍ عَمِيقَةٍ.",
+       "gloss": "y lo arrojaron a un pozo profundo.",
+       "note": "أَلْقَوْ (alqaw) = arrojaron. بِئْر (biʾr) = pozo, aquí indefinido (sin الـ) con kasra y tanwīn. عَمِيقَة (ʿamīqa) = profunda, adjetivo que concuerda con بئر en género (femenino en árabe)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "لَكِنَّ اللَّهَ كَانَ مَعَ يُوسُفَ.",
+     "translation": "Pero Dios estaba con Yūsuf.",
+     "chunks": [
+      {
+       "text": "لَكِنَّ اللَّهَ كَانَ مَعَ يُوسُفَ.",
+       "gloss": "Pero Dios estaba con Yūsuf.",
+       "note": "لَكِنَّ (lakinna) = pero/sin embargo, partícula enfática que rige acusativo. اللَّه (Allāh) = Dios. مَعَ (maʿa) = con, preposición de compañía."
+      }
+     ]
+    },
+    {
+     "text": "مَرَّتْ قَافِلَةٌ وَأَنْقَذُوهُ مِنَ البِئْرِ.",
+     "translation": "Pasó una caravana y lo rescataron del pozo.",
+     "chunks": [
+      {
+       "text": "مَرَّتْ قَافِلَةٌ",
+       "gloss": "Pasó una caravana",
+       "note": "مَرَّتْ (marrat) = pasó, pasado femenino de مَرَّ (pasar). La ت final indica sujeto femenino. قَافِلَة (qāfila) = caravana, del verbo قَفَلَ (regresar)."
+      },
+      {
+       "text": "وَأَنْقَذُوهُ مِنَ البِئْرِ.",
+       "gloss": "y lo rescataron del pozo.",
+       "note": "أَنْقَذُوا (anqazū) = rescataron, de أَنْقَذَ (rescatar). مِنَ (mina) = de/desde. La raíz ن-ق-ذ (n-q-z) implica 'salvación'."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

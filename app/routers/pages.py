@@ -1,149 +1,176 @@
-from fastapi import APIRouter, Request, HTTPException, Form
+from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+import json
+from pathlib import Path
+
+from app.icons import PATHS as ICON_PATHS, icon
+from app.auth import verify_credentials, create_session_token, COOKIE_NAME, MAX_AGE
+from app.lextor import languages
+from app.lextor.guide import build_guide, example_document
+from app.mcp.http import public_base_url
+from app.mcp.tools import TOOLS
+from app.services import text_service as ts
+from app.services import token_service
+from app.services.document_service import list_docs
 from app.services.project_service import list_projects, load_metadata, SUPPORTED_LANGUAGES
-from app.services.document_service import list_docs, list_translates
-from app.services.xlan_service import load_xlan
-from app.auth import verify_credentials, create_session_token, COOKIE_NAME
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+templates.env.globals["lang_name"] = languages.name
+templates.env.globals["lang_native"] = lambda c: languages.get(c).native
+templates.env.globals["icon"] = icon
+templates.env.globals["icons_json"] = json.dumps(ICON_PATHS)
+templates.env.globals["lang_rtl"] = lambda c: languages.get(c).rtl
+
+
+def _ctx(request: Request, **kw) -> dict:
+    return {"request": request, "current_user": request.state.current_user,
+            "bp": request.state.base_path or "", "languages": SUPPORTED_LANGUAGES,
+            "lang_list": languages.ui_list(), **kw}
+
+
+def render(request: Request, name: str, ctx: dict, status_code: int = 200):
+    return templates.TemplateResponse(request, name, ctx, status_code=status_code)
+
+
+def _redirect(request: Request, path: str) -> RedirectResponse:
+    return RedirectResponse((request.state.base_path or "") + path, status_code=302)
 
 
 @router.get("/", response_class=HTMLResponse)
 async def landing(request: Request):
-    return templates.TemplateResponse("landing.html", {
-        "request": request,
-        "current_user": request.state.current_user,
-    })
+    ja = json.loads((Path(__file__).resolve().parent.parent / "lextor" / "examples" / "ja-es.json").read_text("utf-8"))
+    return render(request, "landing.html", _ctx(request, demo_docs={"fr": example_document(), "ja": ja}))
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(request: Request, next: str = ""):
     if request.state.current_user:
-        return RedirectResponse("/home", status_code=302)
-    return templates.TemplateResponse("login.html", {"request": request, "error": None})
+        return _redirect(request, next if next.startswith("/") else "/library")
+    return render(request, "login.html", _ctx(request, error=None, next=next))
 
 
 @router.post("/login")
-async def login_submit(request: Request, username: str = Form(...), password: str = Form(...)):
+async def login_submit(request: Request, username: str = Form(...), password: str = Form(...), next: str = Form("")):
     if verify_credentials(username, password):
-        response = RedirectResponse("/home", status_code=302)
-        token = create_session_token(username)
-        response.set_cookie(COOKIE_NAME, token, max_age=60*60*24*30, httponly=True, samesite="lax")
+        response = _redirect(request, next if next.startswith("/") and not next.startswith("//") else "/library")
+        response.set_cookie(COOKIE_NAME, create_session_token(username), max_age=MAX_AGE, httponly=True,
+                            samesite="lax", secure=request.url.scheme == "https")
         return response
-    return templates.TemplateResponse("login.html", {
-        "request": request,
-        "error": "Usuario o contraseña incorrectos.",
-    })
+    return render(request, "login.html", _ctx(request, error="Usuario o contraseña incorrectos.",
+                                                         next=next), status_code=401)
 
 
 @router.get("/logout")
 async def logout(request: Request):
-    response = RedirectResponse("/", status_code=302)
+    response = _redirect(request, "/")
     response.delete_cookie(COOKIE_NAME)
     return response
 
 
-@router.get("/home", response_class=HTMLResponse)
-async def home(request: Request):
-    user_dir = request.state.user_dir
-    projects = list_projects(user_dir)
-    return templates.TemplateResponse("home.html", {
-        "request": request,
-        "projects": projects,
-        "languages": SUPPORTED_LANGUAGES,
-        "current_user": request.state.current_user,
-    })
+@router.get("/home")
+async def home_legacy(request: Request):
+    return _redirect(request, "/library")
+
+
+@router.get("/library", response_class=HTMLResponse)
+async def library(request: Request):
+    projects = list_projects(request.state.user_dir)
+    return render(request, "library.html", _ctx(request, projects=projects))
 
 
 @router.get("/project/{project_id}", response_class=HTMLResponse)
 async def project_view(request: Request, project_id: str):
-    user_dir = request.state.user_dir
-    meta = load_metadata(project_id, user_dir)
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
     if not meta:
         raise HTTPException(status_code=404, detail="Proyecto no encontrado")
-
-    docs_meta = list_docs(project_id, user_dir)
-    translates_meta = list_translates(project_id, user_dir)
-
-    return templates.TemplateResponse("project.html", {
-        "request": request,
-        "project": meta,
-        "docs_meta": docs_meta,
-        "translates_meta": translates_meta,
-        "languages": SUPPORTED_LANGUAGES,
-        "current_user": request.state.current_user,
-    })
+    return render(request, "project.html", _ctx(
+        request, project=meta, texts_meta=ts.list_texts(project_id, ud), docs_meta=list_docs(project_id, ud)))
 
 
-@router.get("/viewer/{project_id}/doc/{filename:path}", response_class=HTMLResponse)
+@router.get("/read/{project_id}/{filename}", response_class=HTMLResponse)
+async def read_text(request: Request, project_id: str, filename: str):
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
+    doc = ts.load_text(project_id, filename, ud) if meta else None
+    if not doc:
+        raise HTTPException(status_code=404, detail="Texto no encontrado")
+    tmeta = ts.list_texts(project_id, ud)
+    entry = tmeta["files"].get(filename, {})
+    siblings = [{"file": f, "title": e.get("display_name", f)} for f, e in tmeta["files"].items()]
+    return render(request, "reader.html", _ctx(
+        request, project=meta, doc=doc, filename=filename, entry=entry, siblings=siblings,
+        editable=bool(request.state.current_user), share_id=entry.get("share_id"), shared=False))
+
+
+@router.get("/t/{share_id}", response_class=HTMLResponse)
+async def shared_text(request: Request, share_id: str):
+    found = ts.load_shared(share_id)
+    if not found:
+        raise HTTPException(status_code=404, detail="Texto no encontrado")
+    doc, entry = found
+    return render(request, "reader.html", _ctx(
+        request, project=None, doc=doc, filename=None, entry={}, siblings=[], editable=False,
+        share_id=share_id, shared=True))
+
+
+@router.get("/embed/{share_id}", response_class=HTMLResponse)
+async def embed_text(request: Request, share_id: str):
+    found = ts.load_shared(share_id)
+    if not found:
+        raise HTTPException(status_code=404, detail="Texto no encontrado")
+    resp = render(request, "embed.html", _ctx(request, doc=found[0], share_id=share_id))
+    resp.headers["Content-Security-Policy"] = "frame-ancestors *"
+    return resp
+
+
+@router.get("/doc/{project_id}/{filename}", response_class=HTMLResponse)
 async def view_doc(request: Request, project_id: str, filename: str):
-    user_dir = request.state.user_dir
-    meta = load_metadata(project_id, user_dir)
+    ud = request.state.user_dir
+    meta = load_metadata(project_id, ud)
     if not meta:
         raise HTTPException(status_code=404, detail="Proyecto no encontrado")
-
-    docs_meta = list_docs(project_id, user_dir)
-    translates_meta = list_translates(project_id, user_dir)
-
-    file_info = docs_meta.get("files", {}).get(filename)
-    if not file_info:
+    info = list_docs(project_id, ud)["files"].get(filename)
+    if not info:
         raise HTTPException(status_code=404, detail="Documento no encontrado")
-
-    doc_content = ""
+    content = ""
     if filename.lower().endswith((".txt", ".md")):
         from app.services.document_service import get_doc_path
-        p = get_doc_path(project_id, filename, user_dir)
+        p = get_doc_path(project_id, filename, ud)
         if p:
-            with open(p, "r", encoding="utf-8", errors="replace") as f:
-                doc_content = f.read()
-
-    return templates.TemplateResponse("viewer.html", {
-        "request": request,
-        "project": meta,
-        "docs_meta": docs_meta,
-        "translates_meta": translates_meta,
-        "languages": SUPPORTED_LANGUAGES,
-        "view_type": "doc",
-        "filename": filename,
-        "file_info": file_info,
-        "doc_content": doc_content,
-        "xlan_data": None,
-        "xlan_parts": [],
-        "current_user": request.state.current_user,
-    })
+            content = p.read_text(encoding="utf-8", errors="replace")
+    return render(request, "doc.html", _ctx(request, project=meta, filename=filename, info=info,
+                                                       content=content))
 
 
-@router.get("/viewer/{project_id}/xlan/{filename:path}", response_class=HTMLResponse)
-async def view_xlan(request: Request, project_id: str, filename: str):
-    user_dir = request.state.user_dir
-    meta = load_metadata(project_id, user_dir)
-    if not meta:
-        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+# Legacy URLs from the previous version
+@router.get("/viewer/{project_id}/xlan/{filename}")
+async def legacy_viewer_xlan(request: Request, project_id: str, filename: str):
+    if filename.endswith(".xlan"):
+        filename = filename[:-5] + ".lextor"
+    return _redirect(request, f"/read/{project_id}/{filename}")
 
-    docs_meta = list_docs(project_id, user_dir)
-    translates_meta = list_translates(project_id, user_dir)
 
-    xlan_data = load_xlan(project_id, filename, user_dir)
-    if not xlan_data:
-        raise HTTPException(status_code=404, detail="Archivo no encontrado")
+@router.get("/viewer/{project_id}/doc/{filename}")
+async def legacy_viewer_doc(request: Request, project_id: str, filename: str):
+    return _redirect(request, f"/doc/{project_id}/{filename}")
 
-    file_info = translates_meta.get("files", {}).get(filename, {})
-    xlan_parts = file_info.get("parts", [filename])
 
-    return templates.TemplateResponse("viewer.html", {
-        "request": request,
-        "project": meta,
-        "docs_meta": docs_meta,
-        "translates_meta": translates_meta,
-        "languages": SUPPORTED_LANGUAGES,
-        "view_type": "xlan",
-        "filename": filename,
-        "file_info": file_info,
-        "doc_content": "",
-        "xlan_data": xlan_data,
-        "xlan_parts": xlan_parts,
-        "current_user": request.state.current_user,
-    })
+@router.get("/connect", response_class=HTMLResponse)
+async def connect(request: Request):
+    base = public_base_url(request)
+    token = None
+    if request.state.current_user:
+        token = token_service.get_or_create(request.state.user_dir)
+    return render(request, "connect.html", _ctx(
+        request, base_url=base, token=token, tools=TOOLS,
+        mcp_url=f"{base}/mcp/u/{token['token']}" if token else f"{base}/mcp", anon_url=f"{base}/mcp"))
+
+
+@router.get("/format", response_class=HTMLResponse)
+async def format_page(request: Request):
+    return render(request, "format.html", _ctx(
+        request, guide_md=build_guide(), example_json=json.dumps(example_document(), ensure_ascii=False, indent=1)))

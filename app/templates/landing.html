@@ -1,168 +1,252 @@
 {% extends "base.html" %}
+{% block title %}Lextor{% endblock %}
+{% block title_suffix %} · Lee en cualquier idioma. Entiende cada palabra.{% endblock %}
 
-{% block title %}Bienvenido{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ bp }}/static/css/reader.css?v=3" />
+<style>
+  .hero { position: relative; padding: clamp(48px, 8vw, 104px) 0 40px; overflow: hidden; isolation: isolate; }
+  .blob { position: absolute; z-index: -1; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; }
+  .blob-a { width: 520px; height: 520px; left: -140px; top: -160px; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 60%, transparent), transparent 65%); animation: drift 18s ease-in-out infinite; }
+  .blob-b { width: 460px; height: 460px; right: -120px; top: 40px; background: radial-gradient(circle, color-mix(in srgb, var(--accent-2) 55%, transparent), transparent 65%); animation: drift 22s ease-in-out infinite reverse; }
+  .blob-c { width: 380px; height: 380px; left: 40%; top: 320px; background: radial-gradient(circle, color-mix(in srgb, var(--tr) 40%, transparent), transparent 65%); animation: drift 26s ease-in-out infinite; }
+  @keyframes drift { 0%,100% { transform: translate(0,0) scale(1) } 33% { transform: translate(40px,30px) scale(1.08) } 66% { transform: translate(-30px,20px) scale(.95) } }
+  .hero-copy { text-align: center; max-width: 900px; margin: 0 auto; }
+  .hero-pill { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-1); font: 600 14px/1 var(--font-ui); color: var(--muted); margin-bottom: 28px; }
+  .hero-pill b { background: var(--accent); color: #fff; border-radius: 999px; padding: 6px 10px; font-size: 12px; letter-spacing: .04em; }
+  .hero .lead { margin: 26px auto 0; max-width: 680px; }
+  .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 34px; }
+  .word-swap { display: inline-block; position: relative; min-width: 4ch; }
+  .word-swap span { display: inline-block; animation: wordIn .6s var(--ease) both; }
+  @keyframes wordIn { from { opacity: 0; transform: translateY(.4em) rotateX(40deg); filter: blur(4px); } }
+
+  .demo { margin: 64px auto 0; max-width: 1040px; }
+  .demo-window { border-radius: 26px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-3); overflow: hidden; }
+  .demo-bar { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); flex-wrap: wrap; }
+  .demo-dots { display: flex; gap: 6px; margin-right: 6px; }
+  .demo-dots i { width: 11px; height: 11px; border-radius: 50%; background: var(--line-strong); display: block; }
+  .demo-dots i:nth-child(1) { background: #ff6159; } .demo-dots i:nth-child(2) { background: #ffbd2e; } .demo-dots i:nth-child(3) { background: #28c941; }
+  .demo-body { padding: clamp(24px, 4vw, 48px) clamp(18px, 4vw, 56px) clamp(32px, 4vw, 56px); background: var(--lx-bg); min-height: 420px; }
+  .demo-hint { text-align: center; margin-top: 18px; color: var(--muted); font-size: 14.5px; display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .demo-hint svg { width: 18px; height: 18px; color: var(--accent); }
+  .demo-lang .seg > button { min-height: 34px; padding: 0 12px; font-size: 13.5px; }
+  @media (max-width: 640px) { .demo-dots { display: none; } .demo-bar .seg > button span { display: none; } }
+
+  .clients { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; margin-top: 56px; color: var(--muted); font: 600 15px/1 var(--font-ui); }
+  .clients span { display: inline-flex; align-items: center; gap: 9px; }
+  .mono { width: 28px; height: 28px; border-radius: 9px; display: inline-grid; place-items: center; font: 700 13px/1 var(--font-ui); color: #fff; }
+
+  .steps { counter-reset: s; }
+  .step { position: relative; padding: 28px; }
+  .step-n { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font: 700 18px/1 var(--font-display); color: var(--accent-text); background: var(--accent-soft); margin-bottom: 18px; }
+  .step p { color: var(--muted); margin: 8px 0 0; }
+  .chat { margin-top: 20px; display: grid; gap: 10px; font-size: 14.5px; }
+  .bubble { padding: 12px 14px; border-radius: 16px; max-width: 92%; line-height: 1.45; }
+  .bubble.me { margin-left: auto; background: var(--accent); color: #fff; border-bottom-right-radius: 6px; }
+  .bubble.ai { background: var(--surface-2); border-bottom-left-radius: 6px; }
+  .tool { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px dashed var(--line-strong); font: 500 13.5px/1.3 var(--font-mono); color: var(--muted); }
+  .tool svg { width: 16px; height: 16px; color: var(--ok); }
+  .mini-read { margin-top: 20px; font: 400 19px/1.9 var(--font-read); }
+  .mini-read .c { border-radius: 5px; padding: 1px 2px; transition: background .2s ease; }
+  .mini-read .c.on { background: var(--lx-hl); color: var(--lx-hl-text); }
+  .mini-card { margin-top: 8px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; box-shadow: var(--sh-2); background: var(--surface); font-size: 14.5px; }
+  .mini-card b { color: var(--tr); font-size: 17px; }
+
+  .features { display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .feature { padding: 26px; }
+  .feature .fi { width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; margin-bottom: 16px; }
+  .feature .fi svg { width: 24px; height: 24px; }
+  .feature p { color: var(--muted); margin: 8px 0 0; font-size: 15.5px; }
+  .fi-a { background: var(--accent-soft); color: var(--accent-text); }
+  .fi-t { background: var(--tr-soft); color: var(--tr); }
+  .fi-y { background: var(--accent-2-soft); color: color-mix(in srgb, var(--accent-2) 60%, var(--text)); }
+  @media (max-width: 900px) { .features { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
+
+  .marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .marquee-track { display: flex; gap: 14px; width: max-content; animation: marquee 50s linear infinite; padding: 6px 0; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track span { padding: 12px 20px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font: 500 18px/1 var(--font-read); white-space: nowrap; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  .cta-band { position: relative; overflow: hidden; border-radius: 32px; padding: clamp(40px, 6vw, 72px); text-align: center; color: #fff;
+    background: radial-gradient(120% 140% at 0% 0%, #8b7dff 0%, #5b4cf0 45%, #3a2bc4 100%); box-shadow: var(--sh-3); isolation: isolate; }
+  .cta-band::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(40% 60% at 90% 100%, rgba(255,185,56,.55), transparent 70%); }
+  .cta-band .lead { color: rgba(255,255,255,.85); margin: 16px auto 0; max-width: 560px; }
+  .cta-band .btn { --b-bg: #fff; --b-fg: #2a1fa8; --b-bd: #fff; }
+  .cta-band .btn:hover { color: #2a1fa8; transform: translateY(-2px); }
+  .cta-band .btn-ghost-light { --b-bg: transparent; --b-fg: #fff; --b-bd: rgba(255,255,255,.4); }
+  .cta-band .btn-ghost-light:hover { color: #fff; border-color: #fff; }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="min-h-screen flex flex-col">
-
-  <!-- Nav -->
-  <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-ink-100">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2">
-        <img src="{{ request.state.base_path|default('') }}/static/logo.svg" alt="Lextor" class="h-8 w-8" />
-        <span class="text-2xl font-bold tracking-tight text-ink-900">Lextor</span>
-      </a>
-      <div class="flex items-center gap-3">
-        <a href="/login" class="px-5 py-2 border border-ink-200 text-ink-600 text-sm font-medium rounded-full hover:border-ink-400 hover:text-ink-900 transition-colors">
-          Log in
-        </a>
-        <a href="/home" class="px-5 py-2 bg-ink-900 text-white text-sm font-medium rounded-full hover:bg-ink-700 transition-colors">
-          Haz una prueba →
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="flex-1 flex flex-col items-center justify-center pt-32 pb-24 px-6 text-center">
-    <div class="max-w-3xl mx-auto">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-ink-50 border border-ink-100 rounded-full text-xs text-ink-500 font-medium mb-8">
-        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-        Traducción de textos · Lectura bilingüe simultánea · A tu ritmo
+<main id="main">
+  <section class="hero">
+    <div class="blob blob-a"></div><div class="blob blob-b"></div><div class="blob blob-c"></div>
+    <div class="container">
+      <div class="hero-copy">
+        <div class="hero-pill pop-in"><b>NUEVO</b> Crea textos desde Claude, ChatGPT o Gemini vía MCP</div>
+        <h1 class="display pop-in" style="--d:.05s">Lee en <span class="word-swap" id="swap"><span class="text-gradient">cualquier idioma</span></span>.<br>Entiende cada palabra.</h1>
+        <p class="lead pop-in" style="--d:.12s">Pide a tu IA que convierta cualquier texto —un artículo, un cuento, la foto de una página— en una <b>lectura bilingüe interactiva</b>: traducción natural de cada frase, glosa de cada fragmento y notas que de verdad enseñan.</p>
+        <div class="hero-ctas pop-in" style="--d:.2s">
+          <a class="btn btn-primary btn-lg" href="{{ bp }}/connect">{{ icon('plug') }}Conecta tu IA</a>
+          <a class="btn btn-lg" href="#demo">{{ icon('book') }}Probar el lector</a>
+        </div>
       </div>
 
-      <h1 class="text-5xl md:text-7xl font-bold leading-tight text-ink-950 mb-6">
-        Traduce textos y<br />
-        <span class="text-ink-400">léelos en dos idiomas</span>
-      </h1>
-
-      <p class="text-lg md:text-xl text-ink-500 leading-relaxed mb-10 max-w-2xl mx-auto">
-        Pega cualquier texto y obtén una traducción segmentada con notas gramaticales.
-        Lee en dos idiomas a la vez: pasa el ratón sobre cada fragmento para ver su traducción
-        y explicación, o alterna entre la vista bilingüe y la lectura continua.
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="/home" class="px-8 py-3.5 bg-ink-900 text-white font-semibold rounded-full text-base hover:bg-ink-700 transition-all hover:scale-105 shadow-lg shadow-ink-900/10">
-          Empezar a traducir
-        </a>
-        <a href="#how" class="px-8 py-3.5 border border-ink-200 text-ink-600 font-semibold rounded-full text-base hover:border-ink-400 hover:text-ink-900 transition-all">
-          Cómo funciona
-        </a>
-      </div>
-    </div>
-
-    <!-- Floating demo card — bilingual side by side -->
-    <div class="mt-20 max-w-3xl w-full mx-auto">
-      <div class="bg-ink-50 rounded-2xl border border-ink-100 p-8 text-left shadow-xl shadow-ink-100/50">
-        <p class="text-xs font-sans font-medium text-ink-400 uppercase tracking-widest mb-5">Vista previa — lectura bilingüe simultánea</p>
-        <div class="grid grid-cols-2 gap-6">
-          <!-- Original column -->
-          <div>
-            <p class="text-xs font-sans font-semibold text-blue-500 uppercase tracking-widest mb-3">🇬🇧 Texto original</p>
-            <div class="font-serif text-lg leading-loose text-ink-700">
-              <p>
-                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="Era — pretérito imperfecto de 'to be'.">It was</span>
-                <span> </span>
-                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="una noche — sustantivo.">a night</span>
-                <span> </span>
-                <span class="xlan-demo-seg xlan-demo-active px-0.5 rounded cursor-default" data-tip="oscura y tormentosa — adjetivos coordinados.">dark and stormy</span>
-                <span> when </span>
-                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="el pequeño príncipe — sujeto.">the little prince</span>
-                <span> </span>
-                <span class="xlan-demo-seg px-0.5 rounded cursor-default" data-tip="llegó — pasado simple de 'to arrive'.">arrived</span>
-                <span> on my planet.</span>
-              </p>
+      <div class="demo pop-in" id="demo" style="--d:.3s">
+        <div class="demo-window">
+          <div class="demo-bar">
+            <div class="demo-dots"><i></i><i></i><i></i></div>
+            <div class="seg demo-lang" role="group" aria-label="Idioma de la demo">
+              <button type="button" data-demo="fr" aria-pressed="true">Français</button>
+              <button type="button" data-demo="ja" aria-pressed="false">日本語</button>
+            </div>
+            <div class="spacer"></div>
+            <div class="seg" role="group" aria-label="Modo de lectura" id="demo-modes">
+              <button type="button" data-mode="read" aria-pressed="true">{{ icon('book') }}<span>Lectura</span></button>
+              <button type="button" data-mode="parallel" aria-pressed="false">{{ icon('columns') }}<span>Paralelo</span></button>
+              <button type="button" data-mode="study" aria-pressed="false">{{ icon('cards') }}<span>Estudio</span></button>
             </div>
           </div>
-          <!-- Translation column -->
-          <div>
-            <p class="text-xs font-sans font-semibold text-amber-600 uppercase tracking-widest mb-3">🇪🇸 Traducción</p>
-            <div class="font-serif text-lg leading-loose text-ink-500">
-              <p>Era una noche oscura y tormentosa cuando el pequeño príncipe llegó a mi planeta.</p>
-            </div>
+          <div class="demo-body"><div id="demo-reader"></div></div>
+        </div>
+        <p class="demo-hint">{{ icon('sparkles') }}<span id="demo-hint-text">Pasa el ratón por cualquier fragmento. Haz clic para fijar la ficha y usa ← → para recorrer el texto.</span></p>
+      </div>
+
+      <div class="clients reveal">
+        <span><i class="mono" style="background:#d97757">C</i>Claude</span>
+        <span><i class="mono" style="background:#10a37f">G</i>ChatGPT</span>
+        <span><i class="mono" style="background:#4285f4">G</i>Gemini</span>
+        <span><i class="mono" style="background:#18181b">⌘</i>Cursor</span>
+        <span><i class="mono" style="background:#007acc">VS</i>VS Code</span>
+        <span><i class="mono" style="background:#fa520f">M</i>Le Chat</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="como">
+    <div class="container">
+      <div style="text-align:center;max-width:720px;margin:0 auto 48px" class="reveal">
+        <span class="eyebrow">{{ icon('zap') }} Cómo funciona</span>
+        <h2 class="h1" style="margin-top:14px">Tu IA prepara el texto. Tú solo lees.</h2>
+        <p class="lead" style="margin-top:14px">Lextor se conecta a tu asistente como herramienta (MCP). El asistente sabe exactamente qué formato producir, Lextor lo comprueba con una batería de tests y te lo enseña.</p>
+      </div>
+      <div class="grid-3 steps">
+        <div class="card step reveal" style="--d:0s">
+          <div class="step-n">1</div>
+          <h3 class="h3">Conecta Lextor una vez</h3>
+          <p>Copia tu URL personal y añádela como conector en Claude, ChatGPT, Gemini u otro asistente compatible con MCP.</p>
+          <div class="chat">
+            <div class="tool">{{ icon('plug') }} Lextor · conectado</div>
           </div>
         </div>
-        <!-- Tooltip demo -->
-        <div class="mt-5 inline-flex items-start gap-3 bg-white border border-ink-200 rounded-xl px-4 py-3 text-sm shadow-md">
-          <div>
-            <div class="font-sans font-semibold text-ink-900 mb-0.5">dark and stormy</div>
-            <div class="text-ink-500 font-sans">→ <span class="text-ink-800">oscura y tormentosa</span></div>
-            <div class="text-xs text-ink-400 font-sans mt-1">Dos adjetivos coordinados. En inglés el adjetivo precede siempre al sustantivo: <em>a dark and stormy night</em>.</div>
+        <div class="card step reveal" style="--d:.08s">
+          <div class="step-n">2</div>
+          <h3 class="h3">Pide lo que quieras leer</h3>
+          <p>Pega un texto, sube una foto o pide una historia a tu nivel.</p>
+          <div class="chat">
+            <div class="bubble me">Convierte este cuento en una lectura de Lextor, nivel B1 📖</div>
+            <div class="tool">{{ icon('check') }} lextor_create_text · 11/11 tests</div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section id="how" class="py-24 px-6 bg-ink-50 border-t border-ink-100">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-center text-ink-900 mb-4">Traducción y lectura en dos idiomas</h2>
-      <p class="text-center text-ink-500 mb-16 text-lg">Todo lo que necesitas para leer textos traducidos de forma interactiva.</p>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5 text-2xl">🔄</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">Traducción automática</h3>
-          <p class="text-ink-500 leading-relaxed">Pega un texto en cualquier idioma y la IA lo segmenta, traduce y anota automáticamente para que puedas leerlo de forma bilingüe.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-5 text-2xl">📖</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">Lectura bilingüe simultánea</h3>
-          <p class="text-ink-500 leading-relaxed">Lee el texto original y su traducción al mismo tiempo. Pasa el ratón sobre cualquier segmento para ver la traducción y una explicación gramatical.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm">
-          <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-5 text-2xl">📚</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">Proyectos organizados</h3>
-          <p class="text-ink-500 leading-relaxed">Organiza tus textos traducidos en proyectos por idioma. Añade documentación de referencia, etiquetas y categorías.</p>
-        </div>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-8 mt-8">
-        <div class="bg-white rounded-2xl p-8 border border-ink-100 shadow-sm md:col-span-2 text-center">
-          <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5 text-2xl mx-auto">🌍</div>
-          <h3 class="font-semibold text-ink-900 text-xl mb-2">10 idiomas soportados</h3>
-          <p class="text-ink-500 leading-relaxed max-w-xl mx-auto">Traduce entre español, inglés, alemán, francés, italiano, portugués, ruso, chino, japonés y árabe en cualquier dirección.</p>
+        <div class="card step reveal" style="--d:.16s">
+          <div class="step-n">3</div>
+          <h3 class="h3">Lee con todo el contexto</h3>
+          <p>En el propio chat (si tu app lo permite) y siempre en tu biblioteca.</p>
+          <div class="mini-read" id="mini-read"><span class="c" data-g="ella" data-n="El pronombre sujeto es obligatorio en francés.">Elle</span> <span class="c on" data-g="nunca toma" data-n="«ne… jamais» rodea al verbo conjugado.">ne prend jamais</span> <span class="c" data-g="azúcar" data-n="Tras negación, «du» pasa a «de».">de sucre.</span></div>
+          <div class="mini-card" aria-live="polite"><b id="mini-g">nunca toma</b><div class="muted small" id="mini-n">«ne… jamais» rodea al verbo conjugado.</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="py-24 px-6 text-center">
-    <div class="max-w-xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-ink-900 mb-4">¿Listo para traducir y leer?</h2>
-      <p class="text-ink-500 text-lg mb-8">Pega un texto y empieza a leerlo en dos idiomas.</p>
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="/home" class="inline-block px-10 py-4 bg-ink-900 text-white font-bold rounded-full text-lg hover:bg-ink-700 transition-all hover:scale-105 shadow-xl shadow-ink-900/20">
-          Haz una prueba →
-        </a>
-        <a href="/login" class="inline-block px-10 py-4 border border-ink-200 text-ink-600 font-bold rounded-full text-lg hover:border-ink-400 hover:text-ink-900 transition-all">
-          Log in
-        </a>
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div style="text-align:center;max-width:720px;margin:0 auto 44px" class="reveal">
+        <span class="eyebrow">{{ icon('sparkles') }} Pensado para aprender</span>
+        <h2 class="h1" style="margin-top:14px">Todo lo que necesitas, nada que estorbe</h2>
+      </div>
+      <div class="features">
+        <div class="card feature reveal"><div class="fi fi-a">{{ icon('languages') }}</div><h3 class="h3">Dos traducciones</h3><p>Una traducción natural por frase para leer de corrido, y una glosa en contexto para cada fragmento.</p></div>
+        <div class="card feature reveal" style="--d:.05s"><div class="fi fi-t">{{ icon('wand') }}</div><h3 class="h3">Notas que enseñan</h3><p>Tiempo verbal, caso, falsos amigos, registro, matices culturales. Con lema y etiqueta gramatical.</p></div>
+        <div class="card feature reveal" style="--d:.1s"><div class="fi fi-y">{{ icon('columns') }}</div><h3 class="h3">Tres formas de leer</h3><p>Lectura con fichas al pasar el ratón, columnas paralelas alineadas y tarjetas de estudio.</p></div>
+        <div class="card feature reveal"><div class="fi fi-a">{{ icon('type') }}</div><h3 class="h3">Furigana y transliteración</h3><p>Lectura sobre el texto para japonés, chino, ruso, árabe, griego, coreano…</p></div>
+        <div class="card feature reveal" style="--d:.05s"><div class="fi fi-t">{{ icon('headphones') }}</div><h3 class="h3">Escucha cada frase</h3><p>Pronunciación con la voz de tu dispositivo, fragmento a fragmento o frase completa.</p></div>
+        <div class="card feature reveal" style="--d:.1s"><div class="fi fi-y">{{ icon('highlighter') }}</div><h3 class="h3">Tus marcas</h3><p>Resalta en colores y añade tus propias notas. Organiza en carpetas y etiquetas.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="py-8 px-6 border-t border-ink-100 text-center text-sm text-ink-400">
-    <span class="font-bold text-ink-600">Lextor</span> — plataforma de traducción y lectura bilingüe
-  </footer>
+  <section class="section-sm" style="padding-top:0">
+    <div class="marquee reveal" aria-hidden="true">
+      <div class="marquee-track">
+        {% for w in ['Français','日本語','Deutsch','Русский','中文','Italiano','العربية','Português','한국어','Ελληνικά','English','Español','Nederlands','Türkçe','हिन्दी','Polski','Català','עברית','Svenska','Tiếng Việt'] * 2 %}<span>{{ w }}</span>{% endfor %}
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2 class="h1" style="color:#fff">Tu próxima lectura, a un mensaje de distancia</h2>
+        <p class="lead">Conecta Lextor a tu asistente en dos minutos. Sin claves de API, sin copiar prompts.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-lg" href="{{ bp }}/connect">{{ icon('plug') }}Conectar mi IA</a>
+          <a class="btn btn-lg btn-ghost-light" href="{{ bp }}/library">{{ icon('library') }}Ver textos de ejemplo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
 
+{% block scripts %}
+<script src="{{ bp }}/static/js/reader.js?v=3"></script>
 <script>
-  document.querySelectorAll('.xlan-demo-seg').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      el.classList.add('bg-amber-100', 'text-amber-900');
-    });
-    el.addEventListener('mouseleave', () => {
-      if (!el.classList.contains('xlan-demo-active')) {
-        el.classList.remove('bg-amber-100', 'text-amber-900');
-      }
-    });
-  });
-  document.querySelector('.xlan-demo-active')?.classList.add('bg-amber-100', 'text-amber-900');
+(function () {
+  "use strict";
+  const DOCS = {{ demo_docs|tojson }};
+  const host = document.getElementById("demo-reader");
+  let reader = null, mode = "read";
+  function mount(lang) {
+    if (reader) reader.destroy();
+    host.innerHTML = "";
+    reader = LextorReader.mount(host, DOCS[lang], { storageKey: "lextor.demo", mode, narrowAt: 720, onModeChange: sync });
+    document.querySelectorAll("[data-demo]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.demo === lang)));
+    sync(reader.mode);
+  }
+  function sync(m) {
+    mode = m;
+    document.querySelectorAll("#demo-modes [data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
+  }
+  document.querySelectorAll("[data-demo]").forEach((b) => b.addEventListener("click", () => mount(b.dataset.demo)));
+  document.querySelectorAll("#demo-modes [data-mode]").forEach((b) => b.addEventListener("click", () => reader.setMode(b.dataset.mode)));
+  mount("fr");
+  if (matchMedia("(hover: none)").matches) document.getElementById("demo-hint-text").textContent = "Toca cualquier fragmento para ver su traducción y notas.";
+
+  // rotating hero word
+  const words = ["cualquier idioma", "francés", "japonés", "alemán", "ruso", "chino", "italiano", "árabe"];
+  const swap = document.getElementById("swap");
+  let i = 0;
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    setInterval(() => {
+      i = (i + 1) % words.length;
+      swap.innerHTML = `<span class="text-gradient">${words[i]}</span>`;
+    }, 2200);
+  }
+
+  // mini demo in step 3
+  const chunks = document.querySelectorAll("#mini-read .c");
+  let k = 1;
+  setInterval(() => {
+    chunks.forEach((c) => c.classList.remove("on"));
+    k = (k + 1) % chunks.length;
+    chunks[k].classList.add("on");
+    document.getElementById("mini-g").textContent = chunks[k].dataset.g;
+    document.getElementById("mini-n").textContent = chunks[k].dataset.n;
+  }, 1800);
+})();
 </script>
 {% endblock %}

@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+{% set m = doc.meta %}
+{% block title %}{{ entry.display_name or m.title }}{% endblock %}
+{% block description %}{{ m.summary or ('Lectura bilingüe interactiva: ' ~ lang_name(m.text_lang) ~ ' con notas en ' ~ lang_name(m.notes_lang)|lower) }}{% endblock %}
+{% block body_class %}is-reader{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ bp }}/static/css/reader.css?v=3" />
+<style>
+  body.is-reader { background: var(--lx-bg); }
+  .rd-top {
+    position: sticky; top: 0; z-index: 40; height: 64px;
+    background: color-mix(in srgb, var(--lx-bg) 86%, transparent);
+    backdrop-filter: saturate(1.5) blur(14px); -webkit-backdrop-filter: saturate(1.5) blur(14px);
+    border-bottom: 1px solid var(--line);
+    transition: transform .3s var(--ease);
+  }
+  .rd-top.is-hidden { transform: translateY(-100%); }
+  .rd-top-inner { height: 100%; display: flex; align-items: center; gap: 8px; padding: 0 12px; max-width: 1400px; margin: 0 auto; }
+  .rd-title { min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+  .rd-title b { font: 650 15.5px/1.25 var(--font-ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rd-title span { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rd-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; transform-origin: left; transform: scaleX(0);
+    background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  #reader { padding: clamp(28px, 5vw, 64px) clamp(18px, 4vw, 40px) 140px; min-height: calc(100vh - 64px); background: var(--lx-bg); transition: background-color .3s ease; }
+  .rd-modes-top { margin: 0 auto; }
+  .rd-bottom {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--lx-bg) 90%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line); transition: transform .3s var(--ease); display: none;
+  }
+  .rd-bottom.is-hidden { transform: translateY(110%); }
+  .rd-bottom .seg { display: flex; width: 100%; }
+  .rd-bottom .seg > button { flex: 1; justify-content: center; min-height: 46px; font-size: 14px; }
+  @media (max-width: 760px) {
+    .rd-modes-top { display: none !important; }
+    .rd-bottom { display: block; }
+    .rd-top { height: 58px; }
+  }
+  /* settings panel */
+  .rd-settings {
+    position: fixed; z-index: 80; top: 76px; right: 16px; width: 360px; max-width: calc(100vw - 32px);
+    background: var(--bg-elev); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--sh-3);
+    padding: 18px 18px 14px; opacity: 0; transform: translateY(-8px) scale(.98); pointer-events: none;
+    transition: opacity .18s ease, transform .22s var(--ease); max-height: calc(100vh - 100px); overflow-y: auto;
+  }
+  .rd-settings.is-open { opacity: 1; transform: none; pointer-events: auto; }
+  .rd-settings h3 { margin: 0 0 4px; font: 650 16px/1.3 var(--font-ui); }
+  .rd-set-row { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .rd-set-row:last-of-type { border-bottom: 0; }
+  .rd-set-label { font: 600 13px/1 var(--font-ui); color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; }
+  .rd-set-row .seg { display: flex; width: 100%; }
+  .rd-set-row .seg > button { flex: 1; justify-content: center; padding: 0 8px; font-size: 14px; }
+  .rd-size { display: flex; align-items: center; gap: 10px; }
+  .rd-size .btn { flex: none; }
+  .rd-scrim { position: fixed; inset: 0; z-index: 79; background: rgba(10,10,20,.35); display: none; }
+  @media (max-width: 640px) {
+    .rd-settings { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-width: 100%; border-radius: 24px 24px 0 0; transform: translateY(100%);
+      padding-bottom: calc(14px + env(safe-area-inset-bottom)); max-height: 80vh; }
+    .rd-settings.is-open { transform: none; }
+    .rd-settings.is-open + .rd-scrim { display: block; }
+  }
+  /* end-of-text navigation */
+  .rd-end { max-width: 40em; margin: 64px auto 0; padding-top: 28px; border-top: 1px solid var(--line); display: grid; gap: 12px; grid-template-columns: 1fr 1fr; font-family: var(--font-ui); }
+  .rd-end a { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); text-decoration: none; color: var(--text); transition: border-color .15s ease, transform .2s var(--ease); }
+  .rd-end a:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .rd-end small { color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .rd-end .next { text-align: right; grid-column: 2; }
+  .rd-cta { max-width: 40em; margin: 56px auto 0; text-align: center; font-family: var(--font-ui); }
+  .shortcut-list { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; margin: 0; }
+  .shortcut-list dd { margin: 0; color: var(--muted); }
+  .rd-first-hint {
+    position: fixed; left: 16px; right: 16px; bottom: 96px; margin: 0 auto; width: fit-content; max-width: 560px; z-index: 45;
+    background: var(--text); color: var(--bg); padding: 8px 8px 8px 16px; border-radius: 999px; font: 550 14.5px/1.35 var(--font-ui);
+    box-shadow: var(--sh-3); animation: popIn .4s var(--ease) both; display: flex; gap: 10px; align-items: center;
+  }
+  .rd-first-hint > svg { width: 18px; height: 18px; flex: none; }
+  .rd-first-hint button { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: none; border: 0; color: inherit; opacity: .75; cursor: pointer; }
+  .rd-first-hint button:hover { opacity: 1; background: color-mix(in srgb, var(--bg) 15%, transparent); }
+  .rd-first-hint button svg { width: 16px; height: 16px; }
+  @media (min-width: 761px) { .rd-first-hint { bottom: 32px; } }
+</style>
+{% endblock %}
+
+{% block nav %}
+<header class="rd-top" id="rd-top">
+  <div class="rd-top-inner">
+    {% if shared %}
+      <a href="{{ bp }}/" class="btn btn-ghost btn-icon" aria-label="Lextor, inicio"><img src="{{ bp }}/static/img/logo.svg" alt="" width="30" height="30" style="width:30px;height:30px" /></a>
+    {% else %}
+      <a href="{{ bp }}/project/{{ project.id }}" class="btn btn-ghost btn-icon" aria-label="Volver al proyecto" title="Volver al proyecto">{{ icon('arrow-left') }}</a>
+    {% endif %}
+    <div class="rd-title">
+      <b>{{ entry.display_name or m.title }}</b>
+      <span>{% if project %}{{ project.name }} · {% endif %}{{ lang_native(m.text_lang) }} → {{ lang_name(m.notes_lang) }}</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="seg rd-modes-top" role="group" aria-label="Modo de lectura" data-modes>
+      <button type="button" data-mode="read" title="Lectura (1)">{{ icon('book') }}<span>Lectura</span></button>
+      <button type="button" data-mode="parallel" title="Paralelo (2)">{{ icon('columns') }}<span>Paralelo</span></button>
+      <button type="button" data-mode="study" title="Estudio (3)">{{ icon('cards') }}<span>Estudio</span></button>
+    </div>
+    <div class="spacer hide-md"></div>
+    <button class="btn btn-ghost btn-icon" type="button" id="rd-settings-btn" aria-label="Ajustes de lectura" aria-expanded="false" title="Ajustes de lectura">{{ icon('type') }}</button>
+    <div class="menu">
+      <button class="btn btn-ghost btn-icon" type="button" data-menu aria-label="Más opciones">{{ icon('more') }}</button>
+      <div class="menu-list">
+        {% if share_id %}
+        <button type="button" id="act-share">{{ icon('link') }}Copiar enlace público</button>
+        <button type="button" id="act-embed">{{ icon('code') }}Copiar código para incrustar</button>
+        {% endif %}
+        {% if project %}
+        <a href="{{ bp }}/api/projects/{{ project.id }}/texts/{{ filename }}?download=1">{{ icon('download') }}Descargar .lextor</a>
+        {% endif %}
+        <button type="button" id="act-full">{{ icon('maximize') }}Pantalla completa</button>
+        <button type="button" data-open="shortcuts">{{ icon('zap') }}Atajos de teclado</button>
+        <div class="menu-sep"></div>
+        <button type="button" data-theme-toggle="label"></button>
+      </div>
+    </div>
+    {% if shared and not current_user %}
+    <a class="btn btn-primary btn-sm hide-sm" href="{{ bp }}/connect">{{ icon('sparkles') }}Crea los tuyos</a>
+    {% endif %}
+  </div>
+  <div class="rd-progress" id="rd-progress"></div>
+</header>
+{% endblock %}
+
+{% block body %}
+<main id="main">
+  <article id="reader" aria-label="Texto bilingüe"></article>
+
+  {% if siblings and siblings|length > 1 and filename %}
+    {% set ns = namespace(prev=None, next=None, found=False) %}
+    {% for s in siblings %}
+      {% if ns.found and not ns.next %}{% set ns.next = s %}{% endif %}
+      {% if s.file == filename %}{% set ns.found = True %}{% elif not ns.found %}{% set ns.prev = s %}{% endif %}
+    {% endfor %}
+    <nav class="rd-end" aria-label="Más textos del proyecto" style="margin-top:-80px;margin-bottom:120px;padding-left:18px;padding-right:18px">
+      {% if ns.prev %}<a href="{{ bp }}/read/{{ project.id }}/{{ ns.prev.file }}"><small>← Anterior</small><span>{{ ns.prev.title }}</span></a>{% endif %}
+      {% if ns.next %}<a class="next" href="{{ bp }}/read/{{ project.id }}/{{ ns.next.file }}"><small>Siguiente →</small><span>{{ ns.next.title }}</span></a>{% endif %}
+    </nav>
+  {% elif shared %}
+    <div class="rd-cta" style="margin-top:-60px;margin-bottom:140px;padding:0 18px">
+      <p class="muted">Este texto se ha creado con <b>Lextor</b>: tu asistente de IA lo traduce y anota, tú lo lees con todo el contexto.</p>
+      <a class="btn btn-primary btn-lg" href="{{ bp }}/connect">{{ icon('plug') }}Conecta Lextor a tu IA</a>
+    </div>
+  {% endif %}
+</main>
+
+<div class="rd-bottom" id="rd-bottom">
+  <div class="seg" role="group" aria-label="Modo de lectura" data-modes>
+    <button type="button" data-mode="read">{{ icon('book') }}<span>Lectura</span></button>
+    <button type="button" data-mode="parallel">{{ icon('columns') }}<span>Paralelo</span></button>
+    <button type="button" data-mode="study">{{ icon('cards') }}<span>Estudio</span></button>
+  </div>
+</div>
+
+<section class="rd-settings" id="rd-settings" role="dialog" aria-label="Ajustes de lectura">
+  <div class="row row-nowrap" style="margin-bottom:6px">
+    <h3>Ajustes de lectura</h3><div class="spacer"></div>
+    <button class="btn btn-ghost btn-icon btn-sm" type="button" id="rd-settings-close" aria-label="Cerrar">{{ icon('x') }}</button>
+  </div>
+  <div class="rd-set-row">
+    <div class="rd-set-label"><span>Tamaño del texto</span><span id="set-size-val">100%</span></div>
+    <div class="rd-size">
+      <button class="btn btn-icon btn-sm" type="button" id="set-smaller" aria-label="Más pequeño">A−</button>
+      <input class="range" type="range" id="set-size" min="0.8" max="1.6" step="0.05" aria-label="Tamaño del texto" />
+      <button class="btn btn-icon btn-sm" type="button" id="set-bigger" aria-label="Más grande" style="font-size:17px">A+</button>
+    </div>
+  </div>
+  <div class="rd-set-row">
+    <div class="rd-set-label">Tipografía</div>
+    <div class="seg" data-set="font">
+      <button type="button" data-v="serif" style="font-family:var(--font-read)">Serif</button>
+      <button type="button" data-v="sans">Sans</button>
+      <button type="button" data-v="legible" title="Atkinson Hyperlegible, pensada para baja visión y dislexia">Legible</button>
+    </div>
+  </div>
+  <div class="rd-set-row">
+    <div class="rd-set-label">Interlineado</div>
+    <div class="seg" data-set="leading">
+      <button type="button" data-v="1.55">Compacto</button>
+      <button type="button" data-v="1.8">Normal</button>
+      <button type="button" data-v="2.1">Amplio</button>
+    </div>
+  </div>
+  <div class="rd-set-row">
+    <div class="rd-set-label">Ancho de columna</div>
+    <div class="seg" data-set="width">
+      <button type="button" data-v="narrow">Estrecho</button>
+      <button type="button" data-v="normal">Normal</button>
+      <button type="button" data-v="wide">Ancho</button>
+    </div>
+  </div>
+  <div class="rd-set-row">
+    <label class="switch"><input type="checkbox" data-toggle="hints" /> Marcar los fragmentos</label>
+    <label class="switch" id="ruby-switch"><input type="checkbox" data-toggle="ruby" /> <span id="ruby-label">Lectura sobre el texto</span></label>
+    <label class="switch"><input type="checkbox" data-toggle="paper" /> Fondo papel</label>
+  </div>
+  <div class="rd-set-row">
+    <div class="rd-set-label">Tema</div>
+    <div class="seg" id="set-theme">
+      <button type="button" data-v="system">{{ icon('monitor') }}Auto</button>
+      <button type="button" data-v="light">{{ icon('sun') }}Claro</button>
+      <button type="button" data-v="dark">{{ icon('moon') }}Oscuro</button>
+    </div>
+  </div>
+  <button class="btn btn-ghost btn-block" type="button" id="set-reset" style="margin-top:6px">{{ icon('refresh') }}Restablecer</button>
+</section>
+<div class="rd-scrim" id="rd-scrim"></div>
+
+<dialog class="modal" id="shortcuts">
+  <div class="modal-head"><h2 class="h3">Atajos de teclado</h2><button class="btn btn-ghost btn-icon btn-sm" data-close aria-label="Cerrar">{{ icon('x') }}</button></div>
+  <div class="modal-body">
+    <dl class="shortcut-list">
+      <dt><span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span></dt><dd>Lectura · Paralelo · Estudio</dd>
+      <dt><span class="kbd">Tab</span></dt><dd>Recorrer los fragmentos</dd>
+      <dt><span class="kbd">←</span> <span class="kbd">→</span></dt><dd>Fragmento anterior / siguiente (con la ficha abierta)</dd>
+      <dt><span class="kbd">Esc</span></dt><dd>Cerrar la ficha</dd>
+      <dt><span class="kbd">+</span> <span class="kbd">−</span></dt><dd>Tamaño del texto</dd>
+      <dt><span class="kbd">F</span></dt><dd>Pantalla completa</dd>
+    </dl>
+  </div>
+  <div class="modal-foot"><button class="btn btn-primary" data-close>Entendido</button></div>
+</dialog>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+<script src="{{ bp }}/static/js/reader.js?v=3"></script>
+<script>
+(function () {
+  "use strict";
+  const DOC = {{ doc|tojson }};
+  const PROJECT = {{ (project.id if project else None)|tojson }};
+  const FILE = {{ filename|tojson }};
+  const SHARE = {{ share_id|tojson }};
+  const EDITABLE = {{ editable|tojson }};
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  const reader = LextorReader.mount($("#reader"), DOC, {
+    storageKey: "lextor.reader",
+    editable: EDITABLE,
+    onModeChange: syncModes,
+    onAnnotate: EDITABLE ? async (id, ann) => {
+      const url = `/api/projects/${encodeURIComponent(PROJECT)}/texts/${encodeURIComponent(FILE)}/annotations/${encodeURIComponent(id)}`;
+      try {
+        if (ann) await Lextor.api(url, { method: "PUT", json: ann });
+        else await Lextor.api(url, { method: "DELETE" });
+        Lextor.toast(ann ? "Guardado" : "Anotación eliminada", "ok");
+      } catch (e) { Lextor.toast(e.message, "err"); throw e; }
+    } : null,
+  });
+
+  // ── modes ────────────────────────────────────────────────────────────
+  function syncModes(mode) {
+    $$("[data-modes] [data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+  }
+  $$("[data-modes] [data-mode]").forEach((b) => b.addEventListener("click", () => { reader.setMode(b.dataset.mode); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+  syncModes(reader.mode);
+
+  // ── settings panel ──────────────────────────────────────────────────
+  const panel = $("#rd-settings"), btn = $("#rd-settings-btn");
+  const hasRuby = DOC.blocks.some((b) => b.sentences.some((s) => s.chunks.some((c) => c.reading || c.translit)));
+  if (!hasRuby) $("#ruby-switch").hidden = true;
+  $("#ruby-label").textContent = DOC.meta.text_lang === "ja" ? "Furigana sobre el texto" : "Transliteración sobre el texto";
+  function openSettings(open) {
+    panel.classList.toggle("is-open", open);
+    btn.setAttribute("aria-expanded", String(open));
+    if (open) syncSettings();
+  }
+  btn.addEventListener("click", (e) => { e.stopPropagation(); openSettings(!panel.classList.contains("is-open")); });
+  $("#rd-settings-close").addEventListener("click", () => openSettings(false));
+  $("#rd-scrim").addEventListener("click", () => openSettings(false));
+  document.addEventListener("pointerdown", (e) => {
+    if (panel.classList.contains("is-open") && !panel.contains(e.target) && !btn.contains(e.target)) openSettings(false);
+  });
+  function syncSettings() {
+    const s = reader.settings;
+    $("#set-size").value = s.scale;
+    $("#set-size-val").textContent = Math.round(s.scale * 100) + "%";
+    $$("[data-set]").forEach((g) => g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(String(s[g.dataset.set]) === b.dataset.v))));
+    $$("[data-toggle]").forEach((i) => { i.checked = !!s[i.dataset.toggle]; });
+    const t = Lextor.getTheme();
+    $$("#set-theme button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === t)));
+  }
+  function setScale(v) { reader.setSettings({ scale: Math.min(1.6, Math.max(0.8, +(+v).toFixed(2))) }); syncSettings(); }
+  $("#set-size").addEventListener("input", (e) => setScale(e.target.value));
+  $("#set-smaller").addEventListener("click", () => setScale(reader.settings.scale - 0.05));
+  $("#set-bigger").addEventListener("click", () => setScale(reader.settings.scale + 0.05));
+  $$("[data-set]").forEach((g) => g.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const key = g.dataset.set;
+    reader.setSettings({ [key]: key === "leading" ? +b.dataset.v : b.dataset.v });
+    syncSettings();
+  }));
+  $$("[data-toggle]").forEach((i) => i.addEventListener("change", () => { reader.setSettings({ [i.dataset.toggle]: i.checked }); syncSettings(); }));
+  $$("#set-theme button").forEach((b) => b.addEventListener("click", () => { Lextor.setTheme(b.dataset.v); syncSettings(); }));
+  $("#set-reset").addEventListener("click", () => { reader.resetSettings(); syncSettings(); });
+
+  // ── actions ─────────────────────────────────────────────────────────
+  const shareUrl = SHARE ? location.origin + Lextor.BP + "/t/" + SHARE : null;
+  const sh = $("#act-share"); if (sh) sh.addEventListener("click", () => Lextor.copy(shareUrl, "Enlace copiado"));
+  const em = $("#act-embed"); if (em) em.addEventListener("click", () => Lextor.copy(
+    `<iframe src="${location.origin + Lextor.BP}/embed/${SHARE}" width="100%" height="640" style="border:0;border-radius:16px" loading="lazy" title="${DOC.meta.title.replace(/"/g, "&quot;")} — Lextor"></iframe>`, "Código copiado"));
+  function toggleFull() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+  }
+  $("#act-full").addEventListener("click", toggleFull);
+
+  // ── keyboard ────────────────────────────────────────────────────────
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest("input, textarea, select, [contenteditable]") || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "1") reader.setMode("read");
+    else if (e.key === "2") reader.setMode("parallel");
+    else if (e.key === "3") reader.setMode("study");
+    else if (e.key === "+" || e.key === "=") setScale(reader.settings.scale + 0.05);
+    else if (e.key === "-") setScale(reader.settings.scale - 0.05);
+    else if (e.key === "f" || e.key === "F") toggleFull();
+    else if (e.key === "?") Lextor.openModal("shortcuts");
+    else return;
+    e.preventDefault();
+  });
+
+  // ── chrome: auto-hide on scroll + progress ──────────────────────────
+  const top = $("#rd-top"), bottom = $("#rd-bottom"), prog = $("#rd-progress");
+  let lastY = window.scrollY, ticking = false;
+  function onScroll() {
+    const y = window.scrollY;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    prog.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+    const down = y > lastY + 4, up = y < lastY - 4;
+    if (down && y > 120 && !panel.classList.contains("is-open")) { top.classList.add("is-hidden"); bottom.classList.add("is-hidden"); }
+    else if (up || y < 60) { top.classList.remove("is-hidden"); bottom.classList.remove("is-hidden"); }
+    lastY = y; ticking = false;
+  }
+  window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+
+  // ── first-visit hint ────────────────────────────────────────────────
+  try {
+    if (!localStorage.getItem("lextor.hint.seen")) {
+      const touch = matchMedia("(hover: none)").matches;
+      const h = document.createElement("div");
+      h.className = "rd-first-hint";
+      h.innerHTML = `${Lextor.icon("sparkles")}<span>${touch ? "Toca" : "Pasa el ratón o haz clic en"} cualquier fragmento para ver su traducción y notas</span><button type="button" aria-label="Cerrar">${Lextor.icon("x")}</button>`;
+      document.body.appendChild(h);
+      const done = () => { h.remove(); try { localStorage.setItem("lextor.hint.seen", "1"); } catch (e) {} };
+      h.querySelector("button").addEventListener("click", done);
+      $("#reader").addEventListener("click", (e) => { if (e.target.closest(".lx-c")) done(); });
+      setTimeout(done, 12000);
+    }
+  } catch (e) {}
+})();
+</script>
+{% endblock %}

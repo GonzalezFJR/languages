@@ -1,0 +1,206 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "桃太郎 — Momotarō",
+  "text_lang": "ja",
+  "notes_lang": "es",
+  "summary": "Cuento popular japonés sobre un niño que nace de un melocotón gigante y parte a luchar contra los demonios (oni). Nivel N5-N4.",
+  "created_at": "2026-01-01T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "桃太郎",
+     "translation": "Momotarō (El chico del melocotón)",
+     "chunks": [
+      {
+       "text": "桃太郎",
+       "gloss": "Momotarō (El chico del melocotón)",
+       "note": "桃 (momo) = melocotón. 太郎 (Tarō) = nombre masculino muy común, literalmente 'hijo mayor'. Es el héroe más conocido del folclore japonés."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "むかしむかし、あるところにおじいさんとおばあさんが住んでいました。",
+     "translation": "Hace mucho, mucho tiempo, en cierto lugar un anciano y una anciana vivían.",
+     "chunks": [
+      {
+       "text": "むかしむかし、",
+       "gloss": "Hace mucho, mucho tiempo,",
+       "note": "むかしむかし (mukashi mukashi) es la fórmula de inicio de los cuentos japoneses, equivalente a 'Érase una vez'. Se escribe en hiragana. 'Mukashi' = antiguo/pasado."
+      },
+      {
+       "text": "あるところに",
+       "gloss": "en cierto lugar",
+       "note": "ある (aru) = cierto, un. ところ (tokoro) = lugar. に (ni) = partícula de ubicación. Fórmula narrativa fija."
+      },
+      {
+       "text": "おじいさんとおばあさんが",
+       "gloss": "un anciano y una anciana",
+       "note": "おじいさん (ojiisan) = abuelo/anciano. おばあさん (obaasan) = abuela/anciana. と (to) = y (partícula conjuntiva). が (ga) = partícula de sujeto."
+      },
+      {
+       "text": "住んでいました。",
+       "gloss": "vivían.",
+       "note": "住んで (sunde) = forma -te de 住む (sumu, vivir). いました (imashita) = forma pasada educada de いる (iru). 住んでいました = estaban viviendo / vivían (acción continua en pasado)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "おじいさんは山へしばかりに、おばあさんは川へせんたくに行きました。",
+     "translation": "El anciano iba al monte a cortar leña, la anciana iba al río a lavar la ropa.",
+     "chunks": [
+      {
+       "text": "おじいさんは山へ",
+       "gloss": "El anciano iba al monte",
+       "note": "おじいさん (ojiisan) = el anciano. は (wa) = partícula de tema. 山 (yama) = montaña/monte. へ (e) = partícula de dirección (hacia). Se pronuncia 'e' cuando es partícula, aunque normalmente se lee 'he'."
+      },
+      {
+       "text": "しばかりに、",
+       "gloss": "a cortar leña,",
+       "note": "しばかり (shibakari) = cortar leña/hierba. に (ni) = partícula de propósito ('para'). Es una actividad típica en cuentos tradicionales japoneses."
+      },
+      {
+       "text": "おばあさんは川へ",
+       "gloss": "la anciana iba al río",
+       "note": "おばあさん (obaasan) = la anciana. 川 (kawa) = río. へ (e) = partícula de dirección. Estructura paralela con la oración anterior."
+      },
+      {
+       "text": "せんたくに行きました。",
+       "gloss": "a lavar la ropa.",
+       "note": "せんたく (sentaku) = lavado de ropa, colada. に (ni) = partícula de propósito. 行きました (ikimashita) = fue/iba (pasado educado de 行く, iku = ir)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "おばあさんが川でせんたくをしていると、大きな桃がどんぶらこ、どんぶらこと流れてきました。",
+     "translation": "Mientras la anciana lavaba la ropa en el río, un gran melocotón flotando y flotando (onomatopeya) vino flotando río abajo.",
+     "chunks": [
+      {
+       "text": "おばあさんが川でせんたくをしていると、",
+       "gloss": "Mientras la anciana lavaba la ropa en el río,",
+       "note": "川で (kawa de) = en el río (で marca el lugar de la acción). せんたくをしていると (sentaku wo shite iru to) = mientras estaba lavando. と (to) al final = cuando / mientras (conector temporal)."
+      },
+      {
+       "text": "大きな桃が",
+       "gloss": "un gran melocotón",
+       "note": "大きな (ōkina) = grande (adjetivo prenominal, distinto de 大きい). 桃 (momo) = melocotón. が (ga) = partícula de sujeto (introduce algo nuevo/sorprendente)."
+      },
+      {
+       "text": "どんぶらこ、どんぶらこと",
+       "gloss": "flotando y flotando (onomatopeya)",
+       "note": "どんぶらこ (donburako) = onomatopeya que representa algo grande flotando en el agua, meciéndose. Es exclusiva de este cuento. Las onomatopeyas son muy importantes en japonés."
+      },
+      {
+       "text": "流れてきました。",
+       "gloss": "vino flotando río abajo.",
+       "note": "流れて (nagarete) = flotando/fluyendo (forma -te de 流れる, nagareru = fluir). きました (kimashita) = vino (pasado de 来る, kuru = venir). 流れてきました = vino flotando (movimiento hacia el hablante)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "おばあさんは桃を家に持って帰りました。",
+     "translation": "La anciana llevó el melocotón a casa.",
+     "chunks": [
+      {
+       "text": "おばあさんは桃を家に持って帰りました。",
+       "gloss": "La anciana llevó el melocotón a casa.",
+       "note": "桃を (momo wo) = el melocotón (objeto directo). 家に (ie ni) = a casa (destino). 持って帰りました (motte kaerimashita) = llevó de vuelta. 持つ (motsu) = llevar/sostener + 帰る (kaeru) = volver."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "桃を切ると、中から元気な男の子が生まれました。",
+     "translation": "Al cortar el melocotón, de su interior, un enérgico niño nació.",
+     "chunks": [
+      {
+       "text": "桃を切ると、",
+       "gloss": "Al cortar el melocotón,",
+       "note": "切る (kiru) = cortar. と (to) = cuando (conector temporal que indica resultado inmediato). 桃を切ると = al cortar el melocotón (acción con resultado)."
+      },
+      {
+       "text": "中から元気な",
+       "gloss": "de su interior, un enérgico",
+       "note": "中 (naka) = interior/dentro. から (kara) = desde (partícula de origen). 元気な (genki na) = enérgico, lleno de vida. Es un adjetivo -na."
+      },
+      {
+       "text": "男の子が生まれました。",
+       "gloss": "niño nació.",
+       "note": "男の子 (otoko no ko) = niño varón. 男 (otoko) = hombre. の (no) = partícula posesiva. 子 (ko) = niño. 生まれました (umaremashita) = nació (pasado de 生まれる, umareru = nacer)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "二人はその子を「桃太郎」と名付けました。",
+     "translation": "Los dos ancianos llamaron al niño «Momotarō».",
+     "chunks": [
+      {
+       "text": "二人はその子を",
+       "gloss": "Los dos ancianos llamaron al niño",
+       "note": "二人 (futari) = dos personas. その (sono) = ese/aquel (demostrativo). 子 (ko) = niño. を (wo) = partícula de objeto directo."
+      },
+      {
+       "text": "「桃太郎」と名付けました。",
+       "gloss": "«Momotarō».",
+       "note": "「」son comillas japonesas. と (to) = partícula de cita (equivale a 'como' o 'diciendo'). 名付けました (nazukemashita) = pusieron de nombre (de 名付ける, nazukeru = nombrar)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "桃太郎はすくすくと大きくなり、やがて強い若者になりました。",
+     "translation": "Momotarō creció rápida y sanamente, y con el tiempo se convirtió en un joven fuerte.",
+     "chunks": [
+      {
+       "text": "桃太郎はすくすくと大きくなり、",
+       "gloss": "Momotarō creció rápida y sanamente,",
+       "note": "すくすく (sukusuku) = onomatopeya de crecimiento saludable y rápido. と (to) = partícula adverbial. 大きくなり (ōkiku nari) = hacerse grande (forma -ku del adj. + なる, naru = hacerse/convertirse)."
+      },
+      {
+       "text": "やがて強い若者になりました。",
+       "gloss": "y con el tiempo se convirtió en un joven fuerte.",
+       "note": "やがて (yagate) = con el tiempo, pronto. 強い (tsuyoi) = fuerte (adjetivo -i). 若者 (wakamono) = joven/muchacho. になりました (ni narimashita) = se convirtió en (pasado de になる)."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

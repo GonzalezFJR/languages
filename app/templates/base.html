@@ -2,70 +2,30 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Lextor{% endblock %} — Traducción y Lectura Bilingüe</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{% block title %}Lextor{% endblock %}{% block title_suffix %} · Lee en cualquier idioma{% endblock %}</title>
+  <meta name="description" content="{% block description %}Lextor convierte cualquier texto en una lectura bilingüe interactiva: traducción natural, glosas y notas gramaticales en cada fragmento. Funciona con Claude, ChatGPT y Gemini vía MCP.{% endblock %}" />
+  <meta name="theme-color" content="#5b4cf0" />
+  <script>
+    /* theme before paint (no flash) */
+    (function () { try { var t = localStorage.getItem("lextor.theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {} })();
+    window.__BP__ = {{ bp|tojson }};
+    window.__ICONS__ = {{ icons_json|safe }};
+  </script>
+  <link rel="icon" type="image/svg+xml" href="{{ bp }}/static/favicon.svg" />
+  <link rel="alternate icon" href="{{ bp }}/static/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/x-icon" href="{{ request.state.base_path|default('') }}/static/favicon.ico" />
-  <link rel="stylesheet" href="{{ request.state.base_path|default('') }}/static/css/app.css" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            serif: ['Lora', 'Georgia', 'serif'],
-          },
-          colors: {
-            ink: {
-              50: '#f7f7f8',
-              100: '#ededf0',
-              200: '#d6d6dc',
-              300: '#b0b0bc',
-              400: '#84849a',
-              500: '#65657e',
-              600: '#515168',
-              700: '#424257',
-              800: '#393949',
-              900: '#161622',
-              950: '#0d0d16',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,50&family=Inter:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ bp }}/static/css/app.css?v=3" />
   {% block head %}{% endblock %}
 </head>
-<body class="bg-white text-ink-900 font-sans antialiased">
-  <script>
-    // Base path for reverse-proxy subpath deployment
-    window.__BP__ = '{{ request.state.base_path|default("") }}';
-    (function() {
-      const B = window.__BP__;
-      if (!B) return;
-      // Override fetch to prefix API paths
-      const _fetch = window.fetch;
-      window.fetch = function(url, opts) {
-        if (typeof url === 'string' && url.startsWith('/')) url = B + url;
-        return _fetch.call(this, url, opts);
-      };
-      // Rewrite links and forms on DOM ready
-      document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('a[href^="/"]').forEach(a => {
-          const h = a.getAttribute('href');
-          if (!h.startsWith(B)) a.setAttribute('href', B + h);
-        });
-        document.querySelectorAll('form[action^="/"]').forEach(f => {
-          const a = f.getAttribute('action');
-          if (!a.startsWith(B)) f.setAttribute('action', B + a);
-        });
-      });
-    })();
-  </script>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  {% block nav %}{% include "_nav.html" %}{% endblock %}
   {% block body %}{% endblock %}
+  {% block footer %}{% include "_footer.html" %}{% endblock %}
+  <script src="{{ bp }}/static/js/app.js?v=3"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

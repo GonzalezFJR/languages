@@ -1,211 +1,142 @@
-# Xlan — Plataforma de Aprendizaje de Idiomas
+# Lextor — lee en cualquier idioma, entiende cada palabra
 
-Plataforma web para aprender idiomas mediante lectura interactiva. Los textos se almacenan en formato `.xlan` (JSON estructurado) y permiten hacer *hover* sobre cada segmento para ver su traducción y explicación gramatical.
+Lextor convierte cualquier texto en una **lectura bilingüe interactiva** para aprender idiomas: el texto
+original, una traducción natural de cada frase y, en cada fragmento, su glosa en contexto y una nota
+didáctica (gramática, matices, falsos amigos, transliteración…).
+
+Los textos los crea **el asistente de IA del usuario** (Claude, ChatGPT, Gemini, Cursor, VS Code…) a través
+del **servidor MCP de Lextor**. Lextor le explica el formato exacto, valida el resultado con una batería
+de tests, lo guarda en la biblioteca y lo muestra — dentro del propio chat cuando el cliente admite
+MCP Apps, y siempre en la web.
+
+```
+Usuario ──► Asistente IA ──MCP──► Lextor ──► validación (11 tests) ──► biblioteca + lector
+                 ▲                    │
+                 └── widget del lector (MCP Apps) / enlace /t/<id>
+```
 
 ---
 
-## Características
+## Funcionalidades
 
-- **Landing page** interactiva con demostración del visor
-- **Gestión de proyectos**: nombre, idioma base e idioma objetivo
-- **Documentación**: sube PDFs, TXT, DOCX y visualízalos en el lector integrado
-- **Textos traducidos `.xlan`**: visor interactivo con tooltip al pasar el ratón
-- **Pipeline de traducción**: convierte texto plano a borrador `.xlan`
-- **Organización por categorías anidadas** configurable
-- **Sidebar** de navegación redimensionable
-- **Zoom** con `Ctrl +/-` / `Ctrl + rueda` y navegación por teclado
+- **Lector** con tres modos: *Lectura* (ficha al pasar el ratón o tocar), *Paralelo* (columnas alineadas
+  por bloque y por verso; intercalado en móvil) y *Estudio* (tarjetas con el glosario de cada frase).
+- Furigana alineado por kanji, transliteración sobre el texto (pinyin, cirílico, árabe…), escritura RTL.
+- Tamaño, tipografía (serif / sans / Atkinson Hyperlegible), interlineado, ancho y fondo papel ajustables;
+  tamaño base fluido 18–21 px. Tema claro/oscuro/sistema. Atajos de teclado. Voz (Web Speech API).
+- Resaltados y notas del usuario sobre cada fragmento.
+- Biblioteca por proyectos (idioma estudiado → idioma del alumno), carpetas, etiquetas, documentos de referencia.
+- Enlaces públicos no adivinables (`/t/<id>`) e incrustación por `<iframe>` (`/embed/<id>`).
+- Importación de ficheros `.lextor` / `.json` y del antiguo `.xlan` (conversión automática).
 
----
+## El formato `lextor/1`
 
-## Formato `.xlan`
-
-Archivo JSON con la siguiente estructura:
+JSON con bloques (`heading` / `paragraph` / `verse`) → frases → fragmentos:
 
 ```json
 {
-  "meta": {
-    "title": "Título del texto",
-    "description": "Descripción breve",
-    "source_language": "es",
-    "target_language": "en",
-    "created_at": "2026-01-01T00:00:00"
-  },
-  "content": [
-    {
-      "type": "heading",
-      "level": 1,
-      "segments": [...]
-    },
-    {
-      "type": "paragraph",
-      "segments": [
-        {
-          "id": "seg_1",
-          "text": "Había una vez",
-          "translation": "Once upon a time",
-          "info": "Fórmula de inicio de cuento...",
-          "styles": []
-        }
-      ]
-    }
-  ]
+  "meta": {"title": "Le café du coin", "text_lang": "fr", "notes_lang": "es", "level": "A2"},
+  "blocks": [{"type": "paragraph", "sentences": [{
+    "text": "Elle ne prend jamais de sucre.",
+    "translation": "Nunca toma azúcar.",
+    "chunks": [
+      {"text": "Elle", "gloss": "Ella"},
+      {"text": "ne", "gloss": "(negación)", "group": "neg", "note": "Primera parte de «ne… jamais»."},
+      {"text": "prend", "gloss": "toma", "lemma": "prendre", "grammar": "presente · 3ª sg"},
+      {"text": "jamais", "gloss": "nunca", "group": "neg"},
+      {"text": "de sucre.", "gloss": "azúcar."}
+    ]}]}]
 }
 ```
 
-**Tipos de bloque**: `heading` (con `level` 1–3), `paragraph`  
-**Estilos de segmento** (`styles`): `bold`, `italic`, `underline`
+Reglas clave (por qué sustituye al `.xlan`):
 
----
+- **El modelo nunca escribe espacios ni saltos de línea entre piezas.** Cada fragmento es una subcadena
+  exacta de su frase; el espaciado se reconstruye a partir de la frase. Los saltos de línea son estructura
+  (`verse` = una frase por línea; párrafo nuevo = bloque nuevo).
+- **Dos traducciones**: una natural por frase (vista paralela) y una glosa contextual por fragmento (ficha).
+- IDs calculados (`b{bloque}.s{frase}.c{fragmento}`), no escritos por el modelo.
+- Campos opcionales estructurados: `translit`, `reading` (furigana), `lemma`, `grammar`, `literal`, `group`.
+- Textos largos por partes con `lextor_append_blocks` (sin ficheros "parte").
 
-## Tecnologías
+La guía completa para modelos está en [`app/lextor/guide.md`](app/lextor/guide.md) (también en `/format`),
+el validador en [`app/lextor/document.py`](app/lextor/document.py) y hay ejemplos válidos en
+[`app/lextor/examples/`](app/lextor/examples/).
 
-| Capa | Stack |
-|------|-------|
-| Backend | Python 3.11 · FastAPI · Uvicorn |
-| Plantillas | Jinja2 |
-| Frontend | HTML · TailwindCSS (CDN) · Vanilla JS |
-| Almacenamiento | Sistema de ficheros local (`static/contents/`) |
-| Contenedores | Docker · Docker Compose |
+**Tests de validación**: `schema`, `languages`, `no_line_breaks`, `chunk_alignment`, `coverage`,
+`granularity`, `translations`, `notes`, `transliteration`, `plain_text`, `groups`. Los errores bloquean el
+guardado y se devuelven al modelo con la ruta JSON exacta y una pista; los problemas menores (comillas
+tipográficas, mayúsculas, espacios, tuplas en vez de objetos…) se corrigen solos y se informan.
 
----
+## Servidor MCP
+
+| Endpoint | Uso |
+|---|---|
+| `POST /mcp/u/<token>` | URL personal del conector (se genera en `/connect` al iniciar sesión) |
+| `POST /mcp` + `Authorization: Bearer <token>` | Igual, para clientes que permiten cabeceras |
+| `POST /mcp` sin token | Modo anónimo: crea textos con enlace público, sin biblioteca |
+
+- Streamable HTTP sin estado, respuestas JSON. Soporta **las dos eras del protocolo**: `initialize`
+  (≤ 2025-11-25) y `server/discover` + `_meta` por petición (2026-07-28), con validación de cabeceras
+  `MCP-Protocol-Version` / `Mcp-Method` / `Mcp-Name`.
+- Herramientas: `lextor_get_format_guide`, `lextor_validate`, `lextor_create_text`, `lextor_append_blocks`,
+  `lextor_show_text`, `lextor_update_text`, `lextor_get_text`, `lextor_list_projects`, `lextor_list_texts`,
+  `lextor_create_project`. Prompts: `bilingual_text`, `graded_reader`.
+- **Widget MCP Apps** (`ui://lextor/reader-v3.html`, `text/html;profile=mcp-app`) con alias
+  `openai/outputTemplate` para ChatGPT: el lector interactivo aparece dentro del chat en Claude (web,
+  escritorio, móvil), ChatGPT, VS Code, Cursor, Goose… En clientes sin soporte, el modelo comparte el enlace.
+- Las instrucciones paso a paso para cada cliente están en la propia web: **`/connect`**.
 
 ## Despliegue
 
-### Opción 1 — Docker Compose (recomendado)
-
 ```bash
-# 1. Clonar el repositorio
-git clone <repo-url>
-cd languages
-
-# 2. Crear el fichero de entorno
-cp .env.example .env
-# Edita .env si necesitas cambiar el puerto u otras variables
-
-# 3. Arrancar
+cp .env.example .env        # cambia SECRET_KEY, ADMIN_PASSWORD y PUBLIC_URL
 docker compose up --build -d
-
-# La aplicación estará disponible en http://localhost:8000
 ```
 
-Para detenerla:
-```bash
-docker compose down
-```
+El MCP necesita ser accesible por **HTTPS público** para Claude.ai / ChatGPT (pon Lextor detrás de un proxy
+con TLS y define `PUBLIC_URL`). Los datos viven en `static/contents/` (volumen) y **no** se sirven por
+`/static`. Al arrancar, los `.xlan` antiguos se convierten a `.lextor` (los originales quedan en
+`translates/_legacy/`) y se conservan las anotaciones del usuario.
 
-Los archivos de usuario se persisten en `static/contents/` (montado como volumen).
-
----
-
-### Opción 2 — Entorno local (desarrollo)
-
-**Requisitos**: Python 3.11+
+### Desarrollo
 
 ```bash
-# 1. Crear entorno virtual
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-# Linux / macOS
-source .venv/bin/activate
-
-# 2. Instalar dependencias
-pip install -r requirements.txt
-
-# 3. Configurar variables de entorno
-cp .env.example .env
-
-# 4. Arrancar el servidor
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8020
+python -m venv .venv && . .venv/bin/activate
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload --port 8020
+pytest -q
 ```
 
-Accede a `http://localhost:8020`.
-
----
-
-## Variables de entorno (`.env`)
-
-| Variable | Default | Descripción |
-|----------|---------|-------------|
-| `APP_NAME` | `Xlan Language Platform` | Nombre de la app |
-| `APP_ENV` | `development` | Entorno (`development` / `production`) |
-| `DEBUG` | `true` | Modo debug de FastAPI |
-| `SECRET_KEY` | `change-me-in-production` | Clave secreta (cambiar en producción) |
-| `HOST` | `0.0.0.0` | Host de escucha |
-| `PORT` | `8000` | Puerto de escucha |
-| `CONTENTS_DIR` | `static/contents` | Ruta al directorio de proyectos |
-
----
-
-## Proyecto de ejemplo incluido
-
-El repositorio incluye el proyecto **"Inglés — Ejemplo"** (`static/contents/ejemplo_ingles/`) listo para usar:
-
-| Tipo | Archivo | Descripción |
-|------|---------|-------------|
-| Doc | `verbos_irregulares.txt` | 50 verbos irregulares en inglés |
-| Doc | `tiempos_verbales.txt` | Guía comparativa de tiempos verbales |
-| `.xlan` | `el_principito_cap1.xlan` | El Principito cap. I — anotado (B1-B2) |
-| `.xlan` | `la_cenicientay_el_lobo.xlan` | Caperucita Roja — anotado (A2-B1) |
-
----
-
-## Estructura del proyecto
+## Estructura
 
 ```
-languages/
-├── app/
-│   ├── main.py                  # Entrada FastAPI
-│   ├── config.py                # Settings desde .env
-│   ├── routers/
-│   │   ├── pages.py             # Rutas HTML (Jinja2)
-│   │   ├── api_projects.py      # API REST proyectos
-│   │   ├── api_documents.py     # API REST documentos
-│   │   └── api_pipeline.py      # Pipeline texto → .xlan
-│   ├── services/
-│   │   ├── project_service.py   # Lógica de proyectos
-│   │   ├── document_service.py  # Lógica de documentos
-│   │   └── xlan_service.py      # Lógica .xlan + pipeline
-│   └── templates/
-│       ├── base.html
-│       ├── landing.html
-│       ├── home.html
-│       ├── project.html
-│       └── viewer.html
-├── static/
-│   ├── css/app.css
-│   └── contents/                # Datos de usuario (git-ignored, salvo ejemplo)
-│       └── ejemplo_ingles/
-│           ├── metadata.json
-│           ├── docs/
-│           └── translates/
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── .env.example
-└── README.md
+app/
+  lextor/        formato: languages.py, document.py (validador), legacy.py (.xlan → lextor/1),
+                 guide.md + guide.py (guía para modelos), examples/
+  mcp/           http.py (transporte MCP dual), tools.py (herramientas), widget.py (MCP App)
+  services/      proyectos, documentos, textos (+migración y enlaces), tokens MCP, almacenamiento atómico
+  routers/       páginas HTML, API REST
+  templates/     landing, biblioteca, proyecto, lector, conectar, formato, embed…
+static/
+  css/app.css    sistema de diseño (tokens claro/oscuro, componentes)
+  css/reader.css, js/reader.js   lector compartido por web, embed y widget MCP
+tests/           formato, MCP (ambas eras, flujo completo) y web
 ```
-
----
 
 ## API REST (resumen)
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| `GET` | `/api/projects` | Listar proyectos |
-| `POST` | `/api/projects` | Crear proyecto |
-| `GET` | `/api/projects/{id}` | Obtener proyecto |
-| `PATCH` | `/api/projects/{id}` | Actualizar metadata |
-| `DELETE` | `/api/projects/{id}` | Eliminar proyecto |
-| `GET` | `/api/projects/{id}/docs` | Listar documentos |
-| `POST` | `/api/projects/{id}/docs` | Subir documento |
-| `GET` | `/api/projects/{id}/docs/file/{name}` | Servir archivo |
-| `DELETE` | `/api/projects/{id}/docs/{name}` | Eliminar documento |
-| `PUT` | `/api/projects/{id}/docs/metadata` | Actualizar estructura docs |
-| `GET` | `/api/projects/{id}/translates` | Listar .xlan |
-| `DELETE` | `/api/projects/{id}/translates/{name}` | Eliminar .xlan |
-| `PUT` | `/api/projects/{id}/translates/metadata` | Actualizar estructura xlan |
-| `POST` | `/api/projects/{id}/pipeline/translate` | Procesar texto → .xlan |
+| Método | Ruta |
+|---|---|
+| `GET/POST` | `/api/projects` |
+| `PATCH/DELETE` | `/api/projects/{id}` |
+| `GET` | `/api/projects/{id}/texts` · `/api/projects/{id}/texts/{file}` (`?download=1`) |
+| `POST` | `/api/projects/{id}/texts/import` |
+| `PATCH/DELETE` | `/api/projects/{id}/texts/{file}/meta` · `/api/projects/{id}/texts/{file}` |
+| `PUT/DELETE` | `/api/projects/{id}/texts/{file}/annotations/{chunk_id}` |
+| `PUT` | `/api/projects/{id}/{texts|docs}/organize/{tags|categories}` |
+| `GET/POST/DELETE` | `/api/projects/{id}/docs…` |
+| `POST` | `/api/validate` |
+| `GET/POST` | `/api/mcp/token` · `/api/mcp/token/rotate` |
 
-La documentación interactiva de la API está disponible en `http://localhost:8020/docs`.
+Documentación interactiva: `/api/docs`.

@@ -1,0 +1,189 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "Un día en la ciudad",
+  "text_lang": "es",
+  "notes_lang": "en",
+  "summary": "A beginner-friendly text about a typical day exploring a Spanish city. Covers daily routines, directions, and common interactions.",
+  "created_at": "2026-01-20T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "Un día en la ciudad",
+     "translation": "A day in the city",
+     "chunks": [
+      {
+       "text": "Un día en la ciudad",
+       "gloss": "A day in the city",
+       "note": "'Un' = a/an (masculine). 'Día' = day — one of the few Spanish words ending in '-a' that is masculine ('el día'). 'Ciudad' = city."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Me despierto temprano por la mañana.",
+     "translation": "I wake up early in the morning.",
+     "chunks": [
+      {
+       "text": "Me despierto temprano por la mañana.",
+       "gloss": "I wake up early in the morning.",
+       "note": "'Me despierto' = I wake up (reflexive verb 'despertarse'). Many daily routines use reflexive verbs in Spanish. 'Temprano' = early. 'Por la mañana' = in the morning."
+      }
+     ]
+    },
+    {
+     "text": "Me ducho, me visto y bajo a la calle para desayunar en un café.",
+     "translation": "I shower, I get dressed and I go down to the street to have breakfast at a café.",
+     "chunks": [
+      {
+       "text": "Me ducho, me visto",
+       "gloss": "I shower, I get dressed",
+       "note": "'Me ducho' = I shower (from 'ducharse'). 'Me visto' = I get dressed (from 'vestirse'). Both reflexive. In Spanish, you 'shower yourself' and 'dress yourself'."
+      },
+      {
+       "text": "y bajo a la calle para desayunar en un café.",
+       "gloss": "and I go down to the street to have breakfast at a café.",
+       "note": "'Bajo' = I go down (from 'bajar'). 'La calle' = the street. 'Para' = in order to. 'Desayunar' = to have breakfast. In Spain, it's common to have breakfast at a café ('cafetería')."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Pido un café con leche y una tostada con tomate.",
+     "translation": "I order a coffee with milk and toast with tomato.",
+     "chunks": [
+      {
+       "text": "Pido un café con leche y una tostada con tomate.",
+       "gloss": "I order a coffee with milk and toast with tomato.",
+       "note": "'Pido' = I order/ask for (from 'pedir', an e→i stem-changing verb). 'Café con leche' = coffee with milk (the classic Spanish breakfast drink). 'Tostada con tomate' = a very typical Andalusian/Spanish breakfast."
+      }
+     ]
+    },
+    {
+     "text": "El camarero es muy amable y me dice «¡buen provecho!».",
+     "translation": "The waiter is very friendly and says to me 'enjoy your meal!'.",
+     "chunks": [
+      {
+       "text": "El camarero es muy amable",
+       "gloss": "The waiter is very friendly",
+       "note": "'Camarero' = waiter (female: 'camarera'). 'Amable' = friendly/kind. Note: 'amable' doesn't change for gender — it ends in '-e', not '-o/-a'."
+      },
+      {
+       "text": "y me dice «¡buen provecho!».",
+       "gloss": "and says to me 'enjoy your meal!'.",
+       "note": "'Me dice' = says to me. 'Buen provecho' = enjoy your meal (lit. 'good profit/benefit'). Equivalent to French 'bon appétit'. Very commonly said in Spanish-speaking countries."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Después del desayuno, camino por el centro de la ciudad.",
+     "translation": "After breakfast, I walk through the city center.",
+     "chunks": [
+      {
+       "text": "Después del desayuno, camino por el centro de la ciudad.",
+       "gloss": "After breakfast, I walk through the city center.",
+       "note": "'Después del' = after the (contraction: de + el = del). 'Camino' = I walk (from 'caminar'). 'Por' = through/around. 'El centro' = the center/downtown."
+      }
+     ]
+    },
+    {
+     "text": "Las calles están llenas de gente y hay músicos tocando en las esquinas.",
+     "translation": "The streets are full of people and there are musicians playing on the corners.",
+     "chunks": [
+      {
+       "text": "Las calles están llenas de gente",
+       "gloss": "The streets are full of people",
+       "note": "'Las calles' = the streets (feminine plural). 'Están llenas' = are full ('estar' for temporary state, 'llenas' = full, fem. plural). 'Gente' = people (always singular in Spanish: 'la gente es')."
+      },
+      {
+       "text": "y hay músicos tocando en las esquinas.",
+       "gloss": "and there are musicians playing on the corners.",
+       "note": "'Hay' = there is/there are (invariable — same form for singular and plural!). 'Músicos' = musicians. 'Tocando' = playing (present participle of 'tocar'). 'Esquinas' = corners."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Le pregunto a una señora: «Disculpe, ¿dónde está el museo?».",
+     "translation": "I ask a lady: 'Excuse me, where is the museum?'.",
+     "chunks": [
+      {
+       "text": "Le pregunto a una señora:",
+       "gloss": "I ask a lady:",
+       "note": "'Le pregunto a' = I ask (to). In Spanish, you need both 'le' (indirect object pronoun) AND 'a una señora' — this redundancy is normal. 'Señora' = lady/ma'am."
+      },
+      {
+       "text": "«Disculpe, ¿dónde está el museo?».",
+       "gloss": "'Excuse me, where is the museum?'.",
+       "note": "'Disculpe' = excuse me (formal, from 'disculpar' in usted form). '¿Dónde está?' = where is? The accent on 'dónde' shows it's a question word. 'Museo' = museum (cognate!)."
+      }
+     ]
+    },
+    {
+     "text": "Ella me responde con una sonrisa: «Está muy cerca, todo recto y luego a la derecha».",
+     "translation": "She answers me with a smile: 'It's very close, straight ahead and then to the right'.",
+     "chunks": [
+      {
+       "text": "Ella me responde con una sonrisa:",
+       "gloss": "She answers me with a smile:",
+       "note": "'Ella' = she. 'Me responde' = answers me. 'Con una sonrisa' = with a smile. 'Sonrisa' comes from 'sonreír' (to smile, lit. 'to sub-laugh')."
+      },
+      {
+       "text": "«Está muy cerca, todo recto y luego a la derecha».",
+       "gloss": "'It's very close, straight ahead and then to the right'.",
+       "note": "'Muy cerca' = very close. 'Todo recto' = straight ahead (in Latin America: 'derecho' or 'de frente'). 'Luego' = then. 'A la derecha' = to the right."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Al final del día, estoy cansado pero feliz.",
+     "translation": "At the end of the day, I'm tired but happy.",
+     "chunks": [
+      {
+       "text": "Al final del día, estoy cansado pero feliz.",
+       "gloss": "At the end of the day, I'm tired but happy.",
+       "note": "'Al final del día' = at the end of the day. 'Estoy cansado' uses 'estar' (not 'ser') because tiredness is a temporary state. 'Pero' = but. 'Feliz' = happy."
+      }
+     ]
+    },
+    {
+     "text": "Esta ciudad es maravillosa.",
+     "translation": "This city is wonderful.",
+     "chunks": [
+      {
+       "text": "Esta ciudad es maravillosa.",
+       "gloss": "This city is wonderful.",
+       "note": "'Esta' = this (feminine, for 'ciudad'). 'Es maravillosa' uses 'ser' because it describes an inherent quality. 'Maravillosa' = wonderful/marvelous."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

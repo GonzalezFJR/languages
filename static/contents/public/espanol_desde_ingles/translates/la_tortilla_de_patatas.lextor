@@ -1,0 +1,183 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "La tortilla de patatas",
+  "text_lang": "es",
+  "notes_lang": "en",
+  "summary": "A short text about Spain's most iconic dish — the Spanish omelette. Basic vocabulary about food and cooking.",
+  "created_at": "2026-01-20T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "La tortilla de patatas",
+     "translation": "The Spanish Omelette",
+     "chunks": [
+      {
+       "text": "La tortilla de patatas",
+       "gloss": "The Spanish Omelette",
+       "note": "'Tortilla' in Spain refers to an egg-based dish (not the Mexican flatbread). 'Patatas' = potatoes (also called 'papas' in Latin America). This is Spain's most famous tapa."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "La tortilla de patatas es uno de los platos más famosos de España.",
+     "translation": "The Spanish omelette is one of Spain's most famous dishes.",
+     "chunks": [
+      {
+       "text": "La tortilla de patatas es uno de los platos más famosos de España.",
+       "gloss": "The Spanish omelette is one of Spain's most famous dishes.",
+       "note": "'Es uno de' = 'is one of'. 'Platos' = dishes (from 'plato', plate/dish). 'Más famosos' = most famous. In Spanish, superlatives use 'más' + adjective."
+      }
+     ]
+    },
+    {
+     "text": "Se puede comer a cualquier hora del día: en el desayuno, como tapa o en la cena.",
+     "translation": "You can eat it at any time of day: for breakfast, as a tapa, or for dinner.",
+     "chunks": [
+      {
+       "text": "Se puede comer a cualquier hora del día:",
+       "gloss": "You can eat it at any time of day:",
+       "note": "'Se puede' = one can / you can (impersonal construction). 'Cualquier' = any. 'Hora del día' = time of day. The impersonal 'se' is very common in Spanish."
+      },
+      {
+       "text": "en el desayuno, como tapa o en la cena.",
+       "gloss": "for breakfast, as a tapa, or for dinner.",
+       "note": "'Desayuno' = breakfast (from 'des-ayuno' = breaking the fast). 'Cena' = dinner. 'Tapa' = small appetizer served with drinks in Spain, a cultural tradition."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Los ingredientes son muy sencillos: huevos, patatas, aceite de oliva y sal.",
+     "translation": "The ingredients are very simple: eggs, potatoes, olive oil, and salt.",
+     "chunks": [
+      {
+       "text": "Los ingredientes son muy sencillos:",
+       "gloss": "The ingredients are very simple:",
+       "note": "'Ingredientes' is a cognate (same in English). 'Sencillos' = simple/easy. Note the plural masculine adjective ending '-os' to match 'ingredientes' (masculine plural)."
+      },
+      {
+       "text": "huevos, patatas, aceite de oliva y sal.",
+       "gloss": "eggs, potatoes, olive oil, and salt.",
+       "note": "'Huevos' = eggs. 'Aceite de oliva' = olive oil ('aceite' comes from Arabic 'az-zayt'). 'Sal' = salt. These four ingredients are all you need for the classic version."
+      }
+     ]
+    },
+    {
+     "text": "Algunas personas le añaden cebolla, pero esto genera un gran debate entre los españoles.",
+     "translation": "Some people add onion, but this generates a great debate among Spaniards.",
+     "chunks": [
+      {
+       "text": "Algunas personas le añaden cebolla,",
+       "gloss": "Some people add onion,",
+       "note": "'Algunas personas' = some people. 'Le añaden' = add to it. 'Cebolla' = onion. This is a famous debate in Spain: 'con cebolla o sin cebolla' (with or without onion)!"
+      },
+      {
+       "text": "pero esto genera un gran debate entre los españoles.",
+       "gloss": "but this generates a great debate among Spaniards.",
+       "note": "'Esto genera' = this generates. 'Gran debate' = great debate ('gran' is the shortened form of 'grande' before a noun). 'Españoles' = Spaniards/Spanish people."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Primero, se pelan y se cortan las patatas en rodajas finas.",
+     "translation": "First, the potatoes are peeled and cut into thin slices.",
+     "chunks": [
+      {
+       "text": "Primero, se pelan y se cortan las patatas en rodajas finas.",
+       "gloss": "First, the potatoes are peeled and cut into thin slices.",
+       "note": "'Primero' = first. 'Se pelan' = are peeled (passive 'se'). 'Se cortan' = are cut. 'Rodajas finas' = thin slices. 'Rodaja' = round slice."
+      }
+     ]
+    },
+    {
+     "text": "Después, se fríen en abundante aceite de oliva a fuego lento hasta que estén blandas.",
+     "translation": "Then, they are fried in plenty of olive oil over low heat until they are soft.",
+     "chunks": [
+      {
+       "text": "Después, se fríen en abundante aceite de oliva",
+       "gloss": "Then, they are fried in plenty of olive oil",
+       "note": "'Después' = then/afterwards. 'Se fríen' = are fried, from 'freír' (to fry), an irregular verb. 'Abundante' = plenty of/abundant."
+      },
+      {
+       "text": "a fuego lento hasta que estén blandas.",
+       "gloss": "over low heat until they are soft.",
+       "note": "'A fuego lento' = over low/slow heat (lit. 'at slow fire'). 'Hasta que' = until. 'Estén' = subjunctive of 'estar' (are), used after 'hasta que'. 'Blandas' = soft."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Se baten los huevos con un poco de sal y se mezclan con las patatas.",
+     "translation": "The eggs are beaten with a little salt and mixed with the potatoes.",
+     "chunks": [
+      {
+       "text": "Se baten los huevos con un poco de sal",
+       "gloss": "The eggs are beaten with a little salt",
+       "note": "'Se baten' = are beaten, from 'batir' (to beat/whisk). 'Un poco de' = a little bit of. This is a very common quantity expression in Spanish."
+      },
+      {
+       "text": "y se mezclan con las patatas.",
+       "gloss": "and mixed with the potatoes.",
+       "note": "'Se mezclan' = are mixed, from 'mezclar' (to mix). 'Con las patatas' = with the potatoes. Note how 'las' (the, feminine plural) agrees with 'patatas'."
+      }
+     ]
+    },
+    {
+     "text": "Se cocina en una sartén y el momento más difícil es darle la vuelta.",
+     "translation": "It is cooked in a frying pan and the most difficult moment is flipping it.",
+     "chunks": [
+      {
+       "text": "Se cocina en una sartén",
+       "gloss": "It is cooked in a frying pan",
+       "note": "'Se cocina' = it is cooked / one cooks it. 'Sartén' = frying pan. In Spain 'sartén' is usually feminine ('la sartén'), in some Latin American countries it's masculine."
+      },
+      {
+       "text": "y el momento más difícil es darle la vuelta.",
+       "gloss": "and the most difficult moment is flipping it.",
+       "note": "'El momento más difícil' = the most difficult moment. 'Darle la vuelta' = to flip it (lit. 'to give it the turn'). Flipping the tortilla with a plate is a rite of passage for Spanish cooks!"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "¡La tortilla perfecta debe quedar jugosa por dentro!",
+     "translation": "The perfect tortilla should be juicy inside!",
+     "chunks": [
+      {
+       "text": "¡La tortilla perfecta debe quedar jugosa por dentro!",
+       "gloss": "The perfect tortilla should be juicy inside!",
+       "note": "'Perfecta' = perfect (fem. to agree with 'tortilla'). 'Debe quedar' = should remain/turn out. 'Jugosa' = juicy. 'Por dentro' = inside/on the inside. A dry tortilla is considered a failure!"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

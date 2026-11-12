@@ -1,0 +1,50 @@
+{
+  "format": "lextor/1",
+  "meta": {
+    "title": "雨の日",
+    "title_translation": "Un día de lluvia",
+    "text_lang": "ja",
+    "notes_lang": "es",
+    "level": "A2",
+    "summary": "Una tarde tranquila en casa mientras llueve."
+  },
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "sentences": [
+        {
+          "text": "雨の日",
+          "translation": "Un día de lluvia",
+          "chunks": [
+            {"text": "雨の日", "gloss": "día de lluvia", "reading": "あめのひ", "translit": "ame no hi", "note": "«の» une dos sustantivos: 雨 (lluvia) + の + 日 (día) = día de lluvia."}
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "sentences": [
+        {
+          "text": "今日は雨が降っています。",
+          "translation": "Hoy está lloviendo.",
+          "chunks": [
+            {"text": "今日は", "gloss": "hoy", "reading": "きょうは", "translit": "kyō wa", "note": "今日 tiene lectura especial: きょう. La partícula は marca el tema y se pronuncia «wa»."},
+            {"text": "雨が", "gloss": "la lluvia", "reading": "あめが", "translit": "ame ga", "note": "が marca el sujeto gramatical de 降る."},
+            {"text": "降っています。", "gloss": "está cayendo", "reading": "ふっています", "translit": "futte imasu", "lemma": "降る", "grammar": "forma て + います · acción en curso", "note": "Con la lluvia y la nieve se usa 降る (caer): 雨が降る = llover."}
+          ]
+        },
+        {
+          "text": "窓の外を見ながら、お茶を飲みます。",
+          "translation": "Mientras miro por la ventana, me tomo un té.",
+          "chunks": [
+            {"text": "窓の外を", "gloss": "el exterior de la ventana", "reading": "まどのそとを", "translit": "mado no soto o", "note": "窓 (ventana) の 外 (exterior). を marca el objeto directo de 見る."},
+            {"text": "見ながら、", "gloss": "mientras miro,", "reading": "みながら", "translit": "minagara", "lemma": "見る", "grammar": "raíz + ながら · simultaneidad", "note": "〜ながら une dos acciones simultáneas del mismo sujeto; la acción principal va al final."},
+            {"text": "お茶を", "gloss": "té", "reading": "おちゃを", "translit": "ocha o", "note": "お es un prefijo de cortesía muy habitual con ciertas palabras: お茶, お水."},
+            {"text": "飲みます。", "gloss": "bebo", "reading": "のみます", "translit": "nomimasu", "lemma": "飲む", "grammar": "forma ます · presente cortés", "note": "El presente japonés sirve también para hábitos y futuro próximo."}
+          ]
+        }
+      ]
+    }
+  ]
+}

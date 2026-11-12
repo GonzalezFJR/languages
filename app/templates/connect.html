@@ -1,0 +1,930 @@
+{% extends "base.html" %}
+
+{% block title %}Conectar IA{% endblock %}
+{% block description %}Conecta Lextor a Claude, ChatGPT, Gemini, Cursor y otros asistentes mediante MCP: tu IA crea el texto bilingüe y Lextor lo valida y lo muestra.{% endblock %}
+
+{#- ── helpers ─────────────────────────────────────────────────────────────
+   Snippets are written with placeholders {URL} {BASE} {TOKEN}. The server
+   renders them with the token masked; JS re-renders them (reveal / rotate)
+   and copy buttons always copy the real value. -#}
+{% set has_token = token is not none and token %}
+{% set MASK = 'lx_' ~ '•' * 12 %}
+
+{% macro fill(t) -%}
+{%- if token -%}
+{{ t|replace('{URL}', mcp_url|replace(token.token, 'lx_' ~ '•' * 12))|replace('{BASE}', base_url)|replace('{TOKEN}', 'lx_' ~ '•' * 12)|forceescape }}
+{%- else -%}
+{{ t|replace('{URL}', mcp_url)|replace('{BASE}', base_url)|replace('{TOKEN}', '')|forceescape }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro snip(tpl, label) -%}
+{%- set t = tpl|trim -%}
+<div class="code cx-code">
+  <div class="cx-code-head">
+    <span class="cx-code-label">{{ label }}</span>
+    <button type="button" class="copy-btn js-copy-tpl" data-tpl="{{ t|forceescape }}" aria-label="Copiar: {{ label }}">{{ icon('copy') }}<span>Copiar</span></button>
+  </div>
+  <pre tabindex="0"><code class="js-fill" data-tpl="{{ t|forceescape }}">{{ fill(t) }}</code></pre>
+</div>
+{%- endmacro %}
+
+{% macro urlchip(tpl='{URL}') -%}
+<span class="cx-urlchip"><code class="js-fill" data-tpl="{{ tpl }}">{{ fill(tpl) }}</code><button type="button" class="btn btn-soft btn-sm js-copy-tpl" data-tpl="{{ tpl }}">{{ icon('copy') }}Copiar</button></span>
+{%- endmacro %}
+
+{% macro widget(state, extra='') -%}
+{%- if state == 'yes' -%}
+<span class="badge badge-ok">{{ icon('check') }}Lector interactivo en el chat: Sí{{ extra }}</span>
+{%- elif state == 'no' -%}
+<span class="badge">{{ icon('link') }}Lector en el chat: No · recibes un enlace</span>
+{%- else -%}
+<span class="badge badge-amber">{{ icon('link') }}Lector en el chat: sin confirmar · siempre con enlace</span>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro mono(text, tone='accent') -%}
+<span class="cx-mono cx-mono-{{ tone }}" aria-hidden="true">{{ text }}</span>
+{%- endmacro %}
+
+{% block head %}
+<style>
+  /* ── Connect page (cx-) ─────────────────────────────────────────────── */
+  .cx-hero { position: relative; overflow: hidden; isolation: isolate; padding: 64px 0 40px; text-align: center; }
+  .cx-blob {
+    position: absolute; z-index: -1; top: -280px; left: 50%; width: 760px; height: 640px; margin-left: -380px;
+    border-radius: 46% 54% 52% 48% / 50% 45% 55% 50%; filter: blur(64px); opacity: .5; pointer-events: none;
+    background:
+      radial-gradient(circle at 28% 32%, color-mix(in srgb, var(--accent) 75%, transparent), transparent 58%),
+      radial-gradient(circle at 74% 58%, color-mix(in srgb, var(--tr) 60%, transparent), transparent 55%),
+      radial-gradient(circle at 48% 88%, color-mix(in srgb, var(--accent-2) 55%, transparent), transparent 50%);
+    animation: cxBlob 20s ease-in-out infinite alternate;
+  }
+  @keyframes cxBlob {
+    0% { transform: translate(-6%, 0) rotate(0deg) scale(1); }
+    50% { transform: translate(5%, 5%) rotate(35deg) scale(1.08); }
+    100% { transform: translate(-2%, -4%) rotate(-18deg) scale(.94); }
+  }
+  .cx-hero .display { font-size: clamp(2.2rem, 1.3rem + 4vw, 4.4rem); margin-top: 14px; }
+  .cx-hero .lead { max-width: 640px; margin: 18px auto 0; }
+  .cx-flow { display: flex; align-items: flex-start; justify-content: center; gap: 0; margin: 34px auto 0; max-width: 560px; }
+  .cx-node { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 0 0 auto; width: 104px; font: 600 13.5px/1.3 var(--font-ui); color: var(--muted); }
+  .cx-node-ic {
+    width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center;
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-2); color: var(--accent-text);
+  }
+  .cx-node-ic svg { width: 26px; height: 26px; }
+  .cx-node:nth-child(3) .cx-node-ic { color: var(--tr); }
+  .cx-node:nth-child(5) .cx-node-ic { color: color-mix(in srgb, var(--accent-2) 60%, var(--text)); }
+  @media (max-width: 420px) { .cx-node { width: 84px; font-size: 12.5px; } .cx-node-ic { width: 50px; height: 50px; } .cx-line { margin-top: 24px !important; } }
+  .cx-line {
+    flex: 1 1 40px; min-width: 18px; height: 2px; margin-top: 27px; border-radius: 2px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 8px, transparent 8px 14px); background-size: 28px 2px;
+    opacity: .55; animation: cxDash 1.2s linear infinite;
+  }
+  @keyframes cxDash { to { background-position: 28px 0; } }
+
+  .cx-alert {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; max-width: 720px; margin: 0 auto 26px;
+    padding: 16px 18px; border-radius: var(--r); background: var(--accent-2-soft);
+    border: 1px solid color-mix(in srgb, var(--accent-2) 45%, transparent); color: var(--text);
+  }
+  .cx-alert > svg { width: 22px; height: 22px; flex: none; margin-top: 2px; color: color-mix(in srgb, var(--accent-2) 60%, var(--text)); }
+  .cx-alert p { margin: 4px 0 0; color: var(--muted); }
+
+  .cx-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 56px; align-items: start; padding-bottom: 96px; }
+  .cx-toc { position: sticky; top: calc(var(--nav-h) + 24px); }
+  .cx-toc ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .cx-toc a {
+    display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 12px;
+    color: var(--muted); font: 600 14.5px/1.2 var(--font-ui); text-decoration: none; transition: background .15s ease, color .15s ease;
+  }
+  .cx-toc a:hover { background: var(--surface-2); color: var(--text); }
+  .cx-toc a[aria-current="true"] { background: var(--accent-soft); color: var(--accent-text); }
+  .cx-toc .cx-toc-n {
+    width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex: none;
+    border: 1.5px solid currentColor; font-size: 12.5px;
+  }
+  .cx-toc .cx-toc-n svg { width: 14px; height: 14px; }
+  @media (max-width: 900px) {
+    .cx-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .cx-toc { display: none; }
+  }
+
+  .cx-sec { scroll-margin-top: calc(var(--nav-h) + 16px); padding-top: 48px; }
+  .cx-sec:first-child { padding-top: 8px; }
+  .cx-sec-head { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
+  .cx-sec-head .lead { font-size: 1.05rem; margin-top: 6px; }
+  .cx-num {
+    width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center;
+    background: var(--accent); color: #fff; font: 700 20px/1 var(--font-display);
+    box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 80%, transparent);
+  }
+  .cx-num.cx-num-soft { background: var(--accent-soft); color: var(--accent-text); box-shadow: none; }
+  .cx-num svg { width: 22px; height: 22px; }
+
+  /* URL card */
+  .cx-urlcard { padding: 26px; overflow: hidden; }
+  .cx-urlcard::before {
+    content: ""; position: absolute; inset: 0 0 auto; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--tr), var(--accent-2));
+  }
+  .cx-urlcard .copy-field { flex-wrap: wrap; }
+  .cx-urlcard .copy-field .input { flex: 1 1 260px; min-height: 54px; font-size: 15px; background: var(--surface-2); }
+  .cx-urlcard .copy-field .btn { min-height: 54px; }
+  .cx-urlcard .copy-field .btn-icon { width: 54px; }
+  .cx-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 16px; color: var(--muted); font-size: 14.5px; }
+  .cx-meta svg { width: 17px; height: 17px; flex: none; }
+  .cx-meta .cx-used { display: inline-flex; align-items: center; gap: 8px; }
+  .cx-meta .cx-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+  .cx-meta .cx-dot.is-on { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-soft); }
+  .cx-hint { display: flex; gap: 10px; align-items: flex-start; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  .cx-hint svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--tr); }
+  .cx-anon { margin-top: 18px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .cx-anon p { margin: 0; flex: 1 1 280px; color: var(--muted); }
+  .cx-flash { animation: cxFlash 1.2s var(--ease); }
+  @keyframes cxFlash { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); } 100% { box-shadow: 0 0 0 14px transparent; } }
+
+  /* client picker (role=tablist) */
+  .cx-clients { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; border: 0; overflow: visible; }
+  .cx-clients .tab {
+    flex-direction: column; gap: 10px; justify-content: center; min-height: 104px; padding: 14px 8px; margin: 0;
+    border: 1.5px solid var(--line); border-radius: var(--r); background: var(--surface); white-space: normal;
+    text-align: center; line-height: 1.2; font-size: 14px; transition: border-color .18s ease, box-shadow .18s ease, transform .18s var(--ease), background .18s ease;
+  }
+  .cx-clients .tab:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+  .cx-clients .tab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--accent) 80%, transparent); }
+  @media (max-width: 760px) { .cx-clients { grid-template-columns: repeat(3, minmax(0, 1fr)); } .cx-clients .tab { min-height: 92px; } }
+
+  .cx-mono {
+    width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none;
+    font: 700 15px/1 var(--font-ui); letter-spacing: -.02em;
+  }
+  .cx-mono svg { width: 20px; height: 20px; }
+  .cx-mono-accent { background: var(--accent-soft); color: var(--accent-text); }
+  .cx-mono-tr { background: var(--tr-soft); color: var(--tr); }
+  .cx-mono-amber { background: var(--accent-2-soft); color: color-mix(in srgb, var(--accent-2) 55%, var(--text)); }
+  .cx-mono-ink { background: var(--text); color: var(--bg); }
+  .cx-mono-plain { background: var(--surface-2); color: var(--muted); }
+  .cx-mono-danger { background: var(--danger-soft); color: var(--danger); }
+  .tab[aria-selected="true"] .cx-mono { box-shadow: 0 0 0 2px var(--surface); }
+
+  .cx-panel { margin-top: 18px; padding: 28px; }
+  .cx-panel:focus-visible { border-radius: var(--r-lg); }
+  .cx-panel[data-anim] { animation: popIn .35s var(--ease); }
+  .cx-panel-head { display: flex; gap: 14px; align-items: center; }
+  .cx-panel-head .cx-mono { width: 52px; height: 52px; font-size: 18px; border-radius: 16px; }
+  .cx-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 6px; }
+  .cx-badges .badge { height: auto; min-height: 28px; padding: 5px 11px; white-space: normal; line-height: 1.25; }
+  .cx-badges .badge svg { width: 14px; height: 14px; flex: none; }
+  .cx-sub { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); }
+  .cx-sub-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .cx-steps { list-style: none; counter-reset: cx; margin: 20px 0 0; padding: 0; }
+  .cx-steps > li { counter-increment: cx; position: relative; padding: 0 0 22px 60px; min-height: 44px; }
+  .cx-steps > li::before {
+    content: counter(cx); position: absolute; left: 0; top: -4px; width: 42px; height: 42px; border-radius: 50%;
+    display: grid; place-items: center; background: var(--surface); border: 2px solid var(--accent); color: var(--accent-text);
+    font: 700 17px/1 var(--font-ui);
+  }
+  .cx-steps > li::after { content: ""; position: absolute; left: 20px; top: 42px; bottom: 2px; width: 2px; background: var(--line); border-radius: 1px; }
+  .cx-steps > li:last-child { padding-bottom: 4px; }
+  .cx-steps > li:last-child::after { display: none; }
+  .cx-steps > li > p { margin: 4px 0 0; }
+  .cx-steps > li > p:first-child { margin-top: 5px; font-size: 16.5px; }
+  .cx-steps > li .code, .cx-steps > li .cx-urlchip { margin-top: 12px; }
+  .cx-steps b, .cx-note b { font-weight: 650; color: var(--text); }
+  @media (max-width: 480px) {
+    .cx-steps > li { padding-left: 52px; }
+    .cx-steps > li::before { width: 38px; height: 38px; font-size: 16px; }
+    .cx-steps > li::after { left: 18px; top: 38px; }
+    .cx-panel, .cx-urlcard { padding: 20px 16px; }
+  }
+
+  .cx-code { margin-top: 12px; border-radius: var(--r); overflow: hidden; background: #15141c; border: 1px solid var(--line); }
+  :root[data-theme="dark"] .cx-code { background: #0a0a0f; }
+  .cx-code-head { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+  .cx-code-label { flex: 1; min-width: 0; color: #a9a7bb; font: 600 12.5px/1.3 var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cx-code .copy-btn { position: static; height: 38px; }
+  .cx-code pre { border: 0; border-radius: 0; background: transparent; padding: 14px 16px 16px; }
+  .cx-code pre code { white-space: pre; }
+
+  .cx-urlchip { display: flex; align-items: center; gap: 8px; max-width: 100%; padding: 6px 6px 6px 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
+  .cx-urlchip code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: none !important; padding: 0 !important; font-size: 13.5px; }
+  .cx-urlchip .btn { flex: none; }
+  @media (max-width: 480px) {
+    .cx-urlchip { flex-wrap: wrap; padding: 10px 10px 10px 14px; }
+    .cx-urlchip code { white-space: normal; word-break: break-all; flex-basis: 100%; }
+    .cx-urlchip .btn { margin-left: auto; }
+    .cx-urlcard .copy-field .btn-primary { flex: 1; }
+  }
+
+  .cx-note { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; padding: 14px 16px; border-radius: var(--r); background: var(--surface-2); color: var(--muted); font-size: 15px; }
+  .cx-note > svg { width: 19px; height: 19px; flex: none; margin-top: 2px; color: var(--accent-text); }
+  .cx-note.cx-warn { background: var(--accent-2-soft); }
+  .cx-note.cx-warn > svg { color: color-mix(in srgb, var(--accent-2) 60%, var(--text)); }
+  .cx-note p { margin: 0; }
+  .cx-note p + p { margin-top: 6px; }
+
+  /* prompts */
+  .cx-prompts { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .cx-prompt { display: flex; flex-direction: column; gap: 14px; padding: 20px; text-align: left; cursor: pointer; font: inherit; color: inherit; width: 100%; }
+  .cx-prompt q { quotes: "«" "»"; font: 400 17px/1.55 var(--font-read); color: var(--text); flex: 1; }
+  .cx-prompt-foot { display: flex; align-items: center; gap: 8px; color: var(--muted); font: 600 13.5px/1 var(--font-ui); }
+  .cx-prompt-foot svg { width: 16px; height: 16px; }
+  .cx-prompt-foot .spacer + span { color: var(--accent-text); display: inline-flex; gap: 6px; align-items: center; }
+  .cx-prompt:hover .cx-prompt-foot .spacer + span { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* tools */
+  .cx-tools { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .cx-tool { padding: 18px; display: flex; gap: 14px; align-items: flex-start; }
+  .cx-tool-ic { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex: none; background: var(--accent-soft); color: var(--accent-text); }
+  .cx-tool-ic.is-ro { background: var(--tr-soft); color: var(--tr); }
+  .cx-tool-ic svg { width: 20px; height: 20px; }
+  .cx-tool h3 { margin: 0; font: 650 15.5px/1.3 var(--font-ui); }
+  .cx-tool p { margin: 4px 0 8px; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  .cx-tool .mono { color: var(--faint); font-size: 12px; word-break: break-all; }
+  .cx-tool .badge { height: 22px; font-size: 11.5px; padding: 0 8px; }
+
+  /* faq */
+  .cx-faq { display: flex; flex-direction: column; gap: 10px; }
+  .cx-faq details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); transition: border-color .2s ease, box-shadow .2s ease; }
+  .cx-faq details[open] { border-color: var(--line-strong); box-shadow: var(--sh-2); }
+  .cx-faq summary {
+    list-style: none; cursor: pointer; display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 12px 18px;
+    font: 650 16px/1.35 var(--font-ui); border-radius: var(--r);
+  }
+  .cx-faq summary::-webkit-details-marker { display: none; }
+  .cx-faq summary > svg:first-child { width: 20px; height: 20px; color: var(--accent-text); flex: none; }
+  .cx-faq summary .cx-chev { margin-left: auto; width: 20px; height: 20px; color: var(--faint); flex: none; transition: transform .25s var(--ease); }
+  .cx-faq details[open] .cx-chev { transform: rotate(180deg); }
+  .cx-faq .cx-faq-body { padding: 0 18px 18px 52px; color: var(--muted); }
+  .cx-faq .cx-faq-body p { margin: 0; }
+  .cx-faq .cx-faq-body p + p { margin-top: 8px; }
+  .cx-faq details[open] .cx-faq-body { animation: popIn .3s var(--ease); }
+  @media (max-width: 480px) { .cx-faq .cx-faq-body { padding-left: 18px; } }
+
+  .cx-end { margin-top: 56px; text-align: center; padding: 40px 24px; overflow: hidden; }
+  .cx-end .row { justify-content: center; margin-top: 20px; }
+  @media (max-width: 640px) { .cx-hero { padding-top: 40px; } .cx-sec-head .cx-num { width: 40px; height: 40px; font-size: 17px; } }
+</style>
+{% endblock %}
+
+{% block body %}
+<main id="main">
+  <section class="cx-hero">
+    <div class="cx-blob" aria-hidden="true"></div>
+    <div class="container-md">
+      {% if request.query_params.get('from') == 'mcp' %}
+      <div class="cx-alert pop-in" role="status">
+        {{ icon('info') }}
+        <div>
+          <strong>Esta dirección es para tu asistente, no para el navegador.</strong>
+          <p>Has abierto la URL del conector de Lextor. Cópiala y pégala en tu IA (Claude, ChatGPT…) como conector personalizado siguiendo los pasos de abajo.</p>
+        </div>
+      </div>
+      {% endif %}
+      <span class="eyebrow pop-in">{{ icon('plug') }} Conector MCP</span>
+      <h1 class="display pop-in" style="--d:.05s">Conecta Lextor a <span class="text-gradient">tu IA</span></h1>
+      <p class="lead pop-in" style="--d:.1s">Tu asistente crea el texto bilingüe; Lextor lo valida y te lo muestra en el lector interactivo, dentro del chat cuando el asistente lo permite y siempre en tu biblioteca.</p>
+      <div class="cx-flow pop-in" style="--d:.18s" aria-hidden="true">
+        <div class="cx-node"><span class="cx-node-ic">{{ icon('message') }}</span>Tu IA escribe</div>
+        <span class="cx-line"></span>
+        <div class="cx-node"><span class="cx-node-ic">{{ icon('shield') }}</span>Lextor valida</div>
+        <span class="cx-line"></span>
+        <div class="cx-node"><span class="cx-node-ic">{{ icon('book') }}</span>Tú lees</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container cx-layout">
+    <aside class="cx-toc" aria-label="Pasos">
+      <span class="eyebrow">En esta página</span>
+      <ol>
+        <li><a href="#paso-1"><span class="cx-toc-n">1</span>Tu URL</a></li>
+        <li><a href="#paso-2"><span class="cx-toc-n">2</span>Tu asistente</a></li>
+        <li><a href="#paso-3"><span class="cx-toc-n">3</span>Pruébalo</a></li>
+        <li><a href="#herramientas"><span class="cx-toc-n">{{ icon('wand') }}</span>Qué puede hacer</a></li>
+        <li><a href="#problemas"><span class="cx-toc-n">{{ icon('info') }}</span>Problemas</a></li>
+      </ol>
+    </aside>
+
+    <div class="cx-content">
+      {# ── Step 1 ─────────────────────────────────────────────────────── #}
+      <section id="paso-1" class="cx-sec" aria-labelledby="paso-1-t">
+        <header class="cx-sec-head reveal">
+          <span class="cx-num" aria-hidden="true">1</span>
+          <div>
+            <h2 class="h2" id="paso-1-t">Tu URL del conector</h2>
+            <p class="lead">Es lo único que necesita tu asistente. Cópiala: la pegarás en el paso 2.</p>
+          </div>
+        </header>
+
+        <div class="card cx-urlcard reveal">
+          {% if has_token %}
+          <div class="row" style="gap:8px;margin-bottom:12px">
+            <span class="badge badge-accent">{{ icon('user') }}URL personal</span>
+            <span class="badge">Guarda en tu biblioteca</span>
+          </div>
+          <div class="copy-field">
+            <label for="cx-url" style="position:absolute;left:-9999px">URL del conector</label>
+            <input class="input" id="cx-url" type="text" readonly spellcheck="false" autocomplete="off"
+                   value="{{ mcp_url|replace(token.token, MASK) }}" />
+            <button type="button" class="btn btn-icon" id="cx-reveal" aria-pressed="false" aria-controls="cx-url"
+                    aria-label="Mostrar el token" title="Mostrar el token">{{ icon('eye') }}</button>
+            <button type="button" class="btn btn-primary js-copy-tpl" data-tpl="{URL}">{{ icon('copy') }}Copiar URL</button>
+          </div>
+          <div class="cx-meta">
+            <span class="cx-used" id="cx-used">
+              <span class="cx-dot{% if token.last_used_at %} is-on{% endif %}"></span>
+              {% if token.last_used_at %}
+              <span>Último uso: <time datetime="{{ token.last_used_at }}" class="js-time">{{ token.last_used_at[:16]|replace('T', ' ') }}</time>{% if token.last_client %} · {{ token.last_client }}{% endif %}</span>
+              {% else %}
+              <span>Aún no se ha usado</span>
+              {% endif %}
+            </span>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-ghost btn-sm" id="cx-rotate">{{ icon('refresh') }}Regenerar</button>
+          </div>
+          <p class="cx-hint">{{ icon('shield') }}<span>Trátala como una contraseña: quien la tenga puede crear textos en tu biblioteca. Si se filtra, pulsa <b>Regenerar</b> y la antigua dejará de funcionar.</span></p>
+          {% else %}
+          <div class="row" style="gap:8px;margin-bottom:12px">
+            <span class="badge badge-amber">{{ icon('globe') }}URL pública</span>
+            <span class="badge">Sin cuenta</span>
+          </div>
+          <div class="copy-field">
+            <label for="cx-url" style="position:absolute;left:-9999px">URL del conector</label>
+            <input class="input" id="cx-url" type="text" readonly spellcheck="false" autocomplete="off" value="{{ anon_url }}" />
+            <button type="button" class="btn btn-primary js-copy-tpl" data-tpl="{URL}">{{ icon('copy') }}Copiar URL</button>
+          </div>
+          <div class="cx-anon">
+            <p>Sin cuenta, los textos que cree tu IA se guardan solo como <b>enlaces públicos</b>, no en una biblioteca. Entra para obtener tu URL personal y tenerlos todos ordenados.</p>
+            <a class="btn btn-soft" href="{{ bp }}/login?next=/connect">{{ icon('log-in') }}Entrar y obtener mi URL</a>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      {# ── Step 2 ─────────────────────────────────────────────────────── #}
+      <section id="paso-2" class="cx-sec" aria-labelledby="paso-2-t">
+        <header class="cx-sec-head reveal">
+          <span class="cx-num" aria-hidden="true">2</span>
+          <div>
+            <h2 class="h2" id="paso-2-t">Añádela a tu asistente</h2>
+            <p class="lead">Elige tu IA. Los fragmentos de código ya llevan tu URL.</p>
+          </div>
+        </header>
+
+        <div class="tabs cx-clients" role="tablist" aria-label="Asistente" id="cx-tabs">
+          <button class="tab" role="tab" id="tab-claude" data-client="claude" aria-controls="panel-claude" aria-selected="true">{{ mono('Cl', 'amber') }}Claude</button>
+          <button class="tab" role="tab" id="tab-chatgpt" data-client="chatgpt" aria-controls="panel-chatgpt" aria-selected="false" tabindex="-1">{{ mono('Ch', 'tr') }}ChatGPT</button>
+          <button class="tab" role="tab" id="tab-gemini" data-client="gemini" aria-controls="panel-gemini" aria-selected="false" tabindex="-1">{{ mono('Ge', 'accent') }}Gemini</button>
+          <button class="tab" role="tab" id="tab-claude-code" data-client="claude-code" aria-controls="panel-claude-code" aria-selected="false" tabindex="-1">{{ mono(icon('terminal'), 'ink') }}Claude Code</button>
+          <button class="tab" role="tab" id="tab-cursor" data-client="cursor" aria-controls="panel-cursor" aria-selected="false" tabindex="-1">{{ mono(icon('code'), 'danger') }}Cursor / VS Code</button>
+          <button class="tab" role="tab" id="tab-otros" data-client="otros" aria-controls="panel-otros" aria-selected="false" tabindex="-1">{{ mono(icon('plus'), 'plain') }}Otros</button>
+        </div>
+
+        {# Claude ───────────────────────────────────────── #}
+        <div class="card cx-panel" role="tabpanel" id="panel-claude" aria-labelledby="tab-claude" tabindex="0">
+          <div class="cx-panel-head">{{ mono('Cl', 'amber') }}<div><h3 class="h3">Claude</h3><p class="muted small" style="margin:2px 0 0">claude.ai en la web y Claude Desktop</p></div></div>
+          <div class="cx-badges">
+            {{ widget('yes', ' (web, Desktop y móvil)') }}
+            <span class="badge">{{ icon('user') }}Todos los planes · Free: 1 conector personalizado</span>
+          </div>
+          <ol class="cx-steps">
+            <li><p>Abre <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> (o Claude Desktop) y ve a <b>Customize › Connectors</b>.</p></li>
+            <li><p>Pulsa <b>+ Add › Add custom connector</b>.</p></li>
+            <li><p>Escribe el nombre <b>Lextor</b>, pega tu URL y pulsa <b>Continue</b>.</p>{{ urlchip() }}</li>
+            <li><p>En <b>Authentication</b> elige <b>No sign in</b> y pulsa <b>Add</b>.</p></li>
+            <li><p>En el chat, pulsa <b>+</b> (abajo a la izquierda) o escribe <b>/</b>, entra en <b>Connectors</b> y activa <b>Lextor</b>.</p></li>
+          </ol>
+          <div class="cx-note">{{ icon('monitor') }}<div><p><b>¿Usas el móvil?</b> Las apps de Claude para iOS y Android usan los conectores que añades en la web: añádelo una vez en claude.ai y aparecerá también en el móvil, con el lector incluido.</p></div></div>
+          <div class="cx-note">{{ icon('user') }}<div>
+            <p><b>Planes Team y Enterprise:</b> un propietario (Owner) lo añade en <b>Organization settings › Connectors › Add › Custom › Web</b>. Después, cada miembro lo conecta en <b>Customize › Connectors › Connect</b>.</p>
+            {% if has_token %}<p>Ojo: si la organización usa tu URL personal, todos guardarán en tu biblioteca. Para un conector compartido, cada persona debería usar su propia URL.</p>{% endif %}
+          </div></div>
+          <p class="faint small" style="margin:14px 0 0">Los nombres de los menús están en inglés; si usas Claude en otro idioma pueden aparecer traducidos.</p>
+        </div>
+
+        {# ChatGPT ──────────────────────────────────────── #}
+        <div class="card cx-panel" role="tabpanel" id="panel-chatgpt" aria-labelledby="tab-chatgpt" tabindex="0" hidden>
+          <div class="cx-panel-head">{{ mono('Ch', 'tr') }}<div><h3 class="h3">ChatGPT</h3><p class="muted small" style="margin:2px 0 0">chatgpt.com, como plugin con servidor MCP propio</p></div></div>
+          <div class="cx-badges">
+            {{ widget('yes') }}
+            <span class="badge badge-ok">Business · Enterprise · Edu</span>
+            <span class="badge badge-amber">Pro: solo lectura</span>
+            <span class="badge">Plus y Free: sin confirmar</span>
+          </div>
+          <div class="cx-note cx-warn">{{ icon('alert') }}<div><p><b>Depende de tu plan.</b> En Business, Enterprise y Edu los servidores MCP propios funcionan por completo. En Pro solo se permiten herramientas de lectura, así que tu IA podrá consultar textos pero probablemente no crearlos. En Plus y Free no está confirmado que se puedan añadir.</p></div></div>
+          <ol class="cx-steps">
+            <li><p>Abre <a href="https://chatgpt.com/plugins" target="_blank" rel="noopener"><b>chatgpt.com/plugins</b></a>.</p></li>
+            <li><p>Pulsa <b>+</b> y elige <b>Add custom MCP server</b>.</p></li>
+            <li><p>Nombre: <b>Lextor</b>. En <b>Server URL</b> pega tu URL.</p>{{ urlchip() }}</li>
+            <li><p>En autenticación elige <b>No authentication</b> y marca <b>I understand and want to continue</b>.</p></li>
+            <li><p>Pulsa <b>Create as a plugin</b> e instálalo.</p></li>
+            <li><p>En cualquier chat, escribe <span class="kbd">@</span> y elige <b>Lextor</b>.</p></li>
+          </ol>
+          <div class="cx-note">{{ icon('shield') }}<div><p>ChatGPT te pedirá confirmación antes de usar las herramientas que guardan datos (crear o cambiar textos). Las de solo lectura se usan sin preguntar.</p></div></div>
+          <div class="cx-note">{{ icon('settings') }}<div><p><b>¿No ves esa página?</b> En versiones anteriores la opción estaba en <b>Settings › Apps › Advanced settings › Developer mode</b>: actívalo y añade la app desde ahí con la misma URL y sin autenticación.</p></div></div>
+        </div>
+
+        {# Gemini ───────────────────────────────────────── #}
+        <div class="card cx-panel" role="tabpanel" id="panel-gemini" aria-labelledby="tab-gemini" tabindex="0" hidden>
+          <div class="cx-panel-head">{{ mono('Ge', 'accent') }}<div><h3 class="h3">Gemini</h3><p class="muted small" style="margin:2px 0 0">App de Gemini, Gemini CLI y Antigravity</p></div></div>
+          <div class="cx-badges">
+            {{ widget('unknown') }}
+            <span class="badge badge-amber">App: solo EE. UU., +18, cuenta personal, en inglés</span>
+          </div>
+          <h4 class="h3" style="margin-top:22px">App de Gemini</h4>
+          <ol class="cx-steps">
+            <li><p>Ve a <b>Settings › Connected Apps › Custom apps</b>.</p></li>
+            <li><p>Pulsa <b>Add a custom app</b>, pega tu URL y pulsa <b>Next</b>.</p>{{ urlchip() }}</li>
+            <li><p>En el chat, escribe <span class="kbd">@</span> seguido del nombre de la app para usarla.</p></li>
+          </ol>
+          <div class="cx-note cx-warn">{{ icon('alert') }}<div><p>Por ahora Google limita las apps personalizadas a cuentas personales de mayores de 18 años en EE. UU. y con Gemini en inglés. Tampoco hemos podido verificar que acepte servidores sin inicio de sesión como Lextor: si no te funciona, usa Claude o ChatGPT.</p></div></div>
+
+          <div class="cx-sub">
+            <div class="cx-sub-head"><h4 class="h3">Gemini CLI y Antigravity</h4><span class="badge badge-accent">{{ icon('terminal') }}Para usuarios avanzados</span></div>
+            <div class="cx-badges">{{ widget('no') }}</div>
+            <p class="muted" style="margin:8px 0 0">Desde el 18 de junio de 2026, Gemini CLI solo funciona con cuentas de empresa o con clave de API.</p>
+            <ol class="cx-steps">
+              <li><p>Con Gemini CLI, añádelo desde la terminal:</p>
+                {% if has_token %}
+                {{ snip('gemini mcp add --transport http -H "Authorization: Bearer {TOKEN}" -s user lextor {BASE}/mcp', 'Terminal') }}
+                {% else %}
+                {{ snip('gemini mcp add --transport http -s user lextor {URL}', 'Terminal') }}
+                {% endif %}
+              </li>
+              <li><p>O edita <code>~/.gemini/settings.json</code> a mano:</p>
+                {% if has_token %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "httpUrl": "{BASE}/mcp",
+      "headers": { "Authorization": "Bearer {TOKEN}" }
+    }
+  }
+}
+{% endset %}{% else %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "httpUrl": "{URL}"
+    }
+  }
+}
+{% endset %}{% endif %}
+                {{ snip(t, '~/.gemini/settings.json') }}
+              </li>
+              <li><p>En Antigravity, usa <code>~/.gemini/config/mcp_config.json</code>:</p>
+                {% if has_token %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "serverUrl": "{BASE}/mcp",
+      "headers": { "Authorization": "Bearer {TOKEN}" }
+    }
+  }
+}
+{% endset %}{% else %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "serverUrl": "{URL}"
+    }
+  }
+}
+{% endset %}{% endif %}
+                {{ snip(t, '~/.gemini/config/mcp_config.json') }}
+              </li>
+            </ol>
+            <p class="faint small" style="margin:10px 0 0">Si el archivo ya tiene <code>mcpServers</code>, añade solo la entrada <code>"lextor"</code>.</p>
+          </div>
+        </div>
+
+        {# Claude Code ──────────────────────────────────── #}
+        <div class="card cx-panel" role="tabpanel" id="panel-claude-code" aria-labelledby="tab-claude-code" tabindex="0" hidden>
+          <div class="cx-panel-head">{{ mono(icon('terminal'), 'ink') }}<div><h3 class="h3">Claude Code</h3><p class="muted small" style="margin:2px 0 0">El asistente de Claude para la terminal</p></div></div>
+          <div class="cx-badges">
+            {{ widget('no') }}
+            <span class="badge">{{ icon('terminal') }}Requiere Claude Code instalado</span>
+          </div>
+          <ol class="cx-steps">
+            <li><p>Ejecuta en tu terminal:</p>{{ snip('claude mcp add --transport http lextor {URL}', 'Terminal') }}</li>
+            <li><p>Abre Claude Code y escribe <code>/mcp</code> para comprobar que <b>lextor</b> aparece conectado.</p></li>
+            <li><p>Pide un texto: como la terminal no muestra el lector, recibirás un resumen y el enlace para leerlo en Lextor.</p></li>
+          </ol>
+          {% if has_token %}
+          <div class="cx-sub">
+            <div class="cx-sub-head"><h4 class="h3">Alternativa: token en una cabecera</h4></div>
+            <p class="muted" style="margin:6px 0 0">Si prefieres no poner el token en la URL:</p>
+            {{ snip('claude mcp add --transport http lextor {BASE}/mcp --header "Authorization: Bearer {TOKEN}"', 'Terminal') }}
+          </div>
+          {% endif %}
+        </div>
+
+        {# Cursor / VS Code ─────────────────────────────── #}
+        <div class="card cx-panel" role="tabpanel" id="panel-cursor" aria-labelledby="tab-cursor" tabindex="0" hidden>
+          <div class="cx-panel-head">{{ mono(icon('code'), 'danger') }}<div><h3 class="h3">Cursor y VS Code</h3><p class="muted small" style="margin:2px 0 0">Editores con soporte MCP</p></div></div>
+
+          <h4 class="h3" style="margin-top:22px">Cursor</h4>
+          <div class="cx-badges">{{ widget('yes') }}</div>
+          <ol class="cx-steps">
+            <li><p>Abre (o crea) <code>~/.cursor/mcp.json</code> y pega:</p>
+              {% if has_token %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "url": "{BASE}/mcp",
+      "headers": { "Authorization": "Bearer {TOKEN}" }
+    }
+  }
+}
+{% endset %}{% else %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "url": "{URL}"
+    }
+  }
+}
+{% endset %}{% endif %}
+              {{ snip(t, '~/.cursor/mcp.json') }}
+              <p class="faint small">Si el archivo ya tiene <code>mcpServers</code>, añade solo la entrada <code>"lextor"</code>.</p>
+            </li>
+            <li><p>Pide un texto en el chat del agente: Lextor lo mostrará en el lector.</p></li>
+          </ol>
+
+          <div class="cx-sub">
+            <div class="cx-sub-head"><h4 class="h3">VS Code</h4></div>
+            <div class="cx-badges">{{ widget('yes', ' (experimental)') }}</div>
+            <ol class="cx-steps">
+              <li><p>Crea <code>.vscode/mcp.json</code> en tu proyecto:</p>
+                {% if has_token %}{% set t %}
+{
+  "servers": {
+    "lextor": {
+      "type": "http",
+      "url": "{BASE}/mcp",
+      "headers": { "Authorization": "Bearer {TOKEN}" }
+    }
+  }
+}
+{% endset %}{% else %}{% set t %}
+{
+  "servers": {
+    "lextor": {
+      "type": "http",
+      "url": "{URL}"
+    }
+  }
+}
+{% endset %}{% endif %}
+                {{ snip(t, '.vscode/mcp.json') }}
+              </li>
+              <li><p>O usa la paleta de comandos: <b>MCP: Add Server › HTTP</b> y pega tu URL.</p>{{ urlchip() }}</li>
+            </ol>
+          </div>
+        </div>
+
+        {# Otros ────────────────────────────────────────── #}
+        <div class="card cx-panel" role="tabpanel" id="panel-otros" aria-labelledby="tab-otros" tabindex="0" hidden>
+          <div class="cx-panel-head">{{ mono(icon('plus'), 'plain') }}<div><h3 class="h3">Otros asistentes</h3><p class="muted small" style="margin:2px 0 0">Le Chat, LM Studio y cualquier cliente MCP</p></div></div>
+
+          <h4 class="h3" style="margin-top:22px">Le Chat (Mistral)</h4>
+          <div class="cx-badges">{{ widget('unknown') }}</div>
+          <ol class="cx-steps">
+            <li><p>Ve a <b>Connectors › + Add Connector › Custom MCP Connector</b>.</p></li>
+            <li><p>Pon un nombre sin espacios (por ejemplo <code>lextor</code>) y pega tu URL en <b>Server URL</b>.</p>{{ urlchip() }}</li>
+            <li><p>Pulsa <b>Connect</b>.</p></li>
+          </ol>
+
+          <div class="cx-sub">
+            <div class="cx-sub-head"><h4 class="h3">LM Studio</h4><span class="badge">0.3.17 o posterior</span></div>
+            <div class="cx-badges">{{ widget('unknown') }}</div>
+            <ol class="cx-steps">
+              <li><p>En la pestaña <b>Program</b>, pulsa <b>Install › Edit mcp.json</b>.</p></li>
+              <li><p>Pega:</p>
+                {% if has_token %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "url": "{BASE}/mcp",
+      "headers": { "Authorization": "Bearer {TOKEN}" }
+    }
+  }
+}
+{% endset %}{% else %}{% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "url": "{URL}"
+    }
+  }
+}
+{% endset %}{% endif %}
+                {{ snip(t, 'mcp.json') }}
+              </li>
+            </ol>
+          </div>
+
+          <div class="cx-sub">
+            <div class="cx-sub-head"><h4 class="h3">Clientes que solo admiten servidores locales</h4><span class="badge badge-accent">{{ icon('terminal') }}Avanzado</span></div>
+            <p class="muted" style="margin:8px 0 0">Si tu cliente solo acepta servidores MCP locales (stdio), usa el puente <code>mcp-remote</code>. Necesitas Node.js instalado.</p>
+            {% set t %}
+{
+  "mcpServers": {
+    "lextor": {
+      "command": "npx",
+      "args": ["mcp-remote", "{URL}", "--transport", "http-only"]
+    }
+  }
+}
+{% endset %}
+            {{ snip(t, 'Configuración MCP del cliente') }}
+          </div>
+
+          <div class="cx-note">{{ icon('info') }}<div><p><b>¿Otro cliente?</b> Cualquier cliente compatible con MCP por HTTP sirve: añade un servidor remoto con tu URL y sin autenticación. Muestran el lector dentro del chat, entre otros, Microsoft 365 Copilot, Goose, Postman y MCPJam; en los demás tendrás el enlace.</p></div></div>
+        </div>
+      </section>
+
+      {# ── Step 3 ─────────────────────────────────────────────────────── #}
+      <section id="paso-3" class="cx-sec" aria-labelledby="paso-3-t">
+        <header class="cx-sec-head reveal">
+          <span class="cx-num" aria-hidden="true">3</span>
+          <div>
+            <h2 class="h2" id="paso-3-t">Pruébalo</h2>
+            <p class="lead">Copia una de estas peticiones en tu asistente y cámbiala a tu gusto.</p>
+          </div>
+        </header>
+        {% set prompts = [
+          ('file-text', 'Pega un texto', 'Convierte este texto en una lectura bilingüe con Lextor. Mi idioma es el español y mi nivel, B1: [pega aquí el texto]'),
+          ('image', 'Foto de un libro', 'Te adjunto una foto de una página de mi libro. Transcríbela y crea con Lextor una lectura bilingüe con notas en español.'),
+          ('sparkles', 'Lectura graduada', 'Escribe con Lextor una historia corta en italiano de nivel A2 sobre un día de mercado en Nápoles, con notas en español.'),
+          ('plus', 'Continúa un texto', 'Continúa el último texto que creaste en Lextor con dos párrafos más, con el mismo nivel y estilo.'),
+          ('library', 'Tu biblioteca', 'Muéstrame mis textos de japonés en Lextor.'),
+        ] %}
+        <div class="cx-prompts">
+          {% for ic, label, text in prompts %}
+          <button type="button" class="card card-hover cx-prompt reveal" style="--d:{{ loop.index0 * 0.05 }}s" data-copy="{{ text }}" data-copy-label="Petición copiada">
+            <q>{{ text }}</q>
+            <span class="cx-prompt-foot">{{ icon(ic) }}<span>{{ label }}</span><span class="spacer"></span><span>{{ icon('copy') }}Copiar</span></span>
+          </button>
+          {% endfor %}
+        </div>
+      </section>
+
+      {# ── Tools ──────────────────────────────────────────────────────── #}
+      <section id="herramientas" class="cx-sec" aria-labelledby="herr-t">
+        <header class="cx-sec-head reveal">
+          <span class="cx-num cx-num-soft" aria-hidden="true">{{ icon('wand') }}</span>
+          <div>
+            <h2 class="h2" id="herr-t">Qué puede hacer tu IA con Lextor</h2>
+            <p class="lead">Estas son las herramientas que verá tu asistente. Las de solo lectura no cambian nada.</p>
+          </div>
+        </header>
+        {% set tool_es = {
+          'lextor_get_format_guide': ('book', 'Lee las reglas del formato lextor/1 antes de escribir el texto.'),
+          'lextor_validate': ('shield', 'Pasa los tests al documento sin guardarlo y recibe correcciones exactas.'),
+          'lextor_create_text': ('sparkles', 'Valida y guarda el texto bilingüe, y lo abre en el lector.'),
+          'lextor_append_blocks': ('plus', 'Añade la continuación de un texto largo, por partes.'),
+          'lextor_show_text': ('eye', 'Abre un texto guardado en el lector interactivo.'),
+          'lextor_update_text': ('edit', 'Sustituye un texto por una versión corregida.'),
+          'lextor_get_text': ('file-text', 'Lee un texto guardado para revisarlo o continuarlo.'),
+          'lextor_list_projects': ('folder', 'Consulta tus proyectos (cada uno, un par de idiomas).'),
+          'lextor_list_texts': ('list', 'Lista los textos de un proyecto.'),
+          'lextor_create_project': ('folder-plus', 'Crea un proyecto para un par de idiomas.'),
+        } %}
+        <div class="cx-tools">
+          {% for t in tools %}
+          {% set ro = t.annotations and t.annotations.readOnlyHint %}
+          {% set meta = tool_es.get(t.name, ('zap', t.description)) %}
+          <article class="card cx-tool reveal" style="--d:{{ (loop.index0 % 3) * 0.05 }}s">
+            <span class="cx-tool-ic{% if ro %} is-ro{% endif %}">{{ icon(meta[0]) }}</span>
+            <div style="min-width:0">
+              <h3>{{ t.title or t.name }}</h3>
+              <p>{{ meta[1] }}</p>
+              <div class="row" style="gap:8px">
+                {% if ro %}<span class="badge badge-tr">Solo lectura</span>{% else %}<span class="badge badge-amber">Escribe</span>{% endif %}
+                <span class="mono">{{ t.name }}</span>
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      {# ── FAQ ────────────────────────────────────────────────────────── #}
+      <section id="problemas" class="cx-sec" aria-labelledby="faq-t">
+        <header class="cx-sec-head reveal">
+          <span class="cx-num cx-num-soft" aria-hidden="true">{{ icon('info') }}</span>
+          <div>
+            <h2 class="h2" id="faq-t">Preguntas y problemas</h2>
+          </div>
+        </header>
+        <div class="cx-faq reveal">
+          <details>
+            <summary>{{ icon('eye-off') }}No veo el lector dentro del chat{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <div class="cx-faq-body">
+              <p>No todos los asistentes muestran apps interactivas (Claude Code o la app de Gemini, por ejemplo). Tu IA siempre te da un enlace al texto: ábrelo y tendrás el mismo lector, con todas las funciones.</p>
+              <p>En Claude, comprueba también que Lextor esté activado en ese chat (botón <b>+</b> › <b>Connectors</b>).</p>
+            </div>
+          </details>
+          <details>
+            <summary>{{ icon('alert') }}Dice «token no válido» o no conecta{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <div class="cx-faq-body">
+              <p>Seguramente la URL se regeneró o se copió incompleta. Copia de nuevo la URL del paso 1 (o pulsa <b>Regenerar</b>) y actualízala en el conector de tu asistente.</p>
+            </div>
+          </details>
+          <details>
+            <summary>{{ icon('file-text') }}¿Funciona con textos largos?{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <div class="cx-faq-body">
+              <p>Sí. Tu IA envía los textos largos por partes automáticamente: crea el texto con el principio y añade el resto en varios envíos. Si se detiene a mitad, dile «continúa».</p>
+            </div>
+          </details>
+          <details>
+            <summary>{{ icon('shield') }}¿Qué se guarda? ¿Es privado?{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <div class="cx-faq-body">
+              <p>Lextor guarda los textos que crea tu IA (original, traducciones y notas) y, de la conexión, solo la fecha del último uso y el nombre del cliente. No tiene acceso a tus conversaciones: únicamente recibe lo que tu IA envía al usar sus herramientas.</p>
+              <p>Los enlaces públicos usan un identificador aleatorio imposible de adivinar: solo puede abrir un texto quien tenga su enlace.</p>
+            </div>
+          </details>
+          <details>
+            <summary>{{ icon('log-out') }}¿Cómo desconecto Lextor?{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <div class="cx-faq-body">
+              <p>Elimina el conector en los ajustes de tu asistente (en Claude, <b>Customize › Connectors</b>). Para cortar el acceso en todas partes a la vez, pulsa <b>Regenerar</b> en el paso 1: la URL antigua deja de funcionar al instante.</p>
+            </div>
+          </details>
+          {% if not has_token %}
+          <details>
+            <summary>{{ icon('user') }}¿Necesito una cuenta?{{ icon('chevron-down', 'cx-chev') }}</summary>
+            <div class="cx-faq-body">
+              <p>No para probar: con la URL pública tu IA puede crear textos, pero solo se guardan como enlaces públicos. Con una cuenta tienes tu URL personal y una biblioteca con tus proyectos.</p>
+            </div>
+          </details>
+          {% endif %}
+        </div>
+
+        <div class="panel cx-end reveal">
+          <h2 class="h2">¿Listo para leer?</h2>
+          <p class="lead" style="margin-top:8px">Los textos que cree tu IA aparecerán en tu biblioteca.</p>
+          <div class="row">
+            <a class="btn btn-primary btn-lg" href="{{ bp }}/library">{{ icon('library') }}Ir a la biblioteca</a>
+            <a class="btn btn-lg" href="{{ bp }}/format">{{ icon('code') }}Ver el formato</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  "use strict";
+  const CX = {{ {'base': base_url, 'url': mcp_url, 'token': (token.token if token else None)}|tojson }};
+  const MASK = "lx_" + "•".repeat(12);
+  let revealed = false;
+
+  // ── snippets with placeholders {URL} {BASE} {TOKEN} ─────────────────
+  function fill(tpl, real) {
+    const tk = CX.token || "";
+    const shownTok = real || revealed || !tk ? tk : MASK;
+    const url = tk ? CX.url.split(tk).join(shownTok) : CX.url;
+    return tpl.split("{URL}").join(url).split("{BASE}").join(CX.base).split("{TOKEN}").join(shownTok);
+  }
+  function renderAll() {
+    document.querySelectorAll(".js-fill[data-tpl]").forEach((el) => { el.textContent = fill(el.dataset.tpl); });
+    const input = document.getElementById("cx-url");
+    if (input) input.value = fill("{URL}");
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".js-copy-tpl");
+    if (!b) return;
+    Lextor.copy(fill(b.dataset.tpl, true), b.dataset.tpl === "{URL}" ? "URL copiada" : "Copiado");
+    b.classList.remove("cx-flash"); void b.offsetWidth; b.classList.add("cx-flash");
+  });
+  const input = document.getElementById("cx-url");
+  if (input) input.addEventListener("focus", () => input.select());
+
+  // ── reveal / rotate ──────────────────────────────────────────────────
+  const revealBtn = document.getElementById("cx-reveal");
+  if (revealBtn) revealBtn.addEventListener("click", () => {
+    revealed = !revealed;
+    revealBtn.setAttribute("aria-pressed", String(revealed));
+    const label = revealed ? "Ocultar el token" : "Mostrar el token";
+    revealBtn.setAttribute("aria-label", label); revealBtn.title = label;
+    revealBtn.innerHTML = Lextor.icon(revealed ? "eye-off" : "eye");
+    renderAll();
+  });
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    const diff = (Date.now() - d.getTime()) / 1000;
+    try {
+      const rtf = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
+      if (diff < 60) return "hace un momento";
+      if (diff < 3600) return rtf.format(-Math.round(diff / 60), "minute");
+      if (diff < 86400) return rtf.format(-Math.round(diff / 3600), "hour");
+      if (diff < 86400 * 7) return rtf.format(-Math.round(diff / 86400), "day");
+    } catch (e) { /* old browser */ }
+    return d.toLocaleString("es", { dateStyle: "medium", timeStyle: "short" });
+  }
+  document.querySelectorAll("time.js-time").forEach((t) => {
+    const iso = t.getAttribute("datetime");
+    t.title = new Date(iso).toLocaleString("es");
+    t.textContent = fmtDate(iso);
+  });
+
+  const rotateBtn = document.getElementById("cx-rotate");
+  if (rotateBtn) rotateBtn.addEventListener("click", async () => {
+    const ok = await Lextor.confirm({
+      title: "¿Regenerar tu URL?",
+      body: "Se creará una URL nueva y la actual dejará de funcionar al instante: los asistentes donde la añadiste perderán la conexión hasta que pegues la nueva.",
+      ok: "Regenerar", danger: true,
+    });
+    if (!ok) return;
+    rotateBtn.disabled = true;
+    try {
+      const t = await Lextor.api("/api/mcp/token/rotate", { method: "POST" });
+      CX.token = t.token;
+      CX.url = CX.base + "/mcp/u/" + t.token;
+      renderAll();
+      const used = document.getElementById("cx-used");
+      if (used) used.innerHTML = '<span class="cx-dot"></span><span>Aún no se ha usado</span>';
+      if (input) { input.classList.remove("cx-flash"); void input.offsetWidth; input.classList.add("cx-flash"); }
+      Lextor.toast("URL regenerada. Actualízala en tus asistentes.", "ok");
+    } catch (err) {
+      Lextor.toast(err.message || "No se pudo regenerar", "err");
+    } finally {
+      rotateBtn.disabled = false;
+    }
+  });
+
+  // ── client tabs (ARIA tabs, choice kept in the URL hash) ─────────────
+  const tabs = Array.from(document.querySelectorAll("#cx-tabs [role=tab]"));
+  const ids = tabs.map((t) => t.dataset.client);
+  function select(id, opts) {
+    opts = opts || {};
+    const tab = tabs.find((t) => t.dataset.client === id);
+    if (!tab) return;
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      const p = document.getElementById(t.getAttribute("aria-controls"));
+      if (p) {
+        if (on && p.hidden) { p.hidden = false; p.removeAttribute("data-anim"); void p.offsetWidth; p.setAttribute("data-anim", ""); }
+        else if (!on) p.hidden = true;
+      }
+    });
+    if (opts.focus) tab.focus();
+    if (opts.hash && location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => select(t.dataset.client, { hash: true }));
+    t.addEventListener("keydown", (e) => {
+      let j = null;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") j = (i + 1) % tabs.length;
+      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === "Home") j = 0;
+      else if (e.key === "End") j = tabs.length - 1;
+      if (j === null) return;
+      e.preventDefault();
+      select(tabs[j].dataset.client, { focus: true, hash: true });
+    });
+  });
+  function fromHash(scroll) {
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (!ids.includes(h)) return;
+    select(h);
+    if (scroll) {
+      const sec = document.getElementById("paso-2");
+      sec.classList.add("is-in");
+      requestAnimationFrame(() => sec.scrollIntoView({ block: "start" }));
+    }
+  }
+  fromHash(true);
+  window.addEventListener("hashchange", () => fromHash(true));
+
+  // ── sticky step nav: highlight current section ───────────────────────
+  const links = Array.from(document.querySelectorAll(".cx-toc a"));
+  if ("IntersectionObserver" in window && links.length) {
+    const map = new Map(links.map((a) => [a.getAttribute("href").slice(1), a]));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        links.forEach((a) => a.removeAttribute("aria-current"));
+        const a = map.get(en.target.id);
+        if (a) a.setAttribute("aria-current", "true");
+      });
+    }, { rootMargin: "-35% 0px -60% 0px" });
+    map.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+  }
+
+  renderAll();
+})();
+</script>
+{% endblock %}

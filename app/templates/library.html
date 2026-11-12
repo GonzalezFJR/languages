@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block title %}{% if current_user %}Tu biblioteca{% else %}Biblioteca de ejemplo{% endif %}{% endblock %}
+
+{% macro lang_options(selected) -%}
+  {% for l in lang_list %}
+  <option value="{{ l.code }}" {% if l.code == selected %}selected{% endif %}>{{ l.native }}{% if l.native != l.name %} — {{ l.name }}{% endif %}</option>
+  {% endfor %}
+{%- endmacro %}
+
+{% block head %}
+<style>
+  .lib { padding: 36px 0 88px; }
+  .lib-banner {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 18px 20px; margin-bottom: 28px;
+    border-radius: var(--r-lg); border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+    background: linear-gradient(110deg, var(--accent-soft), color-mix(in srgb, var(--accent-2-soft) 70%, var(--surface)));
+  }
+  .lib-banner-icon { width: 44px; height: 44px; flex: none; border-radius: 14px; display: grid; place-items: center; background: var(--surface); color: var(--accent-text); box-shadow: var(--sh-1); }
+  .lib-banner-icon svg { width: 22px; height: 22px; }
+  .lib-banner-text { flex: 1 1 260px; min-width: 0; }
+  .lib-banner-text strong { display: block; font-weight: 650; }
+  .lib-banner-text span { color: var(--muted); font-size: .95rem; }
+
+  .lib-hero { display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }
+  .lib-hero-text { flex: 1 1 380px; min-width: 0; }
+  .lib-hero-text .lead { margin-top: 10px; max-width: 46ch; }
+  .lib-hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .lib-layout { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+  @media (min-width: 1040px) { .lib-layout { grid-template-columns: minmax(0, 1fr) 300px; } .lib-aside { position: sticky; top: calc(var(--nav-h) + 20px); } }
+
+  .proj-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); }
+  .proj-card { display: flex; flex-direction: column; min-width: 0; }
+  .proj-card:has(.menu.is-open) { z-index: 20; }
+  .proj-link { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+  .proj-link:focus-visible { box-shadow: var(--ring); }
+  .proj-band {
+    --c1: var(--accent); --c2: var(--accent-2);
+    position: relative; height: 128px; overflow: hidden; border-radius: var(--r-lg) var(--r-lg) 0 0;
+    background:
+      radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--c1) 26%, transparent), transparent 60%),
+      radial-gradient(120% 140% at 100% 100%, color-mix(in srgb, var(--c2) 30%, transparent), transparent 62%),
+      var(--surface-2);
+    display: flex; align-items: flex-end; padding: 16px 18px;
+  }
+  .proj-band.v1 { --c1: var(--tr); --c2: var(--accent); }
+  .proj-band.v2 { --c1: var(--accent-2); --c2: #c06cff; }
+  .proj-band.v3 { --c1: #c06cff; --c2: var(--tr); }
+  .proj-glyph {
+    position: absolute; right: -6px; top: -26px; font: 700 150px/1 var(--font-display); color: var(--c1);
+    opacity: .14; pointer-events: none; user-select: none; transition: transform .6s var(--ease);
+  }
+  .proj-card:hover .proj-glyph { transform: rotate(-6deg) scale(1.06); }
+  .proj-endonym {
+    position: relative; font: 650 clamp(1.6rem, 1.3rem + 1vw, 2.05rem)/1.05 var(--font-display); letter-spacing: -.02em;
+    color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 50px);
+  }
+  .proj-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .proj-name { font: 650 1.12rem/1.3 var(--font-ui); letter-spacing: -.01em; margin: 0; overflow-wrap: anywhere; }
+  .proj-sub { color: var(--muted); font-size: .92rem; }
+  .proj-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 12px; }
+  .proj-foot time { margin-left: auto; color: var(--faint); font-size: .84rem; }
+  .proj-menu { position: absolute; top: 10px; right: 10px; z-index: 2; }
+  .proj-menu > .btn { background: color-mix(in srgb, var(--surface) 80%, transparent); backdrop-filter: blur(6px); }
+
+  .new-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 250px;
+    border: 2px dashed var(--line-strong); border-radius: var(--r-lg); background: transparent; color: var(--muted);
+    cursor: pointer; font: 600 15px/1.3 var(--font-ui); transition: border-color .2s ease, color .2s ease, background .2s ease;
+  }
+  .new-card:hover { border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); }
+  .new-card-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-text); transition: transform .3s var(--ease); }
+  .new-card:hover .new-card-icon { transform: rotate(90deg); background: var(--surface); }
+
+  .how { padding: 22px; }
+  .how ol { list-style: none; margin: 16px 0 18px; padding: 0; display: grid; gap: 14px; }
+  .how li { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; font-size: .95rem; }
+  .how-num { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--surface); color: var(--accent-text); font: 700 14px/1 var(--font-ui); box-shadow: var(--sh-1); }
+  .how em { font-style: normal; color: var(--accent-text); font-weight: 600; }
+
+  .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+  .modal-form { display: contents; }
+  .settings-danger { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .settings-danger p { flex: 1 1 200px; margin: 0; font-size: .9rem; }
+  .form-err { color: var(--danger); font-size: .9rem; margin: 0; }
+</style>
+{% endblock %}
+
+{% block body %}
+<main id="main" class="lib">
+  <div class="container">
+
+    {% if not current_user %}
+    <section class="lib-banner reveal" aria-label="Modo de ejemplo">
+      <div class="lib-banner-icon">{{ icon('eye') }}</div>
+      <div class="lib-banner-text">
+        <strong>Estás viendo la biblioteca de ejemplo.</strong>
+        <span>Entra para crear la tuya y guardar tus propias lecturas.</span>
+      </div>
+      <div class="row">
+        <a class="btn btn-primary" href="{{ bp }}/login?next=/library">{{ icon('log-in') }}Entrar</a>
+        <a class="btn" href="{{ bp }}/connect">{{ icon('plug') }}Conectar tu IA</a>
+      </div>
+    </section>
+    {% endif %}
+
+    <header class="lib-hero">
+      <div class="lib-hero-text">
+        <span class="eyebrow pop-in">{{ icon('library') }}Biblioteca</span>
+        <h1 class="h1 pop-in" style="--d:.05s;margin-top:10px">{% if current_user %}Tu biblioteca{% else %}Biblioteca de ejemplo{% endif %}</h1>
+        <p class="lead pop-in" style="--d:.1s">Cada proyecto reúne las lecturas bilingües y los apuntes de un idioma. Ábrelo para leer, organizar y compartir.</p>
+      </div>
+      <div class="lib-hero-actions pop-in" style="--d:.15s">
+        {% if current_user %}
+        <a class="btn btn-ghost hide-sm" href="{{ bp }}/connect">{{ icon('plug') }}Conectar tu IA</a>
+        <button class="btn btn-primary btn-lg" type="button" data-open="create-modal">{{ icon('plus') }}Nuevo proyecto</button>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="lib-layout">
+      <section aria-label="Proyectos">
+        {% if projects %}
+        <div class="proj-grid">
+          {% for p in projects %}
+          {% set native = lang_native(p.target) %}
+          <article class="card card-hover proj-card reveal" style="--d:{{ '%.2f'|format((loop.index0 % 9) * 0.05) }}s" data-id="{{ p.id }}">
+            <a class="proj-link" href="{{ bp }}/project/{{ p.id }}" aria-label="Abrir {{ p.name }}"></a>
+            <div class="proj-band v{{ loop.index0 % 4 }}" aria-hidden="true">
+              <span class="proj-glyph" dir="auto">{{ native[:1] }}</span>
+              <span class="proj-endonym" dir="auto" lang="{{ p.target }}">{{ native }}</span>
+            </div>
+            <div class="proj-body">
+              <h2 class="proj-name">{{ p.name }}</h2>
+              <div class="proj-sub">{{ lang_name(p.target) }} · notas en {{ lang_name(p.base)|lower }}</div>
+              <div class="proj-foot">
+                <span class="badge badge-accent">{{ icon('book') }}{{ p.text_count or 0 }} {{ 'texto' if (p.text_count or 0) == 1 else 'textos' }}</span>
+                <span class="badge">{{ icon('file') }}{{ p.doc_count or 0 }} {{ 'doc.' if (p.doc_count or 0) == 1 else 'docs.' }}</span>
+                {% set when = p.updated_at or p.created_at %}
+                {% if when %}<time data-rel datetime="{{ when }}" title="{{ when[:10] }}">{{ when[:10] }}</time>{% endif %}
+              </div>
+            </div>
+            {% if current_user %}
+            <div class="menu proj-menu">
+              <button class="btn btn-ghost btn-icon" type="button" data-menu aria-haspopup="true" aria-expanded="false" aria-label="Opciones de {{ p.name }}">{{ icon('more') }}</button>
+              <div class="menu-list">
+                <button type="button" data-settings="{{ p.id }}">{{ icon('settings') }}Ajustes</button>
+                <div class="menu-sep"></div>
+                <button type="button" class="danger" data-delete="{{ p.id }}">{{ icon('trash') }}Eliminar</button>
+              </div>
+            </div>
+            {% endif %}
+          </article>
+          {% endfor %}
+          {% if current_user %}
+          <button class="new-card reveal" type="button" data-open="create-modal" style="--d:{{ '%.2f'|format((projects|length % 9) * 0.05) }}s">
+            <span class="new-card-icon">{{ icon('plus') }}</span>
+            Nuevo proyecto
+          </button>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="empty reveal">
+          <div class="empty-icon">{{ icon('sparkles') }}</div>
+          <h2 class="h2">Tu biblioteca está vacía</h2>
+          <p class="muted" style="max-width:52ch;margin:12px auto 0">
+            Crea un proyecto por idioma. Las lecturas las crea tu asistente de IA (Claude, ChatGPT…) a través del conector MCP de Lextor:
+            le pasas un texto y aparece aquí convertido en lectura bilingüe.
+          </p>
+          <div class="empty-actions">
+            <a class="btn btn-lg" href="{{ bp }}/connect">{{ icon('plug') }}Conectar tu IA</a>
+            {% if current_user %}
+            <button class="btn btn-primary btn-lg" type="button" data-open="create-modal">{{ icon('plus') }}Nuevo proyecto</button>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </section>
+
+      <aside class="lib-aside reveal" style="--d:.1s" aria-labelledby="how-title">
+        <div class="panel how">
+          <span class="eyebrow">{{ icon('wand') }}Guía rápida</span>
+          <h2 class="h3" id="how-title" style="margin-top:10px">¿Cómo creo textos?</h2>
+          <ol>
+            <li><span class="how-num">1</span><span>Conecta Lextor a <strong>Claude</strong> o <strong>ChatGPT</strong> (una sola vez).</span></li>
+            <li><span class="how-num">2</span><span>Pide <em>«convierte este texto en una lectura de Lextor»</em> y pega el texto o una foto.</span></li>
+            <li><span class="how-num">3</span><span>La lectura aparece aquí, con traducción, glosas y notas.</span></li>
+          </ol>
+          <a class="btn btn-soft btn-block" href="{{ bp }}/connect">{{ icon('plug') }}Conectar tu IA{{ icon('arrow-right') }}</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+{% if current_user %}
+<dialog class="modal" id="create-modal" aria-labelledby="create-title">
+  <form class="modal-form" id="create-form" novalidate>
+    <div class="modal-head">
+      <h2 class="h3" id="create-title">Nuevo proyecto</h2>
+      <button class="btn btn-ghost btn-icon" type="button" data-close aria-label="Cerrar">{{ icon('x') }}</button>
+    </div>
+    <div class="modal-body stack">
+      <div class="field">
+        <label for="c-name">Nombre</label>
+        <input class="input" id="c-name" name="name" required maxlength="80" placeholder="p. ej. Francés para el viaje" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="c-target">Idioma que estudias</label>
+        <select class="select" id="c-target" name="target">{{ lang_options('en') }}</select>
+      </div>
+      <div class="field">
+        <label for="c-base">Tu idioma (traducciones y notas)</label>
+        <select class="select" id="c-base" name="base">{{ lang_options('es') }}</select>
+        <span class="help">Las traducciones, glosas y explicaciones se escriben en este idioma.</span>
+      </div>
+      <p class="form-err" id="create-err" role="alert" hidden></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" type="button" data-close>Cancelar</button>
+      <button class="btn btn-primary" type="submit">{{ icon('plus') }}Crear proyecto</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="settings-modal" aria-labelledby="settings-title">
+  <form class="modal-form" id="settings-form" novalidate>
+    <div class="modal-head">
+      <h2 class="h3" id="settings-title">Ajustes del proyecto</h2>
+      <button class="btn btn-ghost btn-icon" type="button" data-close aria-label="Cerrar">{{ icon('x') }}</button>
+    </div>
+    <div class="modal-body stack">
+      <input type="hidden" name="id" />
+      <div class="field">
+        <label for="s-name">Nombre</label>
+        <input class="input" id="s-name" name="name" required maxlength="80" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="s-target">Idioma que estudias</label>
+        <select class="select" id="s-target" name="target">{{ lang_options('') }}</select>
+      </div>
+      <div class="field">
+        <label for="s-base">Tu idioma (traducciones y notas)</label>
+        <select class="select" id="s-base" name="base">{{ lang_options('') }}</select>
+        <span class="help">Cambiar los idiomas no traduce los textos que ya existen.</span>
+      </div>
+      <p class="form-err" id="settings-err" role="alert" hidden></p>
+      <div class="settings-danger">
+        <p class="muted">Eliminar borra el proyecto con todos sus textos y documentos.</p>
+        <button class="btn btn-danger" type="button" id="settings-delete">{{ icon('trash') }}Eliminar</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" type="button" data-close>Cancelar</button>
+      <button class="btn btn-primary" type="submit">{{ icon('check') }}Guardar</button>
+    </div>
+  </form>
+</dialog>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  "use strict";
+  const L = window.Lextor;
+  const BP = {{ bp|tojson }};
+  const PROJECTS = {{ projects|tojson }};
+  const byId = Object.fromEntries(PROJECTS.map((p) => [p.id, p]));
+
+  // ── relative dates ─────────────────────────────────────────────────
+  const rtf = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
+  function rel(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    const s = (d - Date.now()) / 1000;
+    const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+    for (const [u, sec] of units) if (Math.abs(s) >= sec) return rtf.format(Math.round(s / sec), u);
+    return "ahora mismo";
+  }
+  document.querySelectorAll("time[data-rel]").forEach((t) => {
+    const r = rel(t.getAttribute("datetime"));
+    if (r) t.textContent = r.charAt(0).toUpperCase() + r.slice(1);
+  });
+
+  const createForm = document.getElementById("create-form");
+  if (!createForm) return; // anonymous: read-only
+
+  function showErr(el, msg) { el.textContent = msg || ""; el.hidden = !msg; }
+  function busy(btn, on) { if (btn) { btn.disabled = on; btn.setAttribute("aria-busy", String(on)); } }
+
+  // ── create ─────────────────────────────────────────────────────────
+  const createErr = document.getElementById("create-err");
+  createForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = createForm.elements;
+    const name = f.name.value.trim();
+    showErr(createErr, "");
+    if (!name) { showErr(createErr, "Ponle un nombre al proyecto."); f.name.focus(); return; }
+    if (f.base.value === f.target.value) { showErr(createErr, "El idioma que estudias y tu idioma deben ser distintos."); return; }
+    const btn = createForm.querySelector('[type="submit"]');
+    busy(btn, true);
+    try {
+      const p = await L.api("/api/projects", { method: "POST", json: { name, base: f.base.value, target: f.target.value } });
+      L.toast("Proyecto creado", "ok");
+      location.href = BP + "/project/" + encodeURIComponent(p.id);
+    } catch (err) {
+      showErr(createErr, err.message || "No se pudo crear el proyecto.");
+      busy(btn, false);
+    }
+  });
+  // Auto-suggest a name from the chosen language when the field is empty.
+  createForm.elements.target.addEventListener("change", () => {
+    const n = createForm.elements.name;
+    if (!n.value.trim() || n.dataset.auto === "1") {
+      const opt = createForm.elements.target.selectedOptions[0];
+      const es = opt.textContent.split("—").pop().trim();
+      n.value = es; n.dataset.auto = "1";
+    }
+  });
+  createForm.elements.name.addEventListener("input", (e) => { e.target.dataset.auto = "0"; });
+
+  // ── settings / delete ──────────────────────────────────────────────
+  const settingsForm = document.getElementById("settings-form");
+  const settingsErr = document.getElementById("settings-err");
+  function openSettings(id) {
+    const p = byId[id]; if (!p) return;
+    const f = settingsForm.elements;
+    f.id.value = p.id; f.name.value = p.name || ""; f.target.value = p.target; f.base.value = p.base;
+    showErr(settingsErr, "");
+    L.openModal("settings-modal");
+  }
+  async function deleteProject(id) {
+    const p = byId[id]; if (!p) return false;
+    const ok = await L.confirm({
+      title: "¿Eliminar «" + p.name + "»?",
+      body: "Se borrarán sus " + (p.text_count || 0) + " textos y " + (p.doc_count || 0) + " documentos. No se puede deshacer.",
+      ok: "Eliminar", danger: true,
+    });
+    if (!ok) return false;
+    try {
+      await L.api("/api/projects/" + encodeURIComponent(id), { method: "DELETE" });
+      L.toast("Proyecto eliminado", "ok");
+      const card = document.querySelector('.proj-card[data-id="' + CSS.escape(id) + '"]');
+      if (card) {
+        card.style.transition = "opacity .25s ease, transform .25s ease";
+        card.style.opacity = "0"; card.style.transform = "scale(.96)";
+        setTimeout(() => { card.remove(); if (!document.querySelector(".proj-card")) location.reload(); }, 260);
+      }
+      delete byId[id];
+      return true;
+    } catch (err) { L.toast(err.message || "No se pudo eliminar", "err"); return false; }
+  }
+
+  document.addEventListener("click", (e) => {
+    const s = e.target.closest("[data-settings]");
+    if (s) { openSettings(s.dataset.settings); return; }
+    const d = e.target.closest("[data-delete]");
+    if (d) deleteProject(d.dataset.delete);
+  });
+
+  settingsForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = settingsForm.elements;
+    const name = f.name.value.trim();
+    showErr(settingsErr, "");
+    if (!name) { showErr(settingsErr, "El nombre no puede quedar vacío."); return; }
+    if (f.base.value === f.target.value) { showErr(settingsErr, "El idioma que estudias y tu idioma deben ser distintos."); return; }
+    const btn = settingsForm.querySelector('[type="submit"]');
+    busy(btn, true);
+    try {
+      await L.api("/api/projects/" + encodeURIComponent(f.id.value), { method: "PATCH", json: { name, base: f.base.value, target: f.target.value } });
+      L.toast("Cambios guardados", "ok");
+      setTimeout(() => location.reload(), 350);
+    } catch (err) {
+      showErr(settingsErr, err.message || "No se pudieron guardar los cambios.");
+      busy(btn, false);
+    }
+  });
+  document.getElementById("settings-delete").addEventListener("click", async () => {
+    const id = settingsForm.elements.id.value;
+    L.closeModal("settings-modal");
+    await deleteProject(id);
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Formato lextor/1{% endblock %}
+{% block description %}Documentación del formato lextor/1: bloques, frases con traducción natural y fragmentos con glosas y notas. Incluye un validador interactivo.{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Format page (fm-) ──────────────────────────────────────────────── */
+  .fm-hero { position: relative; overflow: hidden; isolation: isolate; padding: 64px 0 56px; }
+  .fm-hero::before {
+    content: ""; position: absolute; z-index: -1; right: -180px; top: -220px; width: 620px; height: 560px; border-radius: 50%;
+    filter: blur(70px); opacity: .42; pointer-events: none;
+    background: radial-gradient(circle at 35% 40%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 60%),
+                radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--tr) 60%, transparent), transparent 55%);
+    animation: fmBlob 18s ease-in-out infinite alternate;
+  }
+  @keyframes fmBlob { to { transform: translate(-60px, 40px) rotate(30deg) scale(1.08); } }
+  .fm-hero .lead { max-width: 660px; margin-top: 16px; }
+  .fm-hero .row { margin-top: 26px; }
+  .fm-why { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 40px; }
+  .fm-why .card { padding: 22px; }
+  .fm-why-ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 14px; background: var(--accent-soft); color: var(--accent-text); }
+  .fm-why-ic svg { width: 22px; height: 22px; }
+  .fm-why .card:nth-child(2) .fm-why-ic { background: var(--tr-soft); color: var(--tr); }
+  .fm-why .card:nth-child(3) .fm-why-ic { background: var(--ok-soft); color: var(--ok); }
+  .fm-why p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+  @media (max-width: 900px) { .fm-why { grid-template-columns: 1fr; } }
+
+  .fm-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; align-items: start; }
+  .fm-toc { position: sticky; top: calc(var(--nav-h) + 24px); max-height: calc(100vh - var(--nav-h) - 48px); overflow-y: auto; }
+  .fm-toc ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .fm-toc a {
+    display: flex; align-items: center; min-height: 40px; padding: 6px 12px; border-radius: 10px; border-left: 2px solid transparent;
+    color: var(--muted); font: 550 14px/1.3 var(--font-ui); text-decoration: none;
+  }
+  .fm-toc a:hover { background: var(--surface-2); color: var(--text); }
+  .fm-toc a[aria-current="true"] { color: var(--accent-text); background: var(--accent-soft); }
+  .fm-toc .fm-toc-val { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+  @media (max-width: 900px) { .fm-layout { grid-template-columns: minmax(0, 1fr); gap: 0; } .fm-toc { display: none; } }
+
+  .fm-note { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--r); background: var(--surface-2); color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+  .fm-note svg { width: 19px; height: 19px; flex: none; margin-top: 2px; color: var(--accent-text); }
+  .fm-note p { margin: 0; }
+
+  /* markdown */
+  .md { font-size: 16.5px; line-height: 1.7; color: var(--text); overflow-wrap: break-word; }
+  .md > :first-child { margin-top: 0; }
+  .md h1 { font: 650 clamp(1.7rem, 1.3rem + 1.4vw, 2.3rem)/1.15 var(--font-display); letter-spacing: -.02em; margin: 0 0 18px; }
+  .md h2 { font: 650 clamp(1.35rem, 1.15rem + .8vw, 1.7rem)/1.25 var(--font-display); letter-spacing: -.015em; margin: 52px 0 14px; padding-top: 22px; border-top: 1px solid var(--line); scroll-margin-top: calc(var(--nav-h) + 16px); }
+  .md h3 { font: 650 1.1rem/1.35 var(--font-ui); margin: 32px 0 10px; scroll-margin-top: calc(var(--nav-h) + 16px); }
+  .md h4 { font: 650 1rem/1.35 var(--font-ui); margin: 24px 0 8px; }
+  .md p, .md ul, .md ol { margin: 0 0 14px; }
+  .md ul, .md ol { padding-left: 1.4em; }
+  .md li { margin: 4px 0; }
+  .md li::marker { color: var(--faint); }
+  .md strong { font-weight: 650; }
+  .md a { text-decoration: underline; text-underline-offset: 3px; }
+  .md hr { margin: 36px 0; }
+  .md blockquote { margin: 0 0 16px; padding: 12px 18px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 var(--r-sm) var(--r-sm) 0; color: var(--text); }
+  .md blockquote > :last-child { margin-bottom: 0; }
+  .md pre { margin: 0 0 18px; max-width: 100%; }
+  .md .fm-pre { position: relative; }
+  .md .fm-pre .copy-btn { position: absolute; top: 8px; right: 8px; opacity: 0; transition: opacity .15s ease; }
+  .md .fm-pre:hover .copy-btn, .md .fm-pre .copy-btn:focus-visible { opacity: 1; }
+  @media (hover: none) { .md .fm-pre .copy-btn { opacity: 1; } }
+  .md .fm-table { overflow-x: auto; margin: 0 0 18px; border: 1px solid var(--line); border-radius: var(--r); -webkit-overflow-scrolling: touch; }
+  .md table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 520px; }
+  .md th, .md td { padding: 10px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  .md th { background: var(--surface-2); font-weight: 650; font-size: 13.5px; letter-spacing: .01em; }
+  .md tr:last-child td { border-bottom: 0; }
+  .md-fallback { white-space: pre-wrap; background: var(--surface-2); color: var(--text); border: 0; }
+
+  /* validator */
+  .fm-val { scroll-margin-top: calc(var(--nav-h) + 16px); margin: 72px 0 96px; }
+  .fm-val-head { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+  .fm-val-ic { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--accent); color: #fff; }
+  .fm-val-ic svg { width: 22px; height: 22px; }
+  .fm-editor { padding: 0; overflow: hidden; }
+  .fm-editor-bar { display: flex; align-items: center; gap: 10px; padding: 10px 12px 10px 18px; border-bottom: 1px solid var(--line); background: var(--surface-2); flex-wrap: wrap; }
+  .fm-editor-bar .mono { color: var(--muted); font-size: 13px; }
+  .fm-editor textarea {
+    display: block; width: 100%; min-height: 380px; border: 0; border-radius: 0; resize: vertical; padding: 16px 18px;
+    background: var(--surface); color: var(--text); font: 400 13.5px/1.6 var(--font-mono); tab-size: 2; white-space: pre; overflow: auto;
+  }
+  .fm-editor textarea:focus { outline: none; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .fm-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 14px 18px; border-top: 1px solid var(--line); }
+  .fm-actions .help { margin-left: auto; }
+  @media (max-width: 640px) { .fm-actions .btn { flex: 1 1 auto; } .fm-actions .help { margin-left: 0; width: 100%; text-align: center; } .fm-editor textarea { min-height: 300px; } }
+
+  .fm-results { margin-top: 22px; }
+  .fm-summary { display: flex; gap: 14px; align-items: center; padding: 18px 20px; border-radius: var(--r-lg); font: 600 16px/1.4 var(--font-ui); }
+  .fm-summary svg { width: 26px; height: 26px; flex: none; }
+  .fm-summary.is-ok { background: var(--ok-soft); color: var(--ok); }
+  .fm-summary.is-fail { background: var(--danger-soft); color: var(--danger); }
+  .fm-summary span { color: var(--text); }
+  .fm-block-title { font: 650 13px/1 var(--font-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin: 28px 0 12px; display: flex; align-items: center; gap: 10px; }
+  .fm-block-title .badge { letter-spacing: 0; text-transform: none; }
+  .fm-checks { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+  .fm-checks li { display: flex; gap: 14px; align-items: flex-start; padding: 14px 18px; border-top: 1px solid var(--line); animation: popIn .35s var(--ease) both; animation-delay: var(--d, 0s); }
+  .fm-checks li:first-child { border-top: 0; }
+  .fm-pill { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; flex: none; font: 800 15px/1 var(--font-ui); }
+  .fm-pill.pass { background: var(--ok-soft); color: var(--ok); }
+  .fm-pill.warn { background: var(--accent-2-soft); color: color-mix(in srgb, var(--accent-2) 55%, var(--text)); }
+  .fm-pill.fail { background: var(--danger-soft); color: var(--danger); }
+  .fm-check-body { flex: 1; min-width: 0; }
+  .fm-check-body .mono { font-weight: 600; font-size: 13.5px; }
+  .fm-check-body p { margin: 2px 0 0; color: var(--muted); font-size: 14.5px; }
+  .fm-counts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .fm-counts .badge { height: 22px; font-size: 11.5px; padding: 0 8px; }
+  @media (max-width: 560px) { .fm-checks li { flex-wrap: wrap; } .fm-counts { width: 100%; justify-content: flex-start; padding-left: 44px; } }
+
+  .fm-issues { display: flex; flex-direction: column; gap: 10px; }
+  .fm-issue { padding: 14px 16px 14px 18px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line-strong); }
+  .fm-issue.err { border-left-color: var(--danger); }
+  .fm-issue.warn { border-left-color: var(--accent-2); }
+  .fm-issue.fix { border-left-color: var(--tr); }
+  .fm-issue-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .fm-issue-top code { font-size: 12.5px; word-break: break-all; }
+  .fm-issue p { margin: 6px 0 0; }
+  .fm-issue .fm-hint { color: var(--muted); font-size: 14.5px; display: flex; gap: 8px; align-items: flex-start; }
+  .fm-issue .fm-hint svg { width: 16px; height: 16px; flex: none; margin-top: 3px; color: var(--accent-text); }
+  .fm-stats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .fm-stat { padding: 14px 16px; border-radius: var(--r); background: var(--surface-2); }
+  .fm-stat b { display: block; font: 650 24px/1.1 var(--font-display); color: var(--text); }
+  .fm-stat span { font-size: 13px; color: var(--muted); }
+</style>
+{% endblock %}
+
+{% block body %}
+<main id="main">
+  <section class="fm-hero">
+    <div class="container">
+      <span class="eyebrow pop-in">{{ icon('code') }} Documentación</span>
+      <h1 class="h1 pop-in" style="--d:.05s;margin-top:14px;font-size:clamp(2.2rem,1.4rem + 3vw,3.6rem)">El formato <span class="text-gradient">lextor/1</span></h1>
+      <p class="lead pop-in" style="--d:.1s">Un JSON sencillo que tu IA rellena y Lextor comprueba con tests antes de guardarlo. Así cada texto se lee bien, se traduce con naturalidad y se explica fragmento a fragmento.</p>
+      <div class="row pop-in" style="--d:.15s">
+        <a class="btn btn-primary btn-lg" href="#validador">{{ icon('shield') }}Probar el validador</a>
+        <a class="btn btn-lg" href="{{ bp }}/connect">{{ icon('plug') }}Conectar IA</a>
+      </div>
+      <div class="fm-why">
+        <article class="card reveal">
+          <div class="fm-why-ic">{{ icon('list') }}</div>
+          <h2 class="h3">Sin errores de espacios ni saltos</h2>
+          <p>La estructura va en bloques (títulos, párrafos, versos), nunca en saltos de línea dentro del texto. Nada se descoloca.</p>
+        </article>
+        <article class="card reveal" style="--d:.06s">
+          <div class="fm-why-ic">{{ icon('languages') }}</div>
+          <h2 class="h3">Traducción natural + glosas</h2>
+          <p>Cada frase lleva su traducción natural, y cada fragmento su glosa en contexto con una nota didáctica breve.</p>
+        </article>
+        <article class="card reveal" style="--d:.12s">
+          <div class="fm-why-ic">{{ icon('check') }}</div>
+          <h2 class="h3">Validado con tests</h2>
+          <p>Alineación exacta, cobertura, granularidad, notas, transliteración… Si algo falla, tu IA recibe la ruta exacta y cómo arreglarlo.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="container fm-layout">
+    <aside class="fm-toc" aria-label="Contenido">
+      <span class="eyebrow">Contenido</span>
+      <ol id="fm-toc-list"></ol>
+      <div class="fm-toc-val"><a href="#validador">{{ icon('shield') }}&nbsp; Validador</a></div>
+    </aside>
+
+    <div style="min-width:0">
+      <div class="fm-note">{{ icon('info') }}<p>La guía está en inglés porque es exactamente el texto que lee tu asistente cuando llama a <code>lextor_get_format_guide</code>.</p></div>
+      <article class="md" id="fm-md" lang="en">
+        <pre class="md-fallback">{{ guide_md }}</pre>
+      </article>
+
+      <section class="fm-val" id="validador" aria-labelledby="val-t">
+        <div class="fm-val-head">
+          <span class="fm-val-ic" aria-hidden="true">{{ icon('shield') }}</span>
+          <div>
+            <h2 class="h2" id="val-t">Validador</h2>
+            <p class="lead" style="font-size:1.05rem;margin-top:6px">Pega un documento lextor/1 y pásale los mismos tests que usa Lextor al guardar. No se guarda nada.</p>
+          </div>
+        </div>
+        <div class="card fm-editor">
+          <div class="fm-editor-bar">
+            <span class="mono">documento.json</span>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-ghost btn-sm" data-copy-target="#fm-input" data-copy-label="JSON copiado">{{ icon('copy') }}Copiar</button>
+          </div>
+          <label for="fm-input" style="position:absolute;left:-9999px">Documento JSON</label>
+          <textarea id="fm-input" class="textarea" spellcheck="false" autocomplete="off" autocapitalize="off">{{ example_json }}</textarea>
+          <div class="fm-actions">
+            <button type="button" class="btn btn-primary btn-lg" id="fm-run">{{ icon('check') }}Validar</button>
+            <button type="button" class="btn btn-lg" id="fm-reset">{{ icon('refresh') }}Restaurar ejemplo</button>
+            <span class="help"><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> para validar</span>
+          </div>
+        </div>
+        <div class="fm-results" id="fm-results" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  const GUIDE = {{ guide_md|tojson }};
+  const EXAMPLE = {{ example_json|tojson }};
+  const esc = Lextor.esc;
+
+  // ── markdown guide ──────────────────────────────────────────────────
+  function slug(s, used) {
+    let base = s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-") || "s";
+    let id = base, n = 2;
+    while (used.has(id)) id = base + "-" + n++;
+    used.add(id);
+    return id;
+  }
+  function renderGuide() {
+    const root = document.getElementById("fm-md");
+    if (!window.marked) return; // CDN unavailable: keep the plain-text fallback
+    root.innerHTML = marked.parse(GUIDE, { gfm: true });
+    root.querySelectorAll("table").forEach((t) => {
+      const w = document.createElement("div"); w.className = "fm-table"; w.tabIndex = 0;
+      t.replaceWith(w); w.appendChild(t);
+    });
+    root.querySelectorAll("pre").forEach((p) => {
+      const w = document.createElement("div"); w.className = "fm-pre";
+      p.replaceWith(w); w.appendChild(p); p.tabIndex = 0;
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "copy-btn"; b.innerHTML = Lextor.icon("copy") + "<span>Copiar</span>";
+      b.addEventListener("click", () => Lextor.copy(p.textContent));
+      w.appendChild(b);
+    });
+    root.querySelectorAll("a[href^='http']").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+    const used = new Set(["validador"]);
+    const list = document.getElementById("fm-toc-list");
+    const heads = Array.from(root.querySelectorAll("h2, h3"));
+    heads.forEach((h) => { h.id = slug(h.textContent, used); });
+    heads.filter((h) => h.tagName === "H2").forEach((h) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="#${h.id}">${esc(h.textContent.replace(/^\d+\.\s*/, ""))}</a>`;
+      list.appendChild(li);
+    });
+    if ("IntersectionObserver" in window) {
+      const links = Array.from(list.querySelectorAll("a"));
+      const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        links.forEach((a) => {
+          if (a.getAttribute("href") === "#" + en.target.id) a.setAttribute("aria-current", "true");
+          else a.removeAttribute("aria-current");
+        });
+      }), { rootMargin: "-20% 0px -70% 0px" });
+      heads.filter((h) => h.tagName === "H2").forEach((h) => io.observe(h));
+    }
+    if (location.hash) {
+      const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (t) t.scrollIntoView();
+    }
+  }
+  renderGuide();
+
+  // ── validator ───────────────────────────────────────────────────────
+  const input = document.getElementById("fm-input");
+  const out = document.getElementById("fm-results");
+  const runBtn = document.getElementById("fm-run");
+  const MARK = { pass: "✓", warn: "!", fail: "✗" };
+  const STAT_LABELS = {
+    blocks: "Bloques", sentences: "Frases", chunks: "Fragmentos", words: "Palabras",
+    avg_words_per_chunk: "Palabras por fragmento", notes_pct: "% con nota", reading_minutes: "Min. de lectura",
+  };
+
+  function issueList(items, kind, title, badge) {
+    if (!items || !items.length) return "";
+    return `<h3 class="fm-block-title">${esc(title)} <span class="badge ${badge}">${items.length}</span></h3>
+      <div class="fm-issues">${items.map((i) => `
+        <div class="fm-issue ${kind}">
+          <div class="fm-issue-top">${i.code ? `<span class="badge">${esc(i.code)}</span>` : ""}${i.path ? `<code>${esc(i.path)}</code>` : ""}</div>
+          <p>${esc(i.message || "")}</p>
+          ${i.hint ? `<p class="fm-hint">${Lextor.icon("info")}<span>${esc(i.hint)}</span></p>` : ""}
+        </div>`).join("")}</div>`;
+  }
+
+  function render(r) {
+    const checks = (r.checks || []).map((c, i) => {
+      const counts = [];
+      if (c.errors) counts.push(`<span class="badge badge-danger">${c.errors} error${c.errors > 1 ? "es" : ""}</span>`);
+      if (c.warnings) counts.push(`<span class="badge badge-amber">${c.warnings} aviso${c.warnings > 1 ? "s" : ""}</span>`);
+      if (c.auto_fixed) counts.push(`<span class="badge badge-tr">${c.auto_fixed} corregido${c.auto_fixed > 1 ? "s" : ""}</span>`);
+      const label = c.status === "pass" ? "superado" : c.status === "warn" ? "con avisos" : "fallido";
+      return `<li style="--d:${(i * 0.03).toFixed(2)}s">
+        <span class="fm-pill ${esc(c.status)}" role="img" aria-label="${label}">${MARK[c.status] || "?"}</span>
+        <div class="fm-check-body"><span class="mono">${esc(c.name)}</span><p>${esc(c.description || "")}</p></div>
+        ${counts.length ? `<div class="fm-counts">${counts.join("")}</div>` : ""}
+      </li>`;
+    }).join("");
+    const stats = Object.entries(r.stats || {}).map(([k, v]) =>
+      `<div class="fm-stat"><b>${esc(v)}</b><span>${esc(STAT_LABELS[k] || k)}</span></div>`).join("");
+    out.innerHTML = `
+      <div class="fm-summary ${r.ok ? "is-ok" : "is-fail"} pop-in">${Lextor.icon(r.ok ? "check" : "alert")}<span>${esc(r.summary || (r.ok ? "Documento válido" : "El documento tiene errores"))}</span></div>
+      ${checks ? `<h3 class="fm-block-title">Tests</h3><ul class="fm-checks">${checks}</ul>` : ""}
+      ${issueList(r.errors, "err", "Errores", "badge-danger")}
+      ${issueList(r.warnings, "warn", "Avisos", "badge-amber")}
+      ${issueList(r.auto_fixed, "fix", "Corregido automáticamente", "badge-tr")}
+      ${stats ? `<h3 class="fm-block-title">Estadísticas</h3><div class="fm-stats">${stats}</div>` : ""}`;
+  }
+
+  async function validate() {
+    runBtn.disabled = true;
+    const prev = runBtn.innerHTML;
+    runBtn.innerHTML = Lextor.icon("refresh", "spin") + "Validando…";
+    try {
+      const r = await Lextor.api("/api/validate", { method: "POST", body: input.value, headers: { "Content-Type": "application/json" } });
+      render(r || {});
+      out.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    } catch (e) {
+      if (e.body && e.body.checks) render(e.body);
+      else Lextor.toast(e.message || "No se pudo validar", "err");
+    } finally {
+      runBtn.disabled = false; runBtn.innerHTML = prev;
+    }
+  }
+  runBtn.addEventListener("click", validate);
+  document.getElementById("fm-reset").addEventListener("click", () => {
+    input.value = EXAMPLE; out.innerHTML = ""; input.focus();
+    Lextor.toast("Ejemplo restaurado", "ok");
+  });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); validate(); }
+  });
+})();
+</script>
+{% endblock %}

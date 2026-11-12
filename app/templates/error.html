@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% set code = status_code|default(500) %}
+{% if code == 404 %}
+  {% set heading = "No encontramos esta página" %}
+  {% set blurb = "Puede que el enlace esté mal escrito o que el texto ya no exista." %}
+{% elif code == 401 or code == 403 %}
+  {% set heading = "No tienes acceso" %}
+  {% set blurb = "Entra con tu cuenta para ver este contenido." %}
+{% elif code >= 500 %}
+  {% set heading = "Algo ha fallado" %}
+  {% set blurb = "Ha ocurrido un error inesperado. Prueba de nuevo en un momento." %}
+{% else %}
+  {% set heading = "Ha ocurrido un problema" %}
+  {% set blurb = "No hemos podido completar la petición." %}
+{% endif %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block head %}
+<style>
+  .er-wrap { position: relative; overflow: hidden; isolation: isolate; min-height: calc(100vh - var(--nav-h) - 120px); display: grid; place-items: center; padding: 56px 16px 80px; text-align: center; }
+  .er-wrap::before {
+    content: ""; position: absolute; z-index: -1; left: 50%; top: 42%; width: 560px; height: 480px; margin: -240px 0 0 -280px;
+    border-radius: 50%; filter: blur(80px); opacity: .32; pointer-events: none;
+    background: radial-gradient(circle at 35% 40%, color-mix(in srgb, var(--accent) 75%, transparent), transparent 60%),
+                radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--accent-2) 60%, transparent), transparent 55%);
+  }
+  .er-box { max-width: 560px; }
+  .er-code {
+    font: 700 clamp(6rem, 4rem + 12vw, 11rem)/.9 var(--font-display); letter-spacing: -.06em; margin: 0 0 8px;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .er-icon { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 20px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-text); box-shadow: var(--sh-2); }
+  .er-icon svg { width: 30px; height: 30px; }
+  .er-box .lead { margin-top: 12px; }
+  .er-msg { display: inline-block; margin-top: 16px; padding: 8px 14px; border-radius: 999px; background: var(--surface-2); color: var(--muted); font-size: 14.5px; }
+  .er-box .row { justify-content: center; margin-top: 30px; }
+  @media (max-width: 480px) { .er-box .row .btn { flex: 1 1 100%; } }
+</style>
+{% endblock %}
+
+{% block body %}
+<main id="main" class="er-wrap">
+  <div class="er-box">
+    <div class="er-icon float" aria-hidden="true">{{ icon('book' if code == 404 else 'alert') }}</div>
+    <p class="er-code text-gradient pop-in" aria-hidden="true">{{ code }}</p>
+    <h1 class="h1 pop-in" style="--d:.05s">{{ heading }}</h1>
+    <p class="lead pop-in" style="--d:.1s">{{ blurb }}</p>
+    {% if message and message != heading %}<p class="er-msg pop-in" style="--d:.14s">{{ message }}</p>{% endif %}
+    <div class="row pop-in" style="--d:.18s">
+      <a class="btn btn-primary btn-lg" href="{{ bp }}/">{{ icon('arrow-left') }}Inicio</a>
+      <a class="btn btn-lg" href="{{ bp }}/library">{{ icon('library') }}Biblioteca</a>
+      {% if (code == 401 or code == 403) and not current_user %}
+      <a class="btn btn-soft btn-lg" href="{{ bp }}/login">{{ icon('log-in') }}Entrar</a>
+      {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock %}

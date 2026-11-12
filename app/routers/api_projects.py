@@ -1,13 +1,9 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
+from app.auth import require_user
 from app.services.project_service import (
-    create_project,
-    list_projects,
-    load_metadata,
-    delete_project,
-    save_metadata,
-    SUPPORTED_LANGUAGES,
+    create_project, list_projects, load_metadata, delete_project, save_metadata, SUPPORTED_LANGUAGES,
 )
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
@@ -25,24 +21,26 @@ class UpdateProjectRequest(BaseModel):
     target: str | None = None
 
 
+def _check_langs(base: str | None, target: str | None):
+    for code in (base, target):
+        if code is not None and code not in SUPPORTED_LANGUAGES:
+            raise HTTPException(400, f"Idioma no soportado: {code}")
+    if base and target and base == target:
+        raise HTTPException(400, "El idioma de estudio y tu idioma deben ser distintos")
+
+
 @router.get("")
 async def get_projects(request: Request):
     return list_projects(request.state.user_dir)
 
 
 @router.post("")
-async def post_create_project(request: Request, body: CreateProjectRequest):
-    if body.base not in SUPPORTED_LANGUAGES:
-        raise HTTPException(400, f"Idioma base no soportado: {body.base}")
-    if body.target not in SUPPORTED_LANGUAGES:
-        raise HTTPException(400, f"Idioma objetivo no soportado: {body.target}")
-    if body.base == body.target:
-        raise HTTPException(400, "El idioma base y el objetivo deben ser distintos")
+async def post_create_project(body: CreateProjectRequest, user_dir: str = Depends(require_user)):
+    _check_langs(body.base, body.target)
     try:
-        meta = create_project(body.name, body.base, body.target, request.state.user_dir)
+        return create_project(body.name, body.base, body.target, user_dir)
     except ValueError as e:
         raise HTTPException(400, str(e))
-    return meta
 
 
 @router.get("/{project_id}")
@@ -54,29 +52,25 @@ async def get_project(request: Request, project_id: str):
 
 
 @router.patch("/{project_id}")
-async def patch_project(request: Request, project_id: str, body: UpdateProjectRequest):
-    user_dir = request.state.user_dir
+async def patch_project(project_id: str, body: UpdateProjectRequest, user_dir: str = Depends(require_user)):
     meta = load_metadata(project_id, user_dir)
     if not meta:
         raise HTTPException(404, "Proyecto no encontrado")
-    if body.name:
-        meta["name"] = body.name
+    _check_langs(body.base or meta["base"], body.target or meta["target"])
+    if body.name and body.name.strip():
+        meta["name"] = body.name.strip()
     if body.base:
-        if body.base not in SUPPORTED_LANGUAGES:
-            raise HTTPException(400, f"Idioma no soportado: {body.base}")
         meta["base"] = body.base
     if body.target:
-        if body.target not in SUPPORTED_LANGUAGES:
-            raise HTTPException(400, f"Idioma no soportado: {body.target}")
         meta["target"] = body.target
     save_metadata(project_id, meta, user_dir)
     return meta
 
 
 @router.delete("/{project_id}")
-async def delete_project_endpoint(request: Request, project_id: str):
+async def delete_project_endpoint(project_id: str, user_dir: str = Depends(require_user)):
     try:
-        delete_project(project_id, request.state.user_dir)
+        delete_project(project_id, user_dir)
     except ValueError as e:
         raise HTTPException(404, str(e))
     return {"ok": True}

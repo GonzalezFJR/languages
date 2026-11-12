@@ -1,0 +1,293 @@
+{
+ "format": "lextor/1",
+ "meta": {
+  "title": "The Little Prince — Chapter I",
+  "text_lang": "en",
+  "notes_lang": "es",
+  "summary": "Opening of the classic by Antoine de Saint-Exupéry. The narrator recalls his childhood and a drawing he made at six years old.",
+  "created_at": "2026-01-01T00:00:00"
+ },
+ "blocks": [
+  {
+   "type": "heading",
+   "level": 1,
+   "sentences": [
+    {
+     "text": "The Little Prince",
+     "translation": "El Principito",
+     "chunks": [
+      {
+       "text": "The Little Prince",
+       "gloss": "El Principito",
+       "note": "Sustantivo + adjetivo. 'Little' = pequeño/a. 'Prince' = príncipe. En inglés el adjetivo siempre precede al sustantivo, al contrario que en español."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "heading",
+   "level": 2,
+   "sentences": [
+    {
+     "text": "Chapter I",
+     "translation": "Capítulo I",
+     "chunks": [
+      {
+       "text": "Chapter I",
+       "gloss": "Capítulo I",
+       "note": "'Chapter' proviene del latín 'caput' (cabeza). Se usa para dividir obras literarias. Se abrevia como 'Ch.' o 'Chap.'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "Once, when I was six years old, I saw a magnificent picture in a book called 'True Stories from Nature,' about the primeval forest.",
+     "translation": "Una vez, cuando tenía seis años, vi una lámina magnífica en un libro llamado 'Historias verdaderas de la naturaleza', sobre el bosque primigenio (virgen).",
+     "chunks": [
+      {
+       "text": "Once, when I was six years old,",
+       "gloss": "Una vez, cuando tenía seis años,",
+       "note": "'Once' aquí es adverbio temporal = 'una vez / en cierta ocasión'. No confundir con el número 'eleven'. 'When I was six' → en inglés se usa 'to be' para la edad; en español se usa 'tener': 'tenía seis años'."
+      },
+      {
+       "text": "I saw a magnificent picture",
+       "gloss": "vi una lámina magnífica",
+       "note": "'I saw' = pasado simple de 'to see' (ver). 'Magnificent' (magnífico/a) = impresionante, espléndido. 'Picture' = imagen, ilustración, foto o cuadro según el contexto."
+      },
+      {
+       "text": "in a book called",
+       "gloss": "en un libro llamado",
+       "note": "'Called' (participio de 'to call') aquí actúa como adjetivo: 'llamado/titulado'. Equivalente a 'entitled' en registros más formales."
+      },
+      {
+       "text": "'True Stories from Nature,'",
+       "gloss": "'Historias verdaderas de la naturaleza',",
+       "note": "Título del libro ficticio. 'True' = verdadero/real. 'Stories' = historias, cuentos (plural de 'story'). 'From Nature' = de la naturaleza, procedentes de la naturaleza."
+      },
+      {
+       "text": "about the primeval forest.",
+       "gloss": "sobre el bosque primigenio (virgen).",
+       "note": "'Primeval' (primigenio/primitivo) = que existe desde los orígenes, sin alterar por el hombre. Más formal y literario que 'ancient' o 'old'. 'Forest' = bosque (más grande que 'wood')."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "It was a picture of a boa constrictor in the act of swallowing an animal.",
+     "translation": "Era la imagen de una serpiente boa en el acto de tragarse a un animal.",
+     "chunks": [
+      {
+       "text": "It was a picture of a boa constrictor",
+       "gloss": "Era la imagen de una serpiente boa",
+       "note": "'It was' = era / se trataba de. Uso de 'it' como sujeto impersonal. 'Boa constrictor': serpiente tropical que mata por constricción (aplastamiento), no por veneno."
+      },
+      {
+       "text": "in the act of swallowing an animal.",
+       "gloss": "en el acto de tragarse a un animal.",
+       "note": "'In the act of' + gerundio = 'en el acto de / en plena acción de'. 'Swallowing' = tragando (gerundio de 'to swallow'). Nótese que en inglés no se usa preposición 'a' de objeto directo como en español."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "In the book it said: 'Boa constrictors swallow their prey whole, without chewing it.",
+     "translation": "En el libro se decía: 'Las boas constrictoras se tragan a sus presas enteras, sin masticarla.",
+     "chunks": [
+      {
+       "text": "In the book it said:",
+       "gloss": "En el libro se decía:",
+       "note": "'It said' = decía / ponía (un libro, cartel…). El sujeto impersonal 'it' no tiene equivalente en español; se usa la construcción reflexiva impersonal 'se decía / se leía'."
+      },
+      {
+       "text": "'Boa constrictors swallow their prey whole,",
+       "gloss": "'Las boas constrictoras se tragan a sus presas enteras,",
+       "note": "'Prey' (presa) = animal cazado por otro. 'Whole' aquí es adverbio = enteramente, sin masticar. Construcción: sujeto + verbo + objeto + adverbio de modo."
+      },
+      {
+       "text": "without chewing it.",
+       "gloss": "sin masticarla.",
+       "note": "'Without' + gerundio = 'sin' + infinitivo. 'Chewing' (masticando) de 'to chew'. 'It' = pronombre que sustituye a 'their prey'. En español se usa el pronombre clítico 'la' (concordando en género con 'presa')."
+      }
+     ]
+    },
+    {
+     "text": "After that they are not able to move, and they sleep through the six months that they need for digestion.'",
+     "translation": "Después de eso no pueden moverse, y duermen durante los seis meses que necesitan para la digestión.'",
+     "chunks": [
+      {
+       "text": "After that they are not able to move,",
+       "gloss": "Después de eso no pueden moverse,",
+       "note": "'Not able to' = incapaz de (equivalente a 'cannot'). 'After that' = después de eso. Nótese 'to move' en inglés requiere reflexivo en español: 'moverse'."
+      },
+      {
+       "text": "and they sleep through the six months",
+       "gloss": "y duermen durante los seis meses",
+       "note": "'Sleep through' = dormir durante todo un período sin interrupciones. 'Through' añade el matiz de 'de principio a fin'. Muy común: 'sleep through the alarm' = dormirse con el despertador."
+      },
+      {
+       "text": "that they need for digestion.'",
+       "gloss": "que necesitan para la digestión.'",
+       "note": "Oración de relativo: 'that they need' = 'que necesitan'. 'That' como pronombre relativo de objeto puede omitirse en inglés coloquial: 'the six months they need'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "I pondered deeply, then, over the adventures of the jungle.",
+     "translation": "Reflexioné profundamente, entonces, sobre las aventuras de la jungla.",
+     "chunks": [
+      {
+       "text": "I pondered deeply, then,",
+       "gloss": "Reflexioné profundamente, entonces,",
+       "note": "'To ponder' = reflexionar, meditar, considerar detenidamente. Más literario y formal que 'to think about'. 'Deeply' = profundamente (adverbio). 'Then' = entonces (adverbio temporal o de consecuencia)."
+      },
+      {
+       "text": "over the adventures of the jungle.",
+       "gloss": "sobre las aventuras de la jungla.",
+       "note": "'Ponder over' = reflexionar sobre algo (phrasal verb). 'Adventures' = aventuras. 'Jungle' = jungla/selva tropical (del hindi 'jangal'). Sinónimo en inglés más formal: 'rainforest' o 'tropical forest'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "And after some work with a colored pencil I succeeded in making my first drawing.",
+     "translation": "Y tras trabajar un poco con un lápiz de colores logré hacer mi primer dibujo.",
+     "chunks": [
+      {
+       "text": "And after some work with a colored pencil",
+       "gloss": "Y tras trabajar un poco con un lápiz de colores",
+       "note": "'After some work' = tras cierto trabajo / después de trabajar un poco. 'Colored pencil' (AmE) = 'coloured pencil' (BrE) = lápiz de color. Nótese la diferencia ortográfica entre inglés americano y británico."
+      },
+      {
+       "text": "I succeeded in making my first drawing.",
+       "gloss": "logré hacer mi primer dibujo.",
+       "note": "'Succeed in' + gerundio = lograr + infinitivo. Construcción muy útil: 'I succeeded in solving it' = 'logré resolverlo'. 'Drawing' = dibujo (sustantivo) o dibujando (gerundio)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "My Drawing Number One.",
+     "translation": "Mi Dibujo Número Uno.",
+     "chunks": [
+      {
+       "text": "My Drawing Number One.",
+       "gloss": "Mi Dibujo Número Uno.",
+       "note": "El narrador numera sus dibujos con un tono infantil y metódico. En inglés se capitalizan los títulos y nombres propios. 'Number One' puede también significar coloquialmente 'el mejor / el principal'."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "I showed my masterpiece to the grown-ups, and asked them whether the drawing frightened them.",
+     "translation": "Enseñé mi obra maestra a los mayores, y les pregunté si el dibujo les asustaba.",
+     "chunks": [
+      {
+       "text": "I showed my masterpiece to the grown-ups,",
+       "gloss": "Enseñé mi obra maestra a los mayores,",
+       "note": "'To show' = mostrar, enseñar. 'Masterpiece' = obra maestra (master = maestro/experto + piece = pieza/obra). 'Grown-ups' = adultos, personas mayores (sustantivo coloquial, especialmente en lenguaje infantil). Guión obligatorio."
+      },
+      {
+       "text": "and asked them whether the drawing frightened them.",
+       "gloss": "y les pregunté si el dibujo les asustaba.",
+       "note": "'Whether' = si (en preguntas indirectas, con dos opciones implícitas). Más formal que 'if' en este contexto. 'Frightened' = asustado / que asusta. 'To frighten' = asustar."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "But they answered: 'Frightened?",
+     "translation": "Pero ellos respondieron: '¿Asustados?",
+     "chunks": [
+      {
+       "text": "But they answered:",
+       "gloss": "Pero ellos respondieron:",
+       "note": "'To answer' = responder, contestar. Sinónimos: 'to reply' (más formal), 'to respond'. 'But' = pero (conjunción adversativa que introduce un contraste o sorpresa)."
+      },
+      {
+       "text": "'Frightened?",
+       "gloss": "'¿Asustados?",
+       "note": "Pregunta retórica con una sola palabra. 'Frightened' = asustado (participio usado como adjetivo). El tono expresa incredulidad y burla de los adultos ante el dibujo del niño."
+      }
+     ]
+    },
+    {
+     "text": "Why should anyone be frightened by a hat?'",
+     "translation": "¿Por qué habría de asustar un sombrero?'",
+     "chunks": [
+      {
+       "text": "Why should anyone be frightened by a hat?'",
+       "gloss": "¿Por qué habría de asustar un sombrero?'",
+       "note": "'Should' aquí expresa extrañeza o improbabilidad: '¿por qué tendría que...?'. 'Why should' + sujeto + verbo = construcción para expresar incredulidad. 'Anyone' = nadie / alguien (en negativa/interrogativa)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "sentences": [
+    {
+     "text": "My drawing was not a picture of a hat.",
+     "translation": "Mi dibujo no era la imagen de un sombrero.",
+     "chunks": [
+      {
+       "text": "My drawing was not a picture of a hat.",
+       "gloss": "Mi dibujo no era la imagen de un sombrero.",
+       "note": "'Was not' = negación del pasado de 'to be'. En inglés coloquial: 'wasn't'. Énfasis en 'not' para contradecir lo que los adultos creen."
+      }
+     ]
+    },
+    {
+     "text": "It was a picture of a boa constrictor digesting an elephant.",
+     "translation": "Era la imagen de una serpiente boa digiriendo un elefante.",
+     "chunks": [
+      {
+       "text": "It was a picture of a boa constrictor",
+       "gloss": "Era la imagen de una serpiente boa",
+       "note": "Paralelismo intencional con la descripción del libro al principio del capítulo. Repetición de la estructura 'It was a picture of a...' para enfatizar el contraste con la interpretación adulta."
+      },
+      {
+       "text": "digesting an elephant.",
+       "gloss": "digiriendo un elefante.",
+       "note": "'Digesting' = digiriendo (gerundio de 'to digest'). Actúa como participio de presente que modifica a 'boa constrictor'. Construcción paralela: 'a boa constrictor digesting an elephant' = 'una boa digiriendo un elefante'."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

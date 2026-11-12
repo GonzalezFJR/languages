@@ -1,0 +1,53 @@
+{% set path = request.url.path %}
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="{{ bp }}/" class="brand" aria-label="Lextor, inicio">
+      <img class="brand-mark" src="{{ bp }}/static/img/logo.svg" alt="" width="34" height="34" />
+      <span>Lextor</span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a class="nav-link" href="{{ bp }}/library" {% if path.startswith('/library') or path.startswith('/project') %}aria-current="page"{% endif %}>{{ icon('library') }}Biblioteca</a>
+      <a class="nav-link" href="{{ bp }}/connect" {% if path.startswith('/connect') %}aria-current="page"{% endif %}>{{ icon('plug') }}Conectar IA</a>
+      <a class="nav-link" href="{{ bp }}/format" {% if path.startswith('/format') %}aria-current="page"{% endif %}>{{ icon('code') }}Formato</a>
+    </nav>
+    <div class="spacer"></div>
+    <button class="btn btn-ghost btn-icon" type="button" data-theme-toggle aria-label="Cambiar tema"></button>
+    {% if current_user %}
+    <div class="menu hide-nav">
+      <button class="btn btn-ghost" type="button" data-menu aria-haspopup="true" aria-expanded="false">
+        <span class="badge badge-accent" style="width:30px;height:30px;padding:0;justify-content:center;border-radius:50%">{{ current_user[0]|upper }}</span>
+        <span>{{ current_user }}</span>{{ icon('chevron-down') }}
+      </button>
+      <div class="menu-list">
+        <a href="{{ bp }}/library">{{ icon('library') }}Mi biblioteca</a>
+        <a href="{{ bp }}/connect">{{ icon('plug') }}Mi conector MCP</a>
+        <div class="menu-sep"></div>
+        <a href="{{ bp }}/logout" class="danger">{{ icon('log-out') }}Cerrar sesión</a>
+      </div>
+    </div>
+    {% else %}
+    <a class="btn btn-ghost hide-nav" href="{{ bp }}/login">{{ icon('log-in') }}Entrar</a>
+    <a class="btn btn-primary hide-nav" href="{{ bp }}/connect">{{ icon('sparkles') }}Empezar</a>
+    {% endif %}
+    <button class="btn btn-ghost btn-icon nav-burger" type="button" data-mobile-nav aria-label="Abrir menú">{{ icon('menu') }}</button>
+  </div>
+</header>
+<div class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-backdrop"></div>
+  <div class="mobile-nav-sheet">
+    <div class="row" style="margin-bottom:8px">
+      <a href="{{ bp }}/" class="brand"><img class="brand-mark" src="{{ bp }}/static/img/logo.svg" alt="" width="34" height="34" /><span>Lextor</span></a>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-icon" type="button" data-mobile-nav aria-label="Cerrar menú">{{ icon('x') }}</button>
+    </div>
+    <a class="nav-link" href="{{ bp }}/library">{{ icon('library') }}Biblioteca</a>
+    <a class="nav-link" href="{{ bp }}/connect">{{ icon('plug') }}Conectar IA</a>
+    <a class="nav-link" href="{{ bp }}/format">{{ icon('code') }}Formato</a>
+    <div class="divider" style="margin:10px 0"></div>
+    {% if current_user %}
+    <a class="nav-link" href="{{ bp }}/logout">{{ icon('log-out') }}Cerrar sesión ({{ current_user }})</a>
+    {% else %}
+    <a class="btn btn-primary btn-lg btn-block" href="{{ bp }}/login" style="margin-top:6px">{{ icon('log-in') }}Entrar</a>
+    {% endif %}
+  </div>
+</div>
